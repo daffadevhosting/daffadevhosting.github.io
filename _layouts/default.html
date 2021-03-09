@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
+
+    {% include meta.html %}
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="/mdl/material.min.css">
+    <script src="/mdl/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
+    <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
+
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+<!-- No header, and the drawer stays open on larger screens (fixed drawer). -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">{{ site.name }}</span>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="{{ site.baseurl }}/">Blog</a>
+      <a class="mdl-navigation__link" href="{{ site.baseurl }}/store">Store</a>
+      <a class="mdl-navigation__link" href="{{ site.baseurl }}/contact">Contact</a>
+      <a class="mdl-navigation__link" href="{{ site.baseurl }}/about">About</a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content">
+    <div class="page-content">
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="{{ site.baseurl }}/" class="site-avatar"><img src="{{ site.avatar }}" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
+            <p class="site-description">{{ site.description }}</p>
+          </div>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+
+      {{ content }}
+
+    </div>
+<footer class="mdl-mini-footer">
+  <div class="mdl-mini-footer__left-section">
+    <ul class="mdl-mini-footer__link-list">
+      <li><a href="#">Help</a></li>
+      <li><a href="#">Privacy & Terms</a></li>
+          {% include svg-icons.html %}
+    </ul>
+  </div>
+</footer>
+
+    </div>
+  </main>
+</div>
+
+    {% include analytics.html %}
+  </body>
+</html>
