@@ -28,6 +28,7 @@
     <script src="/mdl/material.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="stylesheet" type="text/css" href="/blog.css" />
     <link rel="alternate" type="application/rss+xml" title="DaffaDev - Web Developer from Somewhere" href="/feed.xml" />
 
     <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
@@ -35,7 +36,24 @@
 
   <body>
 <!-- No header, and the drawer stays open on larger screens (fixed drawer). -->
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
+            mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+        <label class="mdl-button mdl-js-button mdl-button--icon"
+               for="fixed-header-drawer-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="sample"
+                 id="fixed-header-drawer-exp">
+        </div>
+      </div>
+    </div>
+  </header>
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">DaffaDev</span>
     <nav class="mdl-navigation">
@@ -62,21 +80,26 @@
 
     <div id="main" role="main" class="container">
 
-      <article class="post">
-  <h1>Test Postingan</h1>
-
-  <div class="entry">
+      <style>
+.wrapper-masthead {display:none;}
+</style>
+<article class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+<div class="mdl-card__media mdl-color-text--grey-50" style="background-image: url(/images/404.jpg); height: 280px;">
+  <h3>Test Postingan</h3>
+</div>
+<div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">
+    Written on March  4, 2014</span>
+</span>
+            </div>
+  <div class="post mdl-color-text--grey-700 mdl-card__supporting-text">
     <p>Next you can update your site name, avatar and other options using the _config.yml file in the root of your repository (shown below).</p>
-
-<p><img src="/images/config.png" alt="_config.yml" /></p>
 
 <p>The easiest way to make your first post is to edit this one. Go into /_posts/ and update the Hello World markdown file. For more instructions head over to the <a href="https://github.com/barryclark/jekyll-now">Jekyll Now repository</a> on GitHub.</p>
 
   </div>
 
-  <div class="date">
-    Written on March  4, 2014
-  </div>
 
   
 </article>

@@ -1,0 +1,16 @@
+---
+layout: default
+---
+
+<div class="posts">
+  {% for produk in site.data.produk %}
+<a href="{{ produk.url }}">
+<div class="store-card-image mdl-card mdl-shadow--2dp produk" style="background: url('{{ produk.image }}') center / cover;">
+  <div class="mdl-card__title mdl-card--expand"></div>
+  <div class="mdl-card__actions">
+    <span class="store-card-image__filename">{{ produk.nama }}</span>
+    <span class="store-card-image__fileprice">Rp.{{ produk.harga }}</span>
+  </div>
+</div></a>
+  {% endfor %}
+</div>
