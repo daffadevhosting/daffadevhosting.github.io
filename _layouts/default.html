@@ -24,22 +24,21 @@
             mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <div class="mdl-layout-spacer"></div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
-                  mdl-textfield--floating-label mdl-textfield--align-right">
-        <label class="mdl-button mdl-js-button mdl-button--icon"
-               for="fixed-header-drawer-exp">
-          <i class="material-icons">search</i>
-        </label>
-        <div class="mdl-textfield__expandable-holder">
-          <input class="mdl-textfield__input" type="text" name="sample"
-                 id="fixed-header-drawer-exp">
-        </div>
-      </div>
+      <div class="mdl-layout-spacer"></div><button id="demo-menu-lower-right"
+        class="mdl-button mdl-js-button mdl-button--icon">
+  <i class="material-icons">share</i>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+    for="demo-menu-lower-right">
+  <li class="mdl-menu__item">Some Action</li>
+  <li class="mdl-menu__item">Another Action</li>
+  <li disabled class="mdl-menu__item">Disabled Action</li>
+  <li class="mdl-menu__item">Yet Another Action</li>
+</ul>
     </div>
   </header>
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">{{ site.name }}</span>
+    <span class="mdl-layout-title" style="background-color: rgb(0 0 0 / 14%);"><a href="{{ site.baseurl }}/">{{ site.name }}</a></span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="{{ site.baseurl }}/">Blog</a>
       <a class="mdl-navigation__link" href="{{ site.baseurl }}/store">Store</a>
@@ -52,10 +51,10 @@
     <div class="wrapper-masthead">
       <div class="container">
         <header class="masthead clearfix">
-          <a href="{{ site.baseurl }}/" class="site-avatar"><img src="{{ site.avatar }}" /></a>
+          <div class="site-avatar"><img src="{{ site.avatar }}" /></div>
 
           <div class="site-info">
-            <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
+            <h1 class="site-name">{{ site.name }}</h1>
             <p class="site-description">{{ site.description }}</p>
           </div>
         </header>

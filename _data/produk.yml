@@ -1,9 +1,11 @@
 - nama: Produk 1
+  label: New
   harga: 2000
-  image: https://cf.shopee.co.id/file/6549ebebfdff7f4355dc0398f5f5b9e2
+  image: /images/jekyll-logo.png
   url: /store/produk-1
 
 - nama: Produk 2
+  label: 25% off
   harga: 3000
-  image: https://cf.shopee.co.id/file/6549ebebfdff7f4355dc0398f5f5b9e2
+  image: /images/jekyll-logo.png
   url: /store/produk-2

@@ -200,6 +200,17 @@ img {
 /*********************/
 /* LAYOUT / SECTIONS */
 /*********************/
+.back-page {
+  margin: 20px 10px;
+  vertical-align: middle;
+}
+
+@media screen and (max-width: 640px) {
+  .mdl-card__supporting-text {
+    width: auto;
+  }
+}
+
 .wrapper-masthead {
   margin-bottom: 50px;
 }
@@ -249,7 +260,6 @@ img {
 .site-name {
   margin: 0;
   color: #333;
-  cursor: pointer;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300;
   font-size: 28px;

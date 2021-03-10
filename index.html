@@ -14,12 +14,12 @@ layout: default
   float: right;
     }
 </style>
-<div class="posts">
+<div class="mdl-grid">
   {% for post in site.posts %}
     <article class="post">
 
-<div class="post-card-wide mdl-card mdl-shadow--2dp">
-  <div class="mdl-card__title" style="background: url('{{ post.image }}') center / cover;">
+<div class="post-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
+  <div class="mdl-card__title" style="background: url('{{ post.image }}') center / cover; background-blend-mode: overlay; background-color: rgb(0 0 0 / 54%);">
     <h2 class="mdl-card__title-text">{{ post.title }}</h2>
   </div>
   <div class="mdl-card__supporting-text">

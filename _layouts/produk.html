@@ -1,0 +1,58 @@
+---
+layout: default
+---
+<style>
+.wrapper-masthead {display:none;}
+.photo-produk {width:100%;}
+.productPhotoWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 10px;
+    position: relative;
+    margin-top: 10px;
+}
+.btn {
+    width: min-content;
+    margin: 5px;
+    font-style: italic;
+    vertical-align: middle;
+    float: right;
+    }
+
+</style>
+
+<div class="back-page">
+<a href="{{ site.baseurl }}/store/">
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+  <i class="material-icons">arrow_back</i>
+</button>
+</a>
+</div>
+<div class="mdl-grid mdl-row">
+  <div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
+<div>
+<img class="mdl-card mdl-shadow--2dp photo-produk" src="{{ page.image }}"/>
+<div class="productPhotoWrapper">
+<img src="{{ page.image }}"/>
+<img src="{{ page.image }}"/>
+<img src="{{ page.image }}"/>
+<img src="{{ page.image }}"/>
+</div>
+</div>
+</div>
+  <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
+<div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">{{page.title}}</h2>
+                    </div>
+<div class="mdl-card__supporting-text no-bottom-padding">
+                        <span>Rp.{{page.harga}}</span>
+                    </div>
+<div class="mdl-card__supporting-text">
+                        <p>{{content}}</p>
+<button class="btn mdl-button mdl-js-button mdl-button--primary">
+  Order Now
+</button>
+                    </div>
+</div>
+</div>
+</div>
