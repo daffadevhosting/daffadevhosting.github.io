@@ -2,7 +2,7 @@
 layout: produk
 label: 25% off
 title: Tes Produk 2
-harga: 2000
+harga: 3000
 diskon: 1,500
 image: /images/jekyll-logo.png
 ---

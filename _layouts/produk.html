@@ -12,13 +12,20 @@ layout: default
     margin-top: 10px;
 }
 .btn {
-    width: min-content;
-    margin: 5px;
+    margin: 5px 0 0;
     font-style: italic;
     vertical-align: middle;
-    float: right;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
     }
-
+.box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 0 auto auto;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+}
+.mdl-dialog {
+    width: 350px;
+}
 </style>
 
 <div class="back-page">
@@ -40,19 +47,60 @@ layout: default
 </div>
 </div>
 </div>
-  <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
+  <div class="mdl-card mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
 <div class="mdl-card__title">
                         <h2 class="mdl-card__title-text">{{page.title}}</h2>
                     </div>
 <div class="mdl-card__supporting-text no-bottom-padding">
                         <span>Rp.{{page.harga}}</span>
                     </div>
-<div class="mdl-card__supporting-text">
+<div class="box mdl-card__supporting-text">
                         <p>{{content}}</p>
-<button class="btn mdl-button mdl-js-button mdl-button--primary">
+                    </div>
+<button id="order" class="btn mdl-button mdl-js-button mdl-button--primary">
   Order Now
 </button>
-                    </div>
 </div>
 </div>
 </div>
+
+  <dialog class="mdl-dialog">
+    <span class="mdl-card__title">Order Produk {{page.title}}?</span>
+    <div class="mdl-dialog__content">
+<form action="#">
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" id="sample3">
+    <label class="mdl-textfield__label" for="sample3">Nama...</label>
+</div>
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="sample4">
+    <label class="mdl-textfield__label" for="sample4">No. WhatsApp...</label>
+    <span class="mdl-textfield__error">Input is not a number!</span>
+  </div>
+  <div class="mdl-textfield mdl-js-textfield">
+    <textarea class="mdl-textfield__input" type="text" rows= "3" id="sample5" ></textarea>
+    <label class="mdl-textfield__label" for="sample5">Alamat Lengkap...</label>
+  </div>
+</form>
+    </div>
+    <div class="mdl-dialog__actions">
+      <button type="button" class="mdl-button">Lanjut</button>
+      <button type="button" class="mdl-button close">Batal</button>
+    </div>
+  </dialog>
+
+
+  <script>
+    var dialog = document.querySelector('dialog');
+    var showDialogButton = document.querySelector('#order');
+    if (! dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+    showDialogButton.addEventListener('click', function() {
+      dialog.showModal();
+    });
+    dialog.querySelector('.close').addEventListener('click', function() {
+      dialog.close();
+    });
+  </script>
+</body>
