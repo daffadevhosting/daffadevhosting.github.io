@@ -44,10 +44,10 @@
 </button>
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
     for="demo-menu-lower-right">
-  <li class="mdl-menu__item">Some Action</li>
-  <li class="mdl-menu__item">Another Action</li>
-  <li disabled class="mdl-menu__item">Disabled Action</li>
-  <li class="mdl-menu__item">Yet Another Action</li>
+  <li class="mdl-menu__item">Share To Facebook</li>
+  <li class="mdl-menu__item">Share To Tweeter</li>
+  <li class="mdl-menu__item">Share To Instagram</li>
+  <li class="mdl-menu__item">Share To Whatsapp</li>
 </ul>
     </div>
   </header>
@@ -91,7 +91,7 @@
     margin: 5px 0 0;
     font-style: italic;
     vertical-align: middle;
-    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+    /*box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);*/
     }
 .box {
     border: 1px solid #ddd;
@@ -101,6 +101,15 @@
 }
 .mdl-dialog {
     width: 350px;
+}
+.warna {
+    display: inline-block;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 3px;
+    margin: 5px 0 5px 5px;
+    min-width: 42.25px;
+    text-align: center;
 }
 </style>
 
@@ -140,6 +149,19 @@
     <li>deskripsi4</li>
 </ul>
 </p>
+                    </div>
+<div class="box mdl-card__supporting-text">
+                        <p>Warna Tersedia:</p>
+<span class="warna">Hitam</span>
+<span class="warna">Putih</span>
+<span class="warna">Merah</span>
+<span class="warna">Abu-Abu</span>
+<span class="warna">Biru</span>
+                        <p>Ukuran:</p>
+<span class="warna">S</span>
+<span class="warna">L</span>
+<span class="warna">XL</span>
+<span class="warna">XXL</span>
                     </div>
 <button id="order" class="btn mdl-button mdl-js-button mdl-button--primary">
   Order Now
