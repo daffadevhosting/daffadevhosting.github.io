@@ -50,6 +50,14 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.4;
   }
 }
+.box-deskription {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+
+  @include mobile {
+    border: none;
+  }
+}
 
 h1 {
   font-size: 30px;

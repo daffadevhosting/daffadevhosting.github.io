@@ -100,6 +100,17 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.box-deskription {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+@media screen and (max-width: 640px) {
+  .box-deskription {
+    border: none;
+  }
+}
+
 h1 {
   font-size: 30px;
 }
