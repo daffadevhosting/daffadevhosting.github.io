@@ -24,7 +24,7 @@ body {
 }
 
 .post-card-wide.mdl-card {
-  width: 512px;
+  width: 521px;
 
   @include mobile {
     width: auto;
@@ -235,7 +235,7 @@ img {
 }
 
 .store-card-image.mdl-card {
-  width: 256px;
+  width: 252px;
   height: 256px;
 
   @include mobile {
@@ -264,13 +264,13 @@ img {
 //
 .posts {
     display: flex;
-    flex-flow: nowrap;
+    flex-flow: wrap;
 
     @include mobile {
     display: block;
     }
   }
-.post {margin:auto;
+.post {margin:0;
 
   @include mobile {
     text-align:justify;

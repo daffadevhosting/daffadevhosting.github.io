@@ -9,3 +9,21 @@
   harga: 3000
   image: /images/jekyll-logo.png
   url: /store/produk-2
+
+- nama: Produk 3
+  label: 25% off
+  harga: 3000
+  image: /images/jekyll-logo.png
+  url: /store/produk-3
+
+- nama: Produk 4
+  label: 25% off
+  harga: 3000
+  image: /images/jekyll-logo.png
+  url: /store/produk-4
+
+- nama: Produk 5
+  label: 25% off
+  harga: 3000
+  image: /images/jekyll-logo.png
+  url: /store/produk-5
