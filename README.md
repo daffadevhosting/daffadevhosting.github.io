@@ -1,1 +1,1 @@
-Jekyll With MDL Template. Base on JekyllNow. <p>https://daffadevhosting.github.io</p>
+Jekyll With MDL Template.. <p><b>https://daffadevhosting.github.io</p>

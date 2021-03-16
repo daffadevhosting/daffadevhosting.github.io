@@ -28,6 +28,7 @@
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <link rel="stylesheet" type="text/css" href="/blog.css" />
     <link rel="alternate" type="application/rss+xml" title="DaffaDev - Web Developer from Somewhere" href="/feed.xml" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"/>
 
     <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
   </head>
@@ -56,8 +57,8 @@
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="/">Blog</a>
       <a class="mdl-navigation__link" href="/store">Store</a>
-      <a class="mdl-navigation__link" href="/contact">Contact</a>
       <a class="mdl-navigation__link" href="/about">About</a>
+      <a class="mdl-navigation__link" href="/contact">Contact</a>
     </nav>
   </div>
   <main class="mdl-layout__content">
@@ -87,18 +88,24 @@
     position: relative;
     margin-top: 10px;
 }
+
+.box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: auto auto 0 auto;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+
+  @include mobile {
+    margin: 0;
+  }
+}
+
 .btn {
     margin: 5px 0 0;
     font-style: italic;
     vertical-align: middle;
     /*box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);*/
     }
-.box {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin: 0 auto auto;
-    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
-}
 .mdl-dialog {
     width: 350px;
 }
@@ -150,7 +157,7 @@
 </ul>
 </p>
                     </div>
-<div class="box mdl-card__supporting-text">
+<div class="mdl-card__supporting-text">
                         <p>Warna Tersedia:</p>
 <span class="warna">Hitam</span>
 <span class="warna">Putih</span>

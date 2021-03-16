@@ -1,15 +1,45 @@
 ---
 layout: default
-permalink: /store/
+permalink: /store
 ---
+<style>
+.rating-produk {
+    display: inline-grid;
+    grid-gap: 10px;
+    float: right;
+    margin: auto;
+    margin-right: 0;
+}
+.skor {
+    width: 65px;
+    font-size: 9px;
+    color:#edde14;
+    }
+.jual {
+    font-size: 10px;
+    margin-right: auto;
+    }
+</style>
 <div class="posts">
   {% for produk in site.data.produk %}
 <a href="{{ produk.url }}">
 <div class="store-card-image mdl-card mdl-shadow--2dp produk" style="background: url('{{ produk.image }}') center / cover;">
   <div class="mdl-card__title mdl-card--expand"></div>
   <div class="mdl-card__actions">
-    <span class="store-card-image__filename">{{ produk.nama }}</span>
-    <span class="store-card-image__fileprice">Rp.{{ produk.harga }}</span>
+<div class="satu">
+    <span class="store-card-image__filename">{{ produk.nama }}</span><br/>
+    <span class="store-card-image__filename"><b>Rp.{{ produk.harga }}</b></span>
+</div>
+<div class="rating-produk">
+<span class="store-card-image__fileprice skor" itemprop="ratingValue">
+<i class="fa {{produk.star1}}"></i>
+<i class="fa {{produk.star2}}"></i>
+<i class="fa {{produk.star3}}"></i>
+<i class="fa {{produk.star4}}"></i>
+<i class="fa {{produk.star5}}"></i>
+</span>
+<span class="store-card-image__fileprice jual">Terjual: {{ produk.penjualan }}</span>
+</div>
   </div>
 </div></a>
   {% endfor %}

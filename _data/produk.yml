@@ -1,29 +1,59 @@
-- nama: Produk 1
+- nama: Produk Satu
   label: New
   harga: 2000
   image: /images/jekyll-logo.png
   url: /store/produk-1
+  star1: fa-star
+  star2: fa-star
+  star3: fa-star
+  star4: fa-star
+  star5: fa-star
+  penjualan: 290pcs
 
-- nama: Produk 2
+- nama: Produk Dua
   label: 25% off
   harga: 3000
-  image: /images/jekyll-logo.png
+  image: /images/404.jpg
   url: /store/produk-2
+  star1: fa-star
+  star2: fa-star
+  star3: fa-star
+  star4: fa-star
+  star5: fa-star-half
+  penjualan: 240pcs
 
-- nama: Produk 3
+- nama: Produk Tiga
   label: 25% off
   harga: 3000
   image: /images/jekyll-logo.png
   url: /store/produk-3
+  star1: fa-star
+  star2: fa-star
+  star3: fa-star
+  star4: fa-star
+  star5: fa-star-half
+  penjualan: 100pcs
 
-- nama: Produk 4
+- nama: Produk Empat
   label: 25% off
   harga: 3000
-  image: /images/jekyll-logo.png
+  image: /images/404.jpg
   url: /store/produk-4
+  star1: fa-star
+  star2: fa-star
+  star3: fa-star
+  star4: fa-star
+  star5: fa-star
+  penjualan: 20pcs
 
-- nama: Produk 5
+- nama: Produk Lima
   label: 25% off
   harga: 3000
   image: /images/jekyll-logo.png
   url: /store/produk-5
+  star1: fa-star
+  star2: fa-star
+  star3: fa-star
+  star4: fa-star
+  star5: fa-star-half
+  penjualan: 300pcs

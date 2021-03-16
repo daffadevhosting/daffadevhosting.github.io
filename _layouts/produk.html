@@ -11,18 +11,24 @@ layout: default
     position: relative;
     margin-top: 10px;
 }
+
+.box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: auto auto 0 auto;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+
+  @include mobile {
+    margin: 0;
+  }
+}
+
 .btn {
     margin: 5px 0 0;
     font-style: italic;
     vertical-align: middle;
     /*box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);*/
     }
-.box {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin: 0 auto auto;
-    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
-}
 .mdl-dialog {
     width: 350px;
 }
@@ -66,7 +72,7 @@ layout: default
 <div class="box mdl-card__supporting-text">
                         <p>{{content}}</p>
                     </div>
-<div class="box mdl-card__supporting-text">
+<div class="mdl-card__supporting-text">
                         <p>Warna Tersedia:</p>
 <span class="warna">Hitam</span>
 <span class="warna">Putih</span>

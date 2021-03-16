@@ -50,6 +50,7 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.4;
   }
 }
+
 .box-deskription {
     border: 1px solid #ddd;
     border-radius: 3px;
@@ -243,9 +244,11 @@ img {
   }
 }
 .store-card-image > .mdl-card__actions {
-  height: 52px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    background: #4242428a;
+    vertical-align: middle;
+    display: flex;
+    flex-wrap: wrap;
 }
 .store-card-image__filename {
   color: #fff;
