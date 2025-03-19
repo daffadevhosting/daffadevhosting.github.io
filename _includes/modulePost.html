@@ -23,16 +23,17 @@
             querySnapshot.forEach(doc => {
                 const post = doc.data();
                 html += `
-                    <div class="col-md-4">
-                        <div class="card post-card mb-4 shadow-sm">
+                    
+                        <ion-card>
                             <img src="${post.image || 'https://via.placeholder.com/600'}" class="card-img-top" alt="${post.title}" loading="lazy">
-                            <div class="card-body">
-                                <h5 class="card-title">${post.title}</h5>
-                                <p class="card-text">${post.content.substring(0, 80)}...</p>
+                            <ion-card-header>
+                                <ion-card-title>${post.title}</ion-card-title>
+                            </ion-card-heaser>
+                                <ion-card-content>${post.content.substring(0, 80)}...</ion-card-content>
                                 <a href="/blog/post.html?id=${doc.id}" class="btn btn-sm btn-primary float-end">Baca Selengkapnya</a>
-                            </div>
-                        </div>
-                    </div>`;
+                            </ion-card-content>
+                        </ion-card>
+                    `;
             });
 
             postsContainer.innerHTML = html;
