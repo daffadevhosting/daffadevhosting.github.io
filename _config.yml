@@ -2,12 +2,12 @@
 title: "Nama Blog Anda"
 description: "Deskripsi singkat tentang blog Anda."
 baseurl: ""  # Jika di root domain, biarkan kosong. Jika di subfolder, misal "/blog"
-url: "https://contoh.com"  # Ganti dengan URL situs Anda
+url: "https://daffadevhosting.github.io"  # Ganti dengan URL situs Anda
 
 # Informasi penulis (opsional)
 author:
-  name: "Nama Anda"
-  email: "email@contoh.com"
+  name: "daffa"
+  email: "admin@dev.id"
 
 # Layout
 permalink: /:categories/:title/  # Struktur URL postingan
