@@ -28,9 +28,12 @@
                             <img src="${post.image || 'https://via.placeholder.com/600'}" class="card-img-top" alt="${post.title}" loading="lazy">
                             <ion-card-header>
                                 <ion-card-title>${post.title}</ion-card-title>
-                            </ion-card-heaser>
-                                <ion-card-content>${post.content.substring(0, 80)}...</ion-card-content>
+                            </ion-card-header>
+                                <ion-card-content>${post.content.substring(0, 80)}...</ion-footer slot="bottom">
+                                    <ion-toolbar>
                                 <a href="/blog/post.html?id=${doc.id}" class="btn btn-sm btn-primary float-end">Baca Selengkapnya</a>
+                                </ion-toolbar>
+                                </ion-footer>
                             </ion-card-content>
                         </ion-card>
                     `;
