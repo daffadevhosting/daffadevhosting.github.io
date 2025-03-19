@@ -11,65 +11,64 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
 
-    document.getElementById("post-form").addEventListener("submit", function(event) {
-        event.preventDefault();
+// Referensi ke Firebase Authentication dan Firestore
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-        const newPost = {
-            title: document.getElementById("title").value,
-            content: document.getElementById("content").value,
-            image: document.getElementById("image").value || "assets/images/img.png",
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        };
+// Proses login dengan reCAPTCHA
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-        // Tampilkan loading
-        const submitButton = event.target.querySelector("button");
-        submitButton.disabled = true;
-        submitButton.textContent = "Menambahkan...";
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-        // Simpan post ke Firestore
-        db.collection("posts").add(newPost)
-        .then(() => {
-            showAlert("Post berhasil ditambahkan!", "success");
-            document.getElementById("post-form").reset();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            showAlert("Terjadi kesalahan! Cek konsol untuk detail.", "danger");
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.textContent = "Tambah Post";
-        });
-    });
-
-    // Logout function
-    document.getElementById("logoutBtn").addEventListener("click", async function () {
-        try {
-            await firebase.auth().signOut();
-            console.log("Logout berhasil!");
-            showAlert("Logout Berhasil...", "success");
-            window.location.href = "/admin/login/";
-        } catch (error) {
-            console.error("Error:", error.message);
-            showAlert("" + error.message, "danger");
-        }
-    });
-
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            window.location.href = "/admin";
-        }
-    });
-
-    function showAlert(message, type) {
-        const alertPlaceholder = document.getElementById('alertPlaceholder');
-        const alertHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>`;
-        alertPlaceholder.innerHTML = alertHTML;
+    if (!email || !password) {
+        showAlert("Email dan password wajib diisi!");
+        return;
     }
+
+    grecaptcha.ready(async function() {
+        try {
+            // Jalankan reCAPTCHA v3
+            const token = await grecaptcha.execute("{{site.SITE_KEY}}", { action: "login" });
+
+            // Validasi reCAPTCHA di sisi klien
+            if (!token) {
+                showAlert("Verifikasi reCAPTCHA gagal. Silakan coba lagi.");
+                return;
+            }
+
+            // Login dengan email dan password
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            console.log("Login berhasil!", user);
+
+            // Cek apakah user adalah admin di Firestore
+            const adminDoc = await db.collection("admins").doc(user.uid).get();
+            if (adminDoc.exists) {
+                // Jika user adalah admin
+                window.location.href = "{{site.baseurl}}/admin/dashboard";
+            } else {
+                // Jika bukan admin
+                window.location.href = "{{site.baseurl}}/restricted";
+            }
+
+        } catch (error) {
+            console.error(error.message);
+            showAlert(error.message);
+        }
+    });
+});
+
+function showAlert(message) {
+    const alertPlaceholder = document.getElementById('alertPlaceholder');
+    const alertHTML = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`;
+    alertPlaceholder.innerHTML = alertHTML;
+}
 </script>
