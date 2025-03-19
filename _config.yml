@@ -1,0 +1,56 @@
+# Konfigurasi dasar Jekyll
+title: "Nama Blog Anda"
+description: "Deskripsi singkat tentang blog Anda."
+baseurl: ""  # Jika di root domain, biarkan kosong. Jika di subfolder, misal "/blog"
+url: "https://contoh.com"  # Ganti dengan URL situs Anda
+
+# Informasi penulis (opsional)
+author:
+  name: "Nama Anda"
+  email: "email@contoh.com"
+
+# Layout
+permalink: /:categories/:title/  # Struktur URL postingan
+
+# Plugins
+plugins:
+  - jekyll-sass-converter
+  - jekyll-paginate
+
+# Konfigurasi Paginasi
+paginate: 5  # Jumlah post per halaman
+paginate_path: "/page:num/"  # Format URL untuk paginasi
+
+# Konfigurasi SASS/SCSS
+sass:
+  style: compressed  # Bisa diganti ke expanded untuk debugging
+  sass_dir: assets/_sass  # Direktori SASS
+
+# Exclude (file yang tidak di-render oleh Jekyll)
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - README.md
+  - .git
+  - .jekyll-cache
+  - .sass-cache
+  - _config_dev.yml  # Jika ada konfigurasi khusus untuk development
+
+# Konfigurasi Markdown
+markdown: kramdown
+kramdown:
+  input: GFM  # Gunakan GitHub Flavored Markdown
+  auto_ids: true
+  toc_levels: 1..3  # Level heading yang muncul di daftar isi
+
+  # Google Auth
+apiKey: AIzaSyA3ra4E7chQhRzERyKW2aFUTRULMb10vxM
+authDomain: blogdaffadev.firebaseapp.com
+projectId: blogdaffadev
+storageBucket: blogdaffadev.firebasestorage.app
+databaseURL: https://blogdaffadev-default-rtdb.asia-southeast1.firebasedatabase.app
+messagingSenderId: 489703180131
+appId: 1:489703180131:web:4383f5ef04c1d414ce3556
+measurementId: G-ZWW4K4NVQ6
