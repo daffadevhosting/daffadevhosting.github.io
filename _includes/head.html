@@ -1,4 +1,21 @@
 <head>
-    <title>{{site.title}}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+    <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+  
+    {% feed_meta %}
+  
+    <script type="module" src="{{ '/assets/frameworks/@ionic/core/dist/ionic/ionic.esm.js?v=8.0' | relative_url }}"></script>
+    <script nomodule src="{{ '/assets/frameworks/@ionic/core/dist/ionic/ionic.js?v=8.0' | relative_url }}"></script>
+    <link rel="stylesheet" href="{{ '/assets/frameworks/@ionic/core/css/ionic.bundle.css?v=8.0' | relative_url }}" />
+    <script type="module" src="{{ '/assets/frameworks/ionicons/dist/ionicons/ionicons.esm.js' | relative_url }}"></script>
+    <script nomodule src="{{ '/assets/frameworks/ionicons/dist/ionicons/ionicons.js' | relative_url }}"></script>
+
     {% include sdk.html %}
 </head>
