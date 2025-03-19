@@ -23,7 +23,6 @@
             querySnapshot.forEach(doc => {
                 const post = doc.data();
                 html += `
-                    
                         <ion-card>
                             <img src="${post.image || 'https://via.placeholder.com/600'}" class="card-img-top" alt="${post.title}" loading="lazy">
                             <ion-card-header>
@@ -48,3 +47,11 @@
 
     fetchPosts();
 </script>
+<style>
+.flex_center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+</style>
