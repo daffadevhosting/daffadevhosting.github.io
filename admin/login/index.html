@@ -18,7 +18,9 @@ permalink: /login
       </ion-input>
     </ion-item>
   </ion-list>
-  <ion-button id="loginButton">Sign in</ion-button>
+  <ion-button type="submit" id="loginButton">Sign in</ion-button>
 </form>
   </ion-card>
+  <script src="https://www.google.com/recaptcha/api.js?render={{site.SITE_KEY}}"></script>
+
   {% include moduleBlogAdmin.html %}
