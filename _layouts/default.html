@@ -4,7 +4,8 @@
     {% include head.html %}
     <body>
         <ion-app>
-            <ion-content>
+            {% include ion-header.html %}
+            <ion-content [fullscreen]="true" class="ion-padding">
                 {{content}}
             </ion-content>
         </ion-app>
