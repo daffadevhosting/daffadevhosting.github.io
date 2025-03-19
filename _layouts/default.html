@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ site.lang | default: page.lang | default: 'id | ID' }}">
+
     {% include head.html %}
     <body>
-        {{content}}
+        <ion-app>
+            <ion-content>
+                {{content}}
+            </ion-content>
+        </ion-app>
     </body>
 </html>
