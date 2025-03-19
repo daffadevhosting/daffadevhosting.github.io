@@ -1,0 +1,46 @@
+<script type="module">
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+                    apiKey: "{{site.API_KEY}}",
+                    authDomain: "{{site.AUTH_DOMAIN}}",
+                    databaseURL: "{{site.DATABASE_URL}}",
+                    projectId: "{{site.PROJECT_ID}}",
+                    storageBucket: "{{site.STORAGE_BUCKET}}",
+                    messagingSenderId: "{{site.SENDER_ID}}",
+                    appId: "{{site.APP_ID}}"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Fetch data dari Firestore
+    async function fetchPosts() {
+        const postsContainer = document.getElementById("posts");
+        postsContainer.innerHTML = '<div class="loader"><span class="text-center"><h3>Loading...</h3></span></div>';
+
+        try {
+            const querySnapshot = await db.collection("posts").orderBy("timestamp", "desc").limit(3).get();
+            let html = "";
+            querySnapshot.forEach(doc => {
+                const post = doc.data();
+                html += `
+                    <div class="col-md-4">
+                        <div class="card post-card mb-4 shadow-sm">
+                            <img src="${post.image || 'https://via.placeholder.com/600'}" class="card-img-top" alt="${post.title}" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">${post.title}</h5>
+                                <p class="card-text">${post.content.substring(0, 80)}...</p>
+                                <a href="/blog/post.html?id=${doc.id}" class="btn btn-sm btn-primary float-end">Baca Selengkapnya</a>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            postsContainer.innerHTML = html;
+        } catch (error) {
+            postsContainer.innerHTML = `<p class="text-danger text-center">Gagal memuat postingan.</p>`;
+            console.error("Error fetching posts:", error);
+        }
+    }
+
+    fetchPosts();
+</script>
