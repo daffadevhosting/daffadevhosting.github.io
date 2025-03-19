@@ -1,5 +1,5 @@
 # Konfigurasi dasar Jekyll
-title: "Nama Blog Anda"
+title: "Daffa Blog"
 description: "Deskripsi singkat tentang blog Anda."
 baseurl: ""  # Jika di root domain, biarkan kosong. Jika di subfolder, misal "/blog"
 url: "https://daffadevhosting.github.io"  # Ganti dengan URL situs Anda
