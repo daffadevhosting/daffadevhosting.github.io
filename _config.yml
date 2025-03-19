@@ -51,6 +51,6 @@ authDomain: blogdaffadev.firebaseapp.com
 projectId: blogdaffadev
 storageBucket: blogdaffadev.firebasestorage.app
 databaseURL: https://blogdaffadev-default-rtdb.asia-southeast1.firebasedatabase.app
-SenderId: 489703180131
+senderId: 489703180131
 appId: 1:489703180131:web:4383f5ef04c1d414ce3556
 measurementId: G-ZWW4K4NVQ6
