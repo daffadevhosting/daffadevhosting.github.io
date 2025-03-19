@@ -5,8 +5,8 @@ permalink: /login
 ---
 
 <ion-card>
+<form id="loginForm">
 <ion-list>
-    <form id="loginForm">
     <ion-item>
       <ion-input type="email" id="email" labelPlacement="floating" value="">
         <div slot="label">Email <ion-text color="danger">(Required)</ion-text></div>
@@ -17,8 +17,8 @@ permalink: /login
         <div slot="label">Password <ion-text color="danger">(Required)</ion-text></div>
       </ion-input>
     </ion-item>
-    </form>
   </ion-list>
   <ion-button id="loginButton">Sign in</ion-button>
+</form>
   </ion-card>
   {% include moduleBlogAdmin.html %}
