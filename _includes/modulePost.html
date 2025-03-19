@@ -1,13 +1,13 @@
 <script type="module">
     // Konfigurasi Firebase
     const firebaseConfig = {
-                    apiKey: "{{site.API_KEY}}",
-                    authDomain: "{{site.AUTH_DOMAIN}}",
-                    databaseURL: "{{site.DATABASE_URL}}",
-                    projectId: "{{site.PROJECT_ID}}",
-                    storageBucket: "{{site.STORAGE_BUCKET}}",
-                    messagingSenderId: "{{site.SENDER_ID}}",
-                    appId: "{{site.APP_ID}}"
+                    apiKey: "{{site.apiKey}}",
+                    authDomain: "{{site.authDomain}}",
+                    databaseURL: "{{site.databaseURL}}",
+                    projectId: "{{site.projectId}}",
+                    storageBucket: "{{site.storageBucket}}",
+                    messagingSenderId: "{{site.SenderId}}",
+                    appId: "{{site.appId}}"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
