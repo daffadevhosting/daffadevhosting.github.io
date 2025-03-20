@@ -3,3 +3,24 @@ layout: default
 title: Posting
 permalink: /dashboard
 ---
+<ion-card>
+<form id="post-form">
+<div class="mb-3">
+  <label for="title" class="form-label">Masukan Judul</label>
+    <input class="form-control" type="text" id="title" placeholder="Judul" required>
+</div>
+<div class="mb-3">
+  <label for="content" class="form-label">Masukan text Konten</label>
+    <textarea class="form-control" id="content" placeholder="Isi post" required></textarea>
+</div>
+<div class="mb-3">
+  <label for="image" class="form-label">Masukan text Konten</label>
+    <input class="form-control" type="text" id="image" placeholder="URL Gambar">
+</div>
+    <button class="btn btn-primary mb-3" type="submit">Tambah Post</button>
+</form>
+<ion-footer slot="bottom">
+<ion-button id="logoutBtn" class="btn btn-danger">Logout</ion-button>
+</ion-footer>
+</ion-card>
+{% include %}
