@@ -8,7 +8,8 @@
         </ion-button>
       </ion-buttons>
     {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard" %}
-        <ion-button id="adminLogin">
+     <ion-buttons>
+        <ion-button id="adminLogout">
             <ion-icon size="large" name="log-in-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
@@ -19,5 +20,8 @@
 <script>
   document.getElementById("adminLogin").addEventListener("click", function () {
     window.location.href = "{{site.baseurl}}/login";
+  });
+  document.getElementById("adminLogout").addEventListener("click", function () {
+    window.location.href = "{{site.baseurl}}/";
   });
 </script>
