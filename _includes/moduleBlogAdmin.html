@@ -49,10 +49,10 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             const adminDoc = await db.collection("admins").doc(user.uid).get();
             if (adminDoc.exists) {
                 // Jika user adalah admin
-                window.location.href = "{{site.baseurl}}/admin/dashboard";
+                window.location.href = "{{site.baseurl}}/dashboard";
             } else {
                 // Jika bukan admin
-                window.location.href = "{{site.baseurl}}/restricted";
+                window.location.href = "{{site.baseurl}}/admin";
             }
 
         } catch (error) {
