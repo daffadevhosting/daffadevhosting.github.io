@@ -1,11 +1,18 @@
 <ion-header>
     <ion-toolbar>
       <ion-title>{{page.title}}</ion-title>
+    {% if page.url == "/" %}
       <ion-buttons slot="end">
         <ion-button id="adminLogin">
             <ion-icon size="large" name="log-in-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
+    {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard" %}
+        <ion-button id="adminLogin">
+            <ion-icon size="large" name="log-in-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+{% endif %}
     </ion-toolbar>
   </ion-header>
 
