@@ -20,6 +20,7 @@
 
     // Elemen DOM
     const postsContainer = document.getElementById("posts");
+    const paginationControls = document.getElementById("pagination-controls");
     const prevButton = document.getElementById("prevPage");
     const nextButton = document.getElementById("nextPage");
 
@@ -31,7 +32,9 @@
 
     // Fungsi mengambil postingan dengan paginasi
     async function fetchPosts(direction = "next") {
+        // Tampilkan spinner dan sembunyikan paginasi
         postsContainer.innerHTML = '<div class="loading-spinner"><ion-spinner name="crescent"></ion-spinner></div>';
+        paginationControls.style.display = "none";
 
         try {
             let query = db.collection("posts").orderBy("timestamp", "desc").limit(postsPerPage);
@@ -78,6 +81,9 @@
         } catch (error) {
             postsContainer.innerHTML = `<p class="flex_center">Gagal memuat postingan.</p>`;
             console.error("Error fetching posts:", error);
+        } finally {
+            // Munculkan kembali paginasi setelah data selesai dimuat
+            paginationControls.style.display = "flex";
         }
     }
 
