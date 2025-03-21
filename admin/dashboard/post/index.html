@@ -61,7 +61,7 @@ async function fetchPosts() {
         </ion-button>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" id="present-alert">
+        <ion-button color="danger" (click)="setOpen(true)">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
@@ -141,4 +141,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<ion-alert trigger="present-alert" id="delete-alert"></ion-alert>
+<ion-alert [isOpen]="isAlertOpen" id="delete-alert"></ion-alert>
