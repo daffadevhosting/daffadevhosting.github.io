@@ -49,7 +49,7 @@ async function fetchPosts() {
                 <h2>${post.title}</h2>
                 <p>${post.content}</p>
             </ion-label>
-<ion-link href="/dashboard/post/edit.html?id=${postId}">
+<ion-link href="/edit.html?id=${postId}">
             <ion-button color="warning">Edit</ion-button>
 </ion-link>
             <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
