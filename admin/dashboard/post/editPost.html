@@ -1,0 +1,78 @@
+---
+layout: default
+title: Edit
+permalink: /dashboard/editpost
+---
+
+    <form id="edit-form">
+        <ion-item>
+            <ion-label position="floating">Judul</ion-label>
+            <ion-input id="title" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label position="floating">Konten</ion-label>
+            <ion-input id="content" type="text"></ion-input>
+        </ion-item>
+        <ion-button expand="full" type="submit">Simpan Perubahan</ion-button>
+    </form>
+</ion-content>
+
+<ion-toast id="toast" duration="2000"></ion-toast>
+
+<script type="module">
+    const db = firebase.firestore();
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get("id");
+
+    async function loadPost() {
+        if (!postId) {
+            showToast("Post tidak ditemukan", "danger");
+            return;
+        }
+
+        const doc = await db.collection("posts").doc(postId).get();
+        if (!doc.exists) {
+            showToast("Post tidak ditemukan", "danger");
+            return;
+        }
+
+        const post = doc.data();
+        document.getElementById("title").value = post.title;
+        document.getElementById("content").value = post.content;
+    }
+
+    document.getElementById("edit-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const titleInput = await document.getElementById("title").getInputElement();
+        const contentInput = await document.getElementById("content").getInputElement();
+
+        if (!titleInput.value.trim() || !contentInput.value.trim()) {
+            showToast("Judul dan Konten tidak boleh kosong!", "danger");
+            return;
+        }
+
+        try {
+            await db.collection("posts").doc(postId).update({
+                title: titleInput.value.trim(),
+                content: contentInput.value.trim(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            showToast("Post berhasil diperbarui", "success");
+            setTimeout(() => window.location.href = "/posts.html", 1500);
+        } catch (error) {
+            console.error("Error:", error);
+            showToast("Gagal memperbarui post", "danger");
+        }
+    });
+
+    function showToast(message, color) {
+        const toast = document.getElementById("toast");
+        toast.message = message;
+        toast.color = color;
+        toast.present();
+    }
+
+    loadPost();
+</script>
