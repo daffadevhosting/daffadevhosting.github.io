@@ -33,6 +33,18 @@ permalink: /dashboard/post
 <ion-toast id="toast" duration="2000"></ion-toast>
 
 <script type="module">
+    // Inisialisasi Firebase
+    const firebaseConfig = {
+        apiKey: "{{site.apiKey}}",
+        authDomain: "{{site.authDomain}}",
+        databaseURL: "{{site.databaseURL}}",
+        projectId: "{{site.projectId}}",
+        storageBucket: "{{site.storageBucket}}",
+        messagingSenderId: "{{site.senderId}}",
+        appId: "{{site.appId}}"
+    };
+
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     let currentPostId = null;
 
