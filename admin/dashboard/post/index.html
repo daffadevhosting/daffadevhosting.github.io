@@ -4,7 +4,7 @@ title: Edit Post
 permalink: /dashboard/post
 ---
 
-    <ion-list id="post-edit-list"></ion-list>
+    <ion-list [inset]="true" id="post-edit-list"></ion-list>
 
 <ion-toast id="toast" duration="2000"></ion-toast>
 <script type="module">
@@ -43,10 +43,8 @@ async function fetchPosts() {
         const post = doc.data();
         const postId = doc.id;
 
-        const postItem = document.createElement("ion-item");
+        const postItem = document.createElement("ion-item-sliding");
         postItem.innerHTML = `
-  <ion-list [inset]="true">
-    <ion-item-sliding>
       <ion-item [button]="true">
         <ion-avatar aria-hidden="true" slot="start">
           <img alt="" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
@@ -62,8 +60,6 @@ async function fetchPosts() {
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-item-option>
       </ion-item-options>
-    </ion-item-sliding>
-</ion-list>
         `;
         postList.appendChild(postItem);
     });
