@@ -5,23 +5,30 @@ permalink: /dashboard
 ---
 
 <ion-toast id="toast" duration="2000"></ion-toast>
-<ion-card>
+
 <form id="post-form">
-    <ion-item lines="full">
-        <ion-label position="floating">Judul</ion-label>
-        <ion-input id="title" type="text"></ion-input>
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-input id="title" label="Judul"></ion-input>
     </ion-item>
-    <ion-item lines="full">
-        <ion-label position="floating">Konten</ion-label>
-        <ion-input id="content" type="text"></ion-input>
+    <ion-item>
+      <ion-input id="imahe" label="Gambar"></ion-input>
     </ion-item>
-    <ion-item lines="full">
-        <ion-label position="floating">Gambar (Opsional)</ion-label>
-        <ion-input id="image" type="text"></ion-input>
+  </ion-list>
+
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-textarea id="content" label="Konten Blog" labelPlacement="floating" rows="5"></ion-textarea>
     </ion-item>
+  </ion-list>
+
+  <ion-note color="medium" class="ion-margin-horizontal">
+    Your comments will be kept anonymous and will only be used to improve the reliability of our products.</ion-note
+  >
+<p />
     <ion-button expand="full" type="submit">Tambah Post</ion-button>
 </form>
 
 <ion-button id="logoutBtn" expand="full" color="danger">Logout</ion-button>
-</ion-card>
+
 {% include modulePostAdmin.html %}
