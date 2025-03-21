@@ -6,7 +6,7 @@ permalink: /dashboard/post
 
     <ion-list id="post-edit-list"></ion-list>
 
-<ion-modal id="edit-modal">
+<ion-modal id="edit-modal" :is-open="isEditModalOpen">
     <ion-header>
         <ion-toolbar>
             <ion-title>Edit Postingan</ion-title>
@@ -70,22 +70,27 @@ permalink: /dashboard/post
         });
     }
 
-    async function openEditModal(postId) {
-        currentPostId = postId;
-        const modal = document.getElementById("edit-modal");
+let isEditModalOpen = false;
+let currentPostId = null;
 
-        const doc = await db.collection("posts").doc(postId).get();
-        if (doc.exists) {
-            document.getElementById("edit-title").value = doc.data().title;
-            document.getElementById("edit-content").value = doc.data().content;
-        }
+async function openEditModal(postId) {
+    currentPostId = postId;
+    isEditModalOpen = true; // Modal akan terbuka
 
-        modal.present();
+    const doc = await db.collection("posts").doc(postId).get();
+    if (doc.exists) {
+        document.getElementById("edit-title").value = doc.data().title;
+        document.getElementById("edit-content").value = doc.data().content;
     }
 
-    function closeEditModal() {
-        document.getElementById("edit-modal").dismiss();
-    }
+    document.getElementById("edit-modal").setAttribute("is-open", isEditModalOpen);
+}
+
+function closeEditModal() {
+    isEditModalOpen = false;
+    document.getElementById("edit-modal").setAttribute("is-open", isEditModalOpen);
+}
+
 
     document.getElementById("edit-form").addEventListener("submit", async function(event) {
         event.preventDefault();
