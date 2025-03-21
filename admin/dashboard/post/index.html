@@ -7,7 +7,6 @@ permalink: /dashboard/post
     <ion-list id="post-edit-list"></ion-list>
 
 <ion-toast id="toast" duration="2000"></ion-toast>
-
 <script type="module">
 // Inisialisasi Firebase
 const firebaseConfig = {
@@ -21,31 +20,44 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-    async function fetchPosts() {
-        const postList = document.getElementById("post-edit-list");
-        postList.innerHTML = "";
-
-        const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
-        snapshot.forEach(doc => {
-            const post = doc.data();
-            const postId = doc.id;
-
-            const postItem = document.createElement("ion-item");
-            postItem.innerHTML = `
-                <ion-label>
-                    <h2>${post.title}</h2>
-                    <p>${post.content}</p>
-                </ion-label>
-                <ion-button color="warning" onclick="editPost('${postId}')">Edit</ion-button>
-                <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
-            `;
-            postList.appendChild(postItem);
-        });
+// Cek apakah pengguna sudah login
+auth.onAuthStateChanged(user => {
+    if (!user) {
+        window.location.href = "/login.html"; // Redirect ke halaman login jika belum login
+    } else {
+        console.log("Pengguna login:", user.email);
+        fetchPosts(); // Jika login, ambil daftar postingan
     }
+});
 
- async function deletePost(postId) {
+// Ambil daftar postingan
+async function fetchPosts() {
+    const postList = document.getElementById("post-edit-list");
+    postList.innerHTML = "";
+
+    const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
+    snapshot.forEach(doc => {
+        const post = doc.data();
+        const postId = doc.id;
+
+        const postItem = document.createElement("ion-item");
+        postItem.innerHTML = `
+            <ion-label>
+                <h2>${post.title}</h2>
+                <p>${post.content}</p>
+            </ion-label>
+            <ion-button color="warning" onclick="editPost('${postId}')">Edit</ion-button>
+            <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
+        `;
+        postList.appendChild(postItem);
+    });
+}
+
+// Fungsi menghapus post dengan konfirmasi
+async function deletePost(postId) {
     const alert = document.createElement('ion-alert');
     alert.header = 'Konfirmasi';
     alert.message = 'Apakah Anda yakin ingin menghapus postingan ini?';
@@ -73,16 +85,40 @@ firebase.initializeApp(firebaseConfig);
     await alert.present();
 }
 
-    function editPost(postId) {
-        window.location.href = `/edit.html?id=${postId}`;
-    }
+// Fungsi mengedit post
+function editPost(postId) {
+    window.location.href = `/edit.html?id=${postId}`;
+}
 
-    function showToast(message, color) {
-        const toast = document.getElementById("toast");
-        toast.message = message;
-        toast.color = color;
-        toast.present();
-    }
+// Fungsi menampilkan toast
+function showToast(message, color) {
+    const toast = document.createElement("ion-toast");
+    toast.message = message;
+    toast.duration = 2000;
+    toast.color = color;
+    document.body.appendChild(toast);
+    toast.present();
+}
 
-    fetchPosts();
+// Fungsi logout
+async function logout() {
+    try {
+        await auth.signOut();
+        showToast("Logout berhasil", "success");
+        setTimeout(() => {
+            window.location.href = "/login.html"; // Redirect ke halaman login setelah logout
+        }, 1000);
+    } catch (error) {
+        console.error("Error logout:", error);
+        showToast("Gagal logout", "danger");
+    }
+}
+
+// Tambahkan event listener untuk tombol logout jika ada
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutButton = document.getElementById("logoutBtn");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", logout);
+    }
+});
 </script>
