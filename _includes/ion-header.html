@@ -7,21 +7,22 @@
             <ion-icon size="large" name="log-in-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
+<script>
+  document.getElementById("adminLogin").addEventListener("click", function () {
+    window.location.href = "{{site.baseurl}}/login";
+  });
+</script>
     {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard" %}
       <ion-buttons slot="end">
         <ion-button id="myblog">
             <ion-icon size="large" name="newspaper-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
-{% endif %}
-    </ion-toolbar>
-  </ion-header>
-
 <script>
-  document.getElementById("adminLogin").addEventListener("click", function () {
-    window.location.href = "{{site.baseurl}}/login";
-  });
   document.getElementById("myblog").addEventListener("click", function () {
     window.location.href = "{{site.baseurl}}/dashboard/post";
   });
 </script>
+{% endif %}
+    </ion-toolbar>
+  </ion-header>
