@@ -57,7 +57,7 @@ async function fetchPosts() {
 }
 
 // Fungsi menghapus post dengan konfirmasi
-async function deletePost('${postId}') {
+async function deletePost(postId) {
     const alert = document.createElement('ion-alert');
     alert.header = 'Konfirmasi';
     alert.message = 'Apakah Anda yakin ingin menghapus postingan ini?';
@@ -86,7 +86,7 @@ async function deletePost('${postId}') {
 }
 
 // Fungsi mengedit post
-function editPost('${postId}') {
+function editPost(postId) {
     window.location.href = `/dashboard/post/edit.html?id=${postId}`;
 }
 
