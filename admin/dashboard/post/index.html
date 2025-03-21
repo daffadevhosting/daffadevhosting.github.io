@@ -1,0 +1,61 @@
+---
+layout: default
+title: Edit Post
+permalink: /dashboard/post
+---
+
+    <ion-list id="post-list"></ion-list>
+
+<ion-toast id="toast" duration="2000"></ion-toast>
+
+<script type="module">
+    const db = firebase.firestore();
+
+    async function fetchPosts() {
+        const postList = document.getElementById("post-list");
+        postList.innerHTML = "";
+
+        const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
+        snapshot.forEach(doc => {
+            const post = doc.data();
+            const postId = doc.id;
+
+            const postItem = document.createElement("ion-item");
+            postItem.innerHTML = `
+                <ion-label>
+                    <h2>${post.title}</h2>
+                    <p>${post.content}</p>
+                </ion-label>
+                <ion-button color="warning" onclick="editPost('${postId}')">Edit</ion-button>
+                <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
+            `;
+            postList.appendChild(postItem);
+        });
+    }
+
+    async function deletePost(postId) {
+        if (!confirm("Apakah Anda yakin ingin menghapus postingan ini?")) return;
+
+        try {
+            await db.collection("posts").doc(postId).delete();
+            showToast("Post berhasil dihapus", "success");
+            fetchPosts();
+        } catch (error) {
+            console.error("Error:", error);
+            showToast("Gagal menghapus post", "danger");
+        }
+    }
+
+    function editPost(postId) {
+        window.location.href = `/edit.html?id=${postId}`;
+    }
+
+    function showToast(message, color) {
+        const toast = document.getElementById("toast");
+        toast.message = message;
+        toast.color = color;
+        toast.present();
+    }
+
+    fetchPosts();
+</script>
