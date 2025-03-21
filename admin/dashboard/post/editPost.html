@@ -72,7 +72,7 @@ permalink: /dashboard/edit.html
             });
 
             showToast("Post berhasil diperbarui", "success");
-            setTimeout(() => window.location.href = "/posts.html", 1500);
+            setTimeout(() => window.location.href = "/dashboard/posts", 1500);
         } catch (error) {
             console.error("Error:", error);
             showToast("Gagal memperbarui post", "danger");
