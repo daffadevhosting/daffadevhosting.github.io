@@ -25,7 +25,7 @@ appId: "{{site.appId}}"
             const postContainer = document.getElementById("post-container");
 
             if (!postId) {
-                postContainer.innerHTML = `<p class="text-danger">Artikel tidak ditemukan.</p>`;
+                postContainer.innerHTML = `<ion-text class="flex_center" color="danger">Artikel tidak ditemukan.</ion-text>`;
                 return;
             }
 
@@ -33,7 +33,7 @@ appId: "{{site.appId}}"
                 const doc = await db.collection("posts").doc(postId).get();
 
                 if (!doc.exists) {
-                    postContainer.innerHTML = `<p class="text-danger">Artikel tidak ditemukan.</p>`;
+                    postContainer.innerHTML = `<ion-text class="flex_center">Artikel tidak ditemukan.</ion-text>`;
                     return;
                 }
 
@@ -60,4 +60,5 @@ appId: "{{site.appId}}"
     </script>
 <style type="text/css">
 .img-thumb {object-fit: cover;background-size: cover;background-position: center center;}
+.flex_center {display: flex;flex-wrap: wrap;align-items: center;justify-content: center;height: 100%;}
 </style>
