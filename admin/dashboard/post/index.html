@@ -78,7 +78,6 @@ async function fetchPosts() {
     async function confirmDelete(postId) {
         const alert = document.getElementById("delete-alert");
         
-  trigger = "present-alert";
         alert.header = "Konfirmasi";
         alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
         alert.buttons = [
@@ -142,4 +141,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<ion-alert id="delete-alert"></ion-alert>
+<ion-alert trigger="present-alert" id="delete-alert"></ion-alert>
