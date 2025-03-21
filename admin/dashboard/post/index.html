@@ -45,9 +45,9 @@ async function fetchPosts() {
 
         const postItem = document.createElement("ion-item");
         postItem.innerHTML = `
-            <ion-label>
+            <ion-label class="ion-text-nowrap">
                 <h2>${post.title}</h2>
-                <p>${post.content}</p>
+                ${post.content}
             </ion-label>
 <a href="/dashboard/post/edit.html?id=${postId}">
             <ion-button color="warning">Edit</ion-button>
