@@ -53,9 +53,11 @@ async function fetchPosts() {
         <ion-label class="ion-text-nowrap">${post.content}</ion-label>
       </ion-item>
       <ion-item-options slot="end">
-        <ion-item-option color="warning" href="/dashboard/post/edit.html?id=${postId}">
-          <ion-icon slot="icon-only" name="share"></ion-icon>
+<a href="/dashboard/post/edit.html?id=${postId}">
+        <ion-item-option color="warning">
+          <ion-icon slot="icon-only" name="edit"></ion-icon>
         </ion-item-option>
+</a>
         <ion-item-option color="danger" expandable="true" onclick="deletePost('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-item-option>
