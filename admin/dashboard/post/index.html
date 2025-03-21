@@ -8,8 +8,6 @@ permalink: /dashboard/post
 
 <ion-toast id="toast" duration="2000"></ion-toast>
 
-<ion-alert id="delete-alert"></ion-alert>
-
 <script type="module">
 // Inisialisasi Firebase
 const firebaseConfig = {
@@ -78,6 +76,8 @@ async function fetchPosts() {
 }
 
 // Fungsi menghapus post dengan konfirmasi
+
+<ion-alert id="delete-alert"></ion-alert>
 
     async function confirmDelete(postId) {
         const alert = document.getElementById("delete-alert");
