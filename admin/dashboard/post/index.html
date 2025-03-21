@@ -62,7 +62,7 @@ async function fetchPosts() {
        </a>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" onclick="deletePost('${postId}')">
+        <ion-button color="danger" onclick="confirmDelete('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
@@ -75,33 +75,34 @@ async function fetchPosts() {
 }
 
 // Fungsi menghapus post dengan konfirmasi
-async function deletePost(postId) {
-    const alert = document.createElement('ion-alert');
-    alert.header = 'Konfirmasi';
-    alert.message = 'Apakah Anda yakin ingin menghapus postingan ini?';
-    alert.buttons = [
-        {
-            text: 'Batal',
-            role: 'cancel'
-        },
-        {
-            text: 'Hapus',
-            handler: async () => {
-                try {
-                    await db.collection("posts").doc(postId).delete();
-                    showToast("Post berhasil dihapus", "success");
-                    fetchPosts();
-                } catch (error) {
-                    console.error("Error:", error);
-                    showToast("Gagal menghapus post", "danger");
+
+    async function confirmDelete(postId) {
+        const alert = document.getElementById("delete-alert");
+
+        alert.header = "Konfirmasi";
+        alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
+        alert.buttons = [
+            {
+                text: "Batal",
+                role: "cancel"
+            },
+            {
+                text: "Hapus",
+                handler: async () => {
+                    try {
+                        await db.collection("posts").doc(postId).delete();
+                        showToast("Post berhasil dihapus", "success");
+                        fetchPosts();
+                    } catch (error) {
+                        console.error("Error:", error);
+                        showToast("Gagal menghapus post", "danger");
+                    }
                 }
             }
-        }
-    ];
+        ];
 
-    document.body.appendChild(alert);
-    await alert.present();
-}
+        await alert.present();
+    }
 
 // Fungsi mengedit post
 function editPost(postId) {
