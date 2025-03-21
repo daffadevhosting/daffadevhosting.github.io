@@ -6,7 +6,7 @@ permalink: /dashboard/post
 
     <ion-list id="post-edit-list"></ion-list>
 
-<ion-modal id="edit-modal" :is-open="isEditModalOpen">
+<ion-modal id="edit-modal">
     <ion-header>
         <ion-toolbar>
             <ion-title>Edit Postingan</ion-title>
@@ -33,126 +33,126 @@ permalink: /dashboard/post
 <ion-toast id="toast" duration="2000"></ion-toast>
 
 <script type="module">
-    // Inisialisasi Firebase
-    const firebaseConfig = {
-        apiKey: "{{site.apiKey}}",
-        authDomain: "{{site.authDomain}}",
-        databaseURL: "{{site.databaseURL}}",
-        projectId: "{{site.projectId}}",
-        storageBucket: "{{site.storageBucket}}",
-        messagingSenderId: "{{site.senderId}}",
-        appId: "{{site.appId}}"
-    };
+// Inisialisasi Firebase
+const firebaseConfig = {
+    apiKey: "{{site.apiKey}}",
+    authDomain: "{{site.authDomain}}",
+    databaseURL: "{{site.databaseURL}}",
+    projectId: "{{site.projectId}}",
+    storageBucket: "{{site.storageBucket}}",
+    messagingSenderId: "{{site.senderId}}",
+    appId: "{{site.appId}}"
+};
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    let currentPostId = null;
-
-    async function fetchPosts() {
-        const postList = document.getElementById("post-edit-list");
-        postList.innerHTML = "";
-
-        const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
-        snapshot.forEach(doc => {
-            const post = doc.data();
-            const postId = doc.id;
-
-            const postItem = document.createElement("ion-item");
-            postItem.innerHTML = `
-                <ion-label>
-                    <h2>${post.title}</h2>
-                    <p>${post.content}</p>
-                </ion-label>
-                <ion-button color="warning" onclick="openEditModal('${postId}')">Edit</ion-button>
-                <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
-            `;
-            postList.appendChild(postItem);
-        });
-    }
-
-let isEditModalOpen = false;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 let currentPostId = null;
+
+// Ambil modal sekali di awal
+const editModal = document.getElementById("edit-modal");
+
+async function fetchPosts() {
+    const postList = document.getElementById("post-edit-list");
+    postList.innerHTML = "";
+
+    const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
+    snapshot.forEach(doc => {
+        const post = doc.data();
+        const postId = doc.id;
+
+        const postItem = document.createElement("ion-item");
+        postItem.innerHTML = `
+            <ion-label>
+                <h2>${post.title}</h2>
+                <p>${post.content}</p>
+            </ion-label>
+            <ion-button color="warning" onclick="openEditModal('${postId}')">Edit</ion-button>
+            <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
+        `;
+        postList.appendChild(postItem);
+    });
+}
 
 async function openEditModal(postId) {
     currentPostId = postId;
-    isEditModalOpen = true; // Modal akan terbuka
 
+    // Ambil data post dari Firestore
     const doc = await db.collection("posts").doc(postId).get();
     if (doc.exists) {
         document.getElementById("edit-title").value = doc.data().title;
         document.getElementById("edit-content").value = doc.data().content;
     }
 
-    document.getElementById("edit-modal").setAttribute("is-open", isEditModalOpen);
+    // Tampilkan modal
+    editModal.setAttribute("is-open", "true");
 }
 
 function closeEditModal() {
-    isEditModalOpen = false;
-    document.getElementById("edit-modal").setAttribute("is-open", isEditModalOpen);
+    editModal.removeAttribute("is-open");
 }
 
+// Tambahkan event listener untuk submit edit form
+document.getElementById("edit-form").addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-    document.getElementById("edit-form").addEventListener("submit", async function(event) {
-        event.preventDefault();
+    const titleInput = document.getElementById("edit-title").value.trim();
+    const contentInput = document.getElementById("edit-content").value.trim();
 
-        const titleInput = await document.getElementById("edit-title").getInputElement();
-        const contentInput = await document.getElementById("edit-content").getInputElement();
+    if (!titleInput || !contentInput) {
+        showToast("Judul dan Konten tidak boleh kosong!", "danger");
+        return;
+    }
 
-        if (!titleInput.value.trim() || !contentInput.value.trim()) {
-            showToast("Judul dan Konten tidak boleh kosong!", "danger");
-            return;
-        }
+    try {
+        await db.collection("posts").doc(currentPostId).update({
+            title: titleInput,
+            content: contentInput,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-        try {
-            await db.collection("posts").doc(currentPostId).update({
-                title: titleInput.value.trim(),
-                content: contentInput.value.trim(),
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+        showToast("Post berhasil diperbarui", "success");
+        fetchPosts();
+        closeEditModal();
+    } catch (error) {
+        console.error("Error:", error);
+        showToast("Gagal memperbarui post", "danger");
+    }
+});
 
-            showToast("Post berhasil diperbarui", "success");
-            fetchPosts();
-            closeEditModal();
-        } catch (error) {
-            console.error("Error:", error);
-            showToast("Gagal memperbarui post", "danger");
-        }
-    });
-
-    async function deletePost(postId) {
-        const alert = document.createElement("ion-alert");
-        alert.header = "Konfirmasi";
-        alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
-        alert.buttons = [
-            {
-                text: "Batal",
-                role: "cancel"
-            },
-            {
-                text: "Hapus",
-                handler: async () => {
-                    try {
-                        await db.collection("posts").doc(postId).delete();
-                        showToast("Post berhasil dihapus", "success");
-                        fetchPosts();
-                    } catch (error) {
-                        console.error("Error:", error);
-                        showToast("Gagal menghapus post", "danger");
-                    }
+async function deletePost(postId) {
+    const alert = document.createElement("ion-alert");
+    alert.header = "Konfirmasi";
+    alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
+    alert.buttons = [
+        {
+            text: "Batal",
+            role: "cancel"
+        },
+        {
+            text: "Hapus",
+            handler: async () => {
+                try {
+                    await db.collection("posts").doc(postId).delete();
+                    showToast("Post berhasil dihapus", "success");
+                    fetchPosts();
+                } catch (error) {
+                    console.error("Error:", error);
+                    showToast("Gagal menghapus post", "danger");
                 }
             }
-        ];
+        }
+    ];
 
-        document.body.appendChild(alert);
-        await alert.present();
-    }
+    document.body.appendChild(alert);
+    await alert.present();
+}
 
-    function showToast(message, color) {
-        const toast = document.getElementById("toast");
-        toast.message = message;
-        toast.color = color;
-        toast.present();
-    }
+function showToast(message, color) {
+    const toast = document.getElementById("toast");
+    toast.message = message;
+    toast.color = color;
+    toast.present();
+}
 
-    fetchPosts();
+fetchPosts();
 </script>
