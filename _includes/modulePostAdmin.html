@@ -21,10 +21,16 @@
         const contentInput = await document.getElementById("content").getInputElement();
         const imageInput = await document.getElementById("image").getInputElement();
 
+        // Validasi input tidak boleh kosong
+        if (!titleInput.value.trim() || !contentInput.value.trim()) {
+            showToast("Judul dan Konten tidak boleh kosong!", "danger");
+            return;
+        }
+
         const newPost = {
-            title: titleInput.value,
-            content: contentInput.value,
-            image: imageInput.value || "/images/img.png",
+            title: titleInput.value.trim(),
+            content: contentInput.value.trim(),
+            image: imageInput.value.trim() || "/images/img.png",
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
@@ -52,7 +58,7 @@
             await firebase.auth().signOut();
             console.log("Logout berhasil!");
             showToast("Logout Berhasil...", "success");
-            window.location.href = "/login/";
+            window.location.href = "/";
         } catch (error) {
             console.error("Error:", error.message);
             showToast("" + error.message, "danger");
@@ -61,7 +67,7 @@
 
     firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
-            window.location.href = "/";
+            window.location.href = "/admin";
         }
     });
 
