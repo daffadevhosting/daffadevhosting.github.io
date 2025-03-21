@@ -28,13 +28,15 @@
                             <ion-card-header>
                                 <ion-card-title>${post.title}</ion-card-title>
                             </ion-card-header>
-                                <ion-card-content>${post.content.substring(0, 80)}...<ion-footer>
+                                <ion-card-content>${post.content.substring(0, 80)}...
+                            </ion-card-content>
+          <ion-footer>
                                     <ion-toolbar>
 <ion-buttons slot="end">
-                                <a href="/blog/post.html?id=${doc.id}"><button>Baca</button></a></ion-buttons>
+                                <a href="/blog/post.html?id=${doc.id}"><button>Baca</button></a>
+</ion-buttons>
                                 </ion-toolbar>
                                 </ion-footer>
-                            </ion-card-content>
                         </ion-card>
                     `;
             });
