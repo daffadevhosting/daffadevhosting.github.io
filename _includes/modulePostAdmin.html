@@ -30,7 +30,7 @@
         const newPost = {
             title: titleInput.value.trim(),
             content: contentInput.value.trim(),
-            image: imageInput.value.trim() || "/images/img.png",
+            image: imageInput.value.trim() || "https://via.placeholder.com/600",
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
