@@ -13,35 +13,37 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    document.getElementById("post-form").addEventListener("submit", function(event) {
+    document.getElementById("post-form").addEventListener("submit", async function(event) {
         event.preventDefault();
 
+        // Ambil elemen input
+        const titleInput = await document.getElementById("title").getInputElement();
+        const contentInput = await document.getElementById("content").getInputElement();
+        const imageInput = await document.getElementById("image").getInputElement();
+
         const newPost = {
-            title: document.getElementById("title").value,
-            content: document.getElementById("content").value,
-            image: document.getElementById("image").value || "/images/img.png",
+            title: titleInput.value,
+            content: contentInput.value,
+            image: imageInput.value || "/images/img.png",
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         // Tampilkan loading
-        const submitButton = event.target.querySelector("button");
+        const submitButton = event.target.querySelector("ion-button");
         submitButton.disabled = true;
         submitButton.textContent = "Menambahkan...";
 
-        // Simpan post ke Firestore
-        db.collection("posts").add(newPost)
-        .then(() => {
-            showAlert("Post berhasil ditambahkan!", "success");
+        try {
+            await db.collection("posts").add(newPost);
+            showToast("Post berhasil ditambahkan!", "success");
             document.getElementById("post-form").reset();
-        })
-        .catch(error => {
+        } catch (error) {
             console.error("Error:", error);
-            showAlert("Terjadi kesalahan! Cek konsol untuk detail.", "danger");
-        })
-        .finally(() => {
+            showToast("Terjadi kesalahan! Cek konsol untuk detail.", "danger");
+        } finally {
             submitButton.disabled = false;
             submitButton.textContent = "Tambah Post";
-        });
+        }
     });
 
     // Logout function
@@ -49,11 +51,11 @@
         try {
             await firebase.auth().signOut();
             console.log("Logout berhasil!");
-            showAlert("Logout Berhasil...", "success");
+            showToast("Logout Berhasil...", "success");
             window.location.href = "/login/";
         } catch (error) {
             console.error("Error:", error.message);
-            showAlert("" + error.message, "danger");
+            showToast("" + error.message, "danger");
         }
     });
 
@@ -63,13 +65,10 @@
         }
     });
 
-    function showAlert(message, type) {
-        const alertPlaceholder = document.getElementById('alertPlaceholder');
-        const alertHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>`;
-        alertPlaceholder.innerHTML = alertHTML;
+    async function showToast(message, color) {
+        const toast = document.getElementById("toast");
+        toast.message = message;
+        toast.color = color;
+        toast.present();
     }
 </script>
