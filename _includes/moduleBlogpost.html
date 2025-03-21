@@ -41,8 +41,8 @@ appId: "{{site.appId}}"
 
                 postContainer.innerHTML = `
                     <h1 class="mb-3">${post.title}</h1>
-                    <p class="text-muted">Dipublikasikan pada ${post.timestamp ? post.timestamp.toDate().toLocaleDateString() : "Tanggal tidak tersedia"
-}</p>
+                    <ion-note class="text-muted">Dipublikasikan pada ${post.timestamp ? post.timestamp.toDate().toLocaleDateString() : "Tanggal tidak tersedia"
+}</ion-note>
                                         <div class='d-md-flex gap-3 mb-4'>
                     <img src="${post.image || 'https://via.placeholder.com/800x400'}" class="img-thumb" alt="${post.title}" style="max-width: 640px;width: 100%;height: 380px;">
                                         <div class='card p-3 mb-2'>
