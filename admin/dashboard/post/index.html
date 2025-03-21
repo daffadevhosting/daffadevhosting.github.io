@@ -26,7 +26,7 @@ const db = firebase.firestore();
 // Cek apakah pengguna sudah login
 auth.onAuthStateChanged(user => {
     if (!user) {
-        window.location.href = "/login.html"; // Redirect ke halaman login jika belum login
+        window.location.href = "/login"; // Redirect ke halaman login jika belum login
     } else {
         console.log("Pengguna login:", user.email);
         fetchPosts(); // Jika login, ambil daftar postingan
