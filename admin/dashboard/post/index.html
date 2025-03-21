@@ -53,13 +53,18 @@ async function fetchPosts() {
       </ion-card-content>
       <ion-footer>
        <ion-toolbar>
+<ion-buttons slot="start">
        <a href="/dashboard/post/edit.html?id=${postId}">
         <ion-button color="warning">
           <ion-icon slot="icon-only" name="create"></ion-icon>
         </ion-button>
        </a>
+</ion-buttons>
+<ion-buttons slot="end">
         <ion-button color="danger" onclick="deletePost('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+</ion-buttons>
          </ion-toolbar>
         </ion-footer>
       </ion-card>
