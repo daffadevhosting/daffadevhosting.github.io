@@ -49,9 +49,9 @@ async function fetchPosts() {
                 <h2>${post.title}</h2>
                 <p>${post.content}</p>
             </ion-label>
-<ion-link href="/edit.html?id=${postId}">
+<a href="/edit.html?id=${postId}">
             <ion-button color="warning">Edit</ion-button>
-</ion-link>
+</a>
             <ion-button color="danger" onclick="deletePost('${postId}')">Hapus</ion-button>
         `;
         postList.appendChild(postItem);
