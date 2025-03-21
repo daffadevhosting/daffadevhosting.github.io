@@ -15,8 +15,7 @@
     // Fetch data dari Firestore
     async function fetchPosts() {
         const postsContainer = document.getElementById("posts");
-        postsContainer.innerHTML = '<div class="loading-spinner">
-<ion-spinner name="crescent"></ion-spinner></div>';
+        postsContainer.innerHTML = '<div class="loading-spinner"><ion-spinner name="crescent"></ion-spinner></div>';
 
         try {
             const querySnapshot = await db.collection("posts").orderBy("timestamp", "desc").limit(10).get();
