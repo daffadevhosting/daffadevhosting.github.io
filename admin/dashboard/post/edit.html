@@ -20,6 +20,8 @@ permalink: /dashboard/post/edit.html
 
 <ion-toast id="toast" duration="2000"></ion-toast>
 
+<ion-spinner id="loading-spinner" name="crescent" style="display: none;"></ion-spinner>
+
 <script type="module">
     // Inisialisasi Firebase
     const firebaseConfig = {
@@ -35,9 +37,11 @@ permalink: /dashboard/post/edit.html
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get("id");
+
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     // Cek apakah pengguna adalah admin
     auth.onAuthStateChanged(async (user) => {
@@ -50,7 +54,7 @@ permalink: /dashboard/post/edit.html
         const adminDoc = await db.collection("admins").doc(user.uid).get();
         if (!adminDoc.exists) {
             showToast("Anda tidak memiliki izin untuk mengakses halaman ini!", "danger");
-            setTimeout(() => window.location.href = "/", 2000); // Redirect ke halaman utama
+            setTimeout(() => window.location.href = "/", 2000);
             return;
         }
 
@@ -65,15 +69,24 @@ permalink: /dashboard/post/edit.html
             return;
         }
 
-        const doc = await db.collection("posts").doc(postId).get();
-        if (!doc.exists) {
-            showToast("Post tidak ditemukan", "danger");
-            return;
-        }
+        loadingSpinner.style.display = "block"; // Tampilkan spinner
 
-        const post = doc.data();
-        document.getElementById("title").value = post.title;
-        document.getElementById("content").value = post.content;
+        try {
+            const doc = await db.collection("posts").doc(postId).get();
+            if (!doc.exists) {
+                showToast("Post tidak ditemukan", "danger");
+                return;
+            }
+
+            const post = doc.data();
+            document.getElementById("title").value = post.title;
+            document.getElementById("content").value = post.content;
+        } catch (error) {
+            console.error("Error:", error);
+            showToast("Gagal memuat data", "danger");
+        } finally {
+            loadingSpinner.style.display = "none"; // Sembunyikan spinner
+        }
     }
 
     // Update data post
