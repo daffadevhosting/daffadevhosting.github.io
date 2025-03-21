@@ -28,9 +28,9 @@
                             <ion-card-header>
                                 <ion-card-title>${post.title}</ion-card-title>
                             </ion-card-header>
-                                <ion-card-content>${post.content.substring(0, 80)}...</ion-footer slot="bottom">
+                                <ion-card-content>${post.content.substring(0, 80)}...<ion-footer>
                                     <ion-toolbar>
-                                <a href="/blog/post.html?id=${doc.id}" class="btn btn-sm btn-primary float-end">Baca Selengkapnya</a>
+                                <a href="/blog/post.html?id=${doc.id}"><buttons slot="end"><button>Baca</button></ion-buttons></a>
                                 </ion-toolbar>
                                 </ion-footer>
                             </ion-card-content>
