@@ -63,7 +63,7 @@ async function fetchPosts() {
        </a>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" onclick="confirmDelete('${postId}')">
+        <ion-button color="danger" (click)="confirmDelete('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
