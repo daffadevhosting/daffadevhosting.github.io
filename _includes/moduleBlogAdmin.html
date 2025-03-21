@@ -63,8 +63,15 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 });
 
 function showAlert(message) {
-    const alertPlaceholder = document.getElementById('alertPlaceholder');
-    const alertHTML = `<ion-toast trigger="openToast" message="${message}" [duration]="5000"></ion-toast>`;
-    alertPlaceholder.innerHTML = alertHTML;
+    // Buat elemen ion-toast
+    const toast = document.createElement("ion-toast");
+    toast.message = message;
+    toast.duration = 5000;
+    toast.color = "danger"; // Bisa diubah sesuai kebutuhan
+    toast.position = "bottom"; // Posisi toast
+
+    // Tambahkan ke dalam body dan tampilkan
+    document.body.appendChild(toast);
+    toast.present();
 }
 </script>
