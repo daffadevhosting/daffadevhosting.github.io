@@ -45,24 +45,22 @@ async function fetchPosts() {
 
         const postItem = document.createElement("div");
         postItem.innerHTML = `
-<ion-card>
-      <img id="image" alt="" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-        <ion-card-header>
+    <ion-card>
         <ion-card-title>${post.title}</ion-card-title>
         </ion-card-header>
-<ion-card-content>
+    <ion-card-content>
         <ion-label class="ion-text-nowrap">${post.content}</ion-label>
       </ion-card-content>
       <ion-footer>
-<ion-toolbar>
-<a href="/dashboard/post/edit.html?id=${postId}">
+       <ion-toolbar>
+       <a href="/dashboard/post/edit.html?id=${postId}">
         <ion-button color="warning">
           <ion-icon slot="icon-only" name="create"></ion-icon>
         </ion-button>
-</a>
+       </a>
         <ion-button color="danger" onclick="deletePost('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
-</ion-toolbar>
+         </ion-toolbar>
         </ion-footer>
       </ion-card>
         `;
