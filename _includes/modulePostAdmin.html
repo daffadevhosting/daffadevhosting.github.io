@@ -58,7 +58,7 @@
             await firebase.auth().signOut();
             console.log("Logout berhasil!");
             showToast("Logout Berhasil...", "success");
-            window.location.href = "/";
+            window.location.href = "{{site.baseurl}}/";
         } catch (error) {
             console.error("Error:", error.message);
             showToast("" + error.message, "danger");
@@ -67,7 +67,7 @@
 
     firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
-            window.location.href = "/admin";
+            window.location.href = "{{site.baseurl}}/admin";
         }
     });
 
