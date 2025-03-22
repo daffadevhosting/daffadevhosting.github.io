@@ -12,15 +12,26 @@
     window.location.href = "{{site.baseurl}}/login";
   });
 </script>
-    {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard" %}
+    {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard/tambah" %}
       <ion-buttons slot="end">
         <ion-button id="myblog">
             <ion-icon size="large" name="newspaper-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
+{% elsif page.url == "/dashboard/post" %}
+      <ion-buttons slot="end">
+        <ion-button id="editblog">
+            <ion-icon size="large" name="plus-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
 <script>
   document.getElementById("myblog").addEventListener("click", function () {
-    window.location.href = "{{site.baseurl}}/dashboard/post";
+    window.location.href = "{{site.baseurl}}/dashboard";
+  });
+</script>
+<script>
+  document.getElementById("editblog").addEventListener("click", function () {
+    window.location.href = "{{site.baseurl}}/dashboard/tambah";
   });
 </script>
 {% endif %}
