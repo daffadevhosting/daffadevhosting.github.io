@@ -61,17 +61,47 @@ async function fetchPosts() {
         </ion-button>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" onclick="confirmDelete()">
+        <ion-button color="danger" id="present-alert" onclick="confirmDelete('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
          </ion-toolbar>
         </ion-footer>
       </ion-card>
+<ion-alert trigger="present-alert" header="Alert!"></ion-
         `;
         postList.appendChild(postItem);
     });
 }
+
+// Fungsi menghapus post dengan konfirmasi
+
+    async function confirmDelete(postId) {
+        const alert = document.querySelector('ion-alert');
+
+        alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
+        alert.buttons = [
+            {
+                text: "Batal",
+                role: "cancel"
+            },
+            {
+                text: "Hapus",
+                handler: async () => {
+                    try {
+                        await db.collection("posts").doc(postId).delete();
+                        showToast("Post berhasil dihapus", "success");
+                        fetchPosts();
+                    } catch (error) {
+                        console.error("Error:", error);
+                        showToast("Gagal menghapus post", "danger");
+                    }
+                }
+            }
+        ];
+
+        await alert.present();
+    }
 
 // Fungsi menampilkan toast
 function showToast(message, color) {
@@ -111,34 +141,4 @@ document.addEventListener("DOMContentLoaded", () => {
 function editPost(postId) {
     window.location.href = `/dashboard/post/edit.html?id=${postId}`;
 }
-
-// Fungsi menghapus post dengan konfirmasi
-
-    async function confirmDelete(postId) {
-        const alert = document.createElement('ion-alert');
-
-        alert.header = "Konfirmasi";
-        alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
-        alert.buttons = [
-            {
-                text: "Batal",
-                role: "cancel"
-            },
-            {
-                text: "Hapus",
-                handler: async () => {
-                    try {
-                        await db.collection("posts").doc(postId).delete();
-                        showToast("Post berhasil dihapus", "success");
-                        fetchPosts();
-                    } catch (error) {
-                        console.error("Error:", error);
-                        showToast("Gagal menghapus post", "danger");
-                    }
-                }
-            }
-        ];
-
-        await alert.present();
-    }
 </script>
