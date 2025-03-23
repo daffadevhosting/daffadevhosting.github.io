@@ -61,48 +61,47 @@ async function fetchPosts() {
         </ion-button>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" id="present-alert" onclick="confirmDelete('${postId}')">
+        <ion-button color="danger" onclick="confirmDelete('${postId}')">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
          </ion-toolbar>
         </ion-footer>
       </ion-card>
-<ion-alert id="delete-alert" trigger="present-alert" header="Konfirmasi"
-    message="Yakin ingin menghapus postingan ini?" buttons="[{text: 'Batal', role: 'cancel'}, {text: 'Hapus', role: 'destructive'}]">
-</ion-alert>
+<ion-alert id="delete-alert"></ion-alert>
         `;
         postList.appendChild(postItem);
     });
 }
 
 // Fungsi menghapus post dengan konfirmasi
-
-    async function confirmDelete(postId) {
-        const alert = document.querySelector('ion-alert');
-
-        alert.buttons = [
-            {
-                text: "Batal",
-                role: "cancel"
-            },
-            {
-                text: "Hapus",
-                handler: async () => {
-                    try {
-                        await db.collection("posts").doc(postId).delete();
-                        showToast("Post berhasil dihapus", "success");
-                        fetchPosts();
-                    } catch (error) {
-                        console.error("Error:", error);
-                        showToast("Gagal menghapus post", "danger");
-                    }
+async function confirmDelete(postId) {
+    const alert = document.createElement("ion-alert");
+    alert.header = "Konfirmasi";
+    alert.message = "Yakin ingin menghapus postingan ini?";
+    alert.buttons = [
+        {
+            text: "Batal",
+            role: "cancel"
+        },
+        {
+            text: "Hapus",
+            handler: async () => {
+                try {
+                    await db.collection("posts").doc(postId).delete();
+                    showToast("Post berhasil dihapus", "success");
+                    fetchPosts();
+                } catch (error) {
+                    console.error("Error:", error);
+                    showToast("Gagal menghapus post", "danger");
                 }
             }
-        ];
+        }
+    ];
 
-        await alert.present();
-    }
+    document.body.appendChild(alert);
+    await alert.present();
+}
 
 // Fungsi menampilkan toast
 function showToast(message, color) {
