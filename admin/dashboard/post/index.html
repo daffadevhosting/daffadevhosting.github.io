@@ -68,7 +68,7 @@ async function fetchPosts() {
          </ion-toolbar>
         </ion-footer>
       </ion-card>
-<ion-alert trigger="present-alert" header="Alert!"></ion-
+<ion-alert trigger="present-alert" header="Alert!" message="yakin ingin menghapus postingan ini?"></ion-
         `;
         postList.appendChild(postItem);
     });
@@ -79,7 +79,6 @@ async function fetchPosts() {
     async function confirmDelete(postId) {
         const alert = document.querySelector('ion-alert');
 
-        alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
         alert.buttons = [
             {
                 text: "Batal",
