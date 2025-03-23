@@ -61,7 +61,7 @@ async function fetchPosts() {
         </ion-button>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" id="present-alert">
+        <ion-button color="danger" onclick="confirmDelete()">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
@@ -76,7 +76,7 @@ async function fetchPosts() {
 // Fungsi menghapus post dengan konfirmasi
 
     async function confirmDelete(postId) {
-        const alert = document.getElementById("delete-alert");
+        const alert = document.createElement('ion-alert');
         
         alert.header = "Konfirmasi";
         alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
