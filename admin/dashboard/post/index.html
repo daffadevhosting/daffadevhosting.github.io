@@ -8,137 +8,135 @@ permalink: /dashboard/post
 
 <ion-toast id="toast" duration="2000"></ion-toast>
 
-<script type="module">
-// Inisialisasi Firebase
-const firebaseConfig = {
-    apiKey: "{{site.apiKey}}",
-    authDomain: "{{site.authDomain}}",
-    databaseURL: "{{site.databaseURL}}",
-    projectId: "{{site.projectId}}",
-    storageBucket: "{{site.storageBucket}}",
-    messagingSenderId: "{{site.senderId}}",
-    appId: "{{site.appId}}"
-};
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+    <script type="module">
+        // Inisialisasi Firebase
+        const firebaseConfig = {
+            apiKey: "{{site.apiKey}}",
+            authDomain: "{{site.authDomain}}",
+            databaseURL: "{{site.databaseURL}}",
+            projectId: "{{site.projectId}}",
+            storageBucket: "{{site.storageBucket}}",
+            messagingSenderId: "{{site.senderId}}",
+            appId: "{{site.appId}}"
+        };
 
-// Cek apakah pengguna sudah login
-auth.onAuthStateChanged(user => {
-    if (!user) {
-        window.location.href = "/login"; // Redirect ke halaman login jika belum login
-    } else {
-        console.log("Pengguna login:", user.email);
-        fetchPosts(); // Jika login, ambil daftar postingan
-    }
-});
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-// Ambil daftar postingan
-async function fetchPosts() {
-    const postList = document.getElementById("post-edit-list");
-    postList.innerHTML = "";
+        // Cek apakah pengguna sudah login
+        auth.onAuthStateChanged(user => {
+            if (!user) {
+                window.location.href = "/login"; // Redirect ke halaman login jika belum login
+            } else {
+                console.log("Pengguna login:", user.email);
+                fetchPosts(); // Jika login, ambil daftar postingan
+            }
+        });
 
-    const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
-    snapshot.forEach(doc => {
-        const post = doc.data();
-        const postId = doc.id;
+        // Ambil daftar postingan
+        async function fetchPosts() {
+            const postList = document.getElementById("post-edit-list");
+            postList.innerHTML = "";
 
-        const postItem = document.createElement("div");
-        postItem.innerHTML = `
-    <ion-card>
-       <ion-card-header>
-        <ion-card-title>${post.title}</ion-card-title>
-        </ion-card-header>
-    <ion-card-content>
-        <ion-label class="ion-text-wrap">${post.content.substring(0, 40)}...</ion-label>
-      </ion-card-content>
-      <ion-footer>
-       <ion-toolbar>
-<ion-buttons slot="start">
-        <ion-button color="warning" onclick="editPost('${postId}')">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-button>
-</ion-buttons>
-<ion-buttons slot="end">
-        <ion-button color="danger" onclick="confirmDelete('${postId}')">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-button>
-</ion-buttons>
-         </ion-toolbar>
-        </ion-footer>
-      </ion-card>
-<ion-alert id="delete-alert"></ion-alert>
-        `;
-        postList.appendChild(postItem);
-    });
-}
+            const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
+            snapshot.forEach(doc => {
+                const post = doc.data();
+                const postId = doc.id;
 
-// Fungsi menghapus post dengan konfirmasi
-async function confirmDelete(postId) {
-    const alert = document.createElement("ion-alert");
-    alert.header = "Konfirmasi";
-    alert.message = "Yakin ingin menghapus postingan ini?";
-    alert.buttons = [
-        {
-            text: "Batal",
-            role: "cancel"
-        },
-        {
-            text: "Hapus",
-            handler: async () => {
-                try {
-                    await db.collection("posts").doc(postId).delete();
-                    showToast("Post berhasil dihapus", "success");
-                    fetchPosts();
-                } catch (error) {
-                    console.error("Error:", error);
-                    showToast("Gagal menghapus post", "danger");
+                const postItem = document.createElement("div");
+                postItem.innerHTML = `
+                    <ion-card>
+                        <ion-card-header>
+                            <ion-card-title>${post.title}</ion-card-title>
+                        </ion-card-header>
+                        <ion-card-content>
+                            <ion-label class="ion-text-wrap">${post.content.substring(0, 40)}...</ion-label>
+                        </ion-card-content>
+                        <ion-footer>
+                            <ion-toolbar>
+                                <ion-buttons slot="start">
+                                    <ion-button color="warning" onclick="editPost('${postId}')">
+                                        <ion-icon slot="icon-only" name="create"></ion-icon>
+                                    </ion-button>
+                                </ion-buttons>
+                                <ion-buttons slot="end">
+                                    <ion-button color="danger" onclick="confirmDelete('${postId}')">
+                                        <ion-icon slot="icon-only" name="trash"></ion-icon>
+                                    </ion-button>
+                                </ion-buttons>
+                            </ion-toolbar>
+                        </ion-footer>
+                    </ion-card>
+                `;
+                postList.appendChild(postItem);
+            });
+        }
+
+        // Fungsi konfirmasi hapus post dengan ion-alert
+        async function confirmDelete(postId) {
+            const alert = document.createElement("ion-alert");
+            alert.header = "Konfirmasi";
+            alert.message = "Yakin ingin menghapus postingan ini?";
+            alert.buttons = [
+                {
+                    text: "Batal",
+                    role: "cancel"
+                },
+                {
+                    text: "Hapus",
+                    handler: async () => {
+                        try {
+                            await db.collection("posts").doc(postId).delete();
+                            showToast("Post berhasil dihapus", "success");
+                            fetchPosts();
+                        } catch (error) {
+                            console.error("Error:", error);
+                            showToast("Gagal menghapus post", "danger");
+                        }
+                    }
                 }
+            ];
+
+            document.body.appendChild(alert);
+            await alert.present();
+        }
+
+        // Fungsi menampilkan toast
+        function showToast(message, color) {
+            const toast = document.createElement("ion-toast");
+            toast.message = message;
+            toast.duration = 2000;
+            toast.color = color;
+            document.body.appendChild(toast);
+            toast.present();
+        }
+
+        // Fungsi logout
+        async function logout() {
+            try {
+                await auth.signOut();
+                showToast("Logout berhasil", "success");
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 1000);
+            } catch (error) {
+                console.error("Error logout:", error);
+                showToast("Gagal logout", "danger");
             }
         }
-    ];
 
-    document.body.appendChild(alert);
-    await alert.present();
-}
+        // Tambahkan event listener untuk tombol logout jika ada
+        document.addEventListener("DOMContentLoaded", () => {
+            const logoutButton = document.getElementById("logoutBtn");
+            if (logoutButton) {
+                logoutButton.addEventListener("click", logout);
+            }
+        });
 
-// Fungsi menampilkan toast
-function showToast(message, color) {
-    const toast = document.createElement("ion-toast");
-    toast.message = message;
-    toast.duration = 2000;
-    toast.color = color;
-    document.body.appendChild(toast);
-    toast.present();
-}
-
-// Fungsi logout
-async function logout() {
-    try {
-        await auth.signOut();
-        showToast("Logout berhasil", "success");
-        setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000);
-    } catch (error) {
-        console.error("Error logout:", error);
-        showToast("Gagal logout", "danger");
-    }
-}
-
-// Tambahkan event listener untuk tombol logout jika ada
-document.addEventListener("DOMContentLoaded", () => {
-    const logoutButton = document.getElementById("logoutBtn");
-    if (logoutButton) {
-        logoutButton.addEventListener("click", logout);
-    }
-});
-</script>
-
-<script>
-// Fungsi mengedit post
-function editPost(postId) {
-    window.location.href = `/dashboard/post/edit.html?id=${postId}`;
-}
-</script>
+        // Fungsi mengedit post
+        function editPost(postId) {
+            window.location.href = `/dashboard/post/edit.html?id=${postId}`;
+        }
+    </script>
