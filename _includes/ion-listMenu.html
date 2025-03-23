@@ -12,25 +12,3 @@
     <ion-label>Admin</ion-label>
   </ion-item>
 </ion-list>
-
-<style>
-  .nav-item.active {
-    background: var(--ion-color-primary);
-    color: white;
-    border-radius: 8px;
-  }
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const currentPath = window.location.pathname;
-    const navItems = document.querySelectorAll(".nav-item");
-
-    navItems.forEach((item) => {
-      const itemPath = new URL(item.href, window.location.origin).pathname;
-      if (currentPath === itemPath) {
-        item.classList.add("active");
-      }
-    });
-  });
-</script>
