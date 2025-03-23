@@ -68,7 +68,9 @@ async function fetchPosts() {
          </ion-toolbar>
         </ion-footer>
       </ion-card>
-<ion-alert trigger="present-alert" header="Alert!" message="yakin ingin menghapus postingan ini?"></ion-alert>
+<ion-alert id="delete-alert" trigger="present-alert" header="Konfirmasi"
+    message="Yakin ingin menghapus postingan ini?" buttons="[{text: 'Batal', role: 'cancel'}, {text: 'Hapus', role: 'destructive'}]">
+</ion-alert>
         `;
         postList.appendChild(postItem);
     });
