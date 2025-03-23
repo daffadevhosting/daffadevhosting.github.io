@@ -61,7 +61,7 @@ async function fetchPosts() {
         </ion-button>
 </ion-buttons>
 <ion-buttons slot="end">
-        <ion-button color="danger" id="delete-alert">
+        <ion-button color="danger" id="present-alert">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
 </ion-buttons>
@@ -77,7 +77,7 @@ async function fetchPosts() {
 
     async function confirmDelete(postId) {
         const alert = document.getElementById("delete-alert");
-        alert.trigger = "delete-alert";
+        
         alert.header = "Konfirmasi";
         alert.message = "Apakah Anda yakin ingin menghapus postingan ini?";
         alert.buttons = [
@@ -141,4 +141,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<ion-alert id="delete-alert"></ion-alert>
+<ion-alert trigger="present-alert" id="delete-alert"></ion-alert>
