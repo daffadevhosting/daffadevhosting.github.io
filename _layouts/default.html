@@ -5,10 +5,12 @@
     <body>
         <ion-app>
             {% include ion-menu.html %}
+<div class="ion-page" id="main-content">
             {% include ion-header.html %}
             <ion-content [fullscreen]="true" class="ion-padding">
                 {{content}}
             </ion-content>
+</div>
             {% include ion-footer.html %}
         </ion-app>
     </body>
