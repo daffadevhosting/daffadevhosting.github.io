@@ -1,14 +1,36 @@
 <ion-list>
-  <ion-item href="{{site.baseurl}}/">
+  <ion-item href="{{site.baseurl}}/" class="nav-item">
     <ion-icon aria-hidden="true" name="home" slot="start"></ion-icon>
     <ion-label>Beranda</ion-label>
   </ion-item>
-  <ion-item href="{{site.baseurl}}/product">
+  <ion-item href="{{site.baseurl}}/product" class="nav-item">
     <ion-icon aria-hidden="true" name="store" slot="start"></ion-icon>
     <ion-label>Produk</ion-label>
   </ion-item>
-  <ion-item href="{{site.baseurl}}/login">
+  <ion-item href="{{site.baseurl}}/login" class="nav-item">
     <ion-icon aria-hidden="true" name="person" slot="start"></ion-icon>
     <ion-label>Admin</ion-label>
   </ion-item>
 </ion-list>
+
+<style>
+  .nav-item.active {
+    background: var(--ion-color-primary);
+    color: white;
+    border-radius: 8px;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const currentPath = window.location.pathname;
+    const navItems = document.querySelectorAll(".nav-item");
+
+    navItems.forEach((item) => {
+      const itemPath = new URL(item.href, window.location.origin).pathname;
+      if (currentPath === itemPath) {
+        item.classList.add("active");
+      }
+    });
+  });
+</script>
