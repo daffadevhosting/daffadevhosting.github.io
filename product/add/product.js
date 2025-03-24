@@ -1,3 +1,18 @@
+        // Inisialisasi Firebase
+        const firebaseConfig = {
+            apiKey: "{{site.apiKey}}",
+            authDomain: "{{site.authDomain}}",
+            databaseURL: "{{site.databaseURL}}",
+            projectId: "{{site.projectId}}",
+            storageBucket: "{{site.storageBucket}}",
+            messagingSenderId: "{{site.senderId}}",
+            appId: "{{site.appId}}"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("productForm");
     const productList = document.getElementById("productList");
