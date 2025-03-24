@@ -2,14 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("productForm");
     const productList = document.getElementById("productList");
 
-    // Fungsi untuk menambahkan produk ke Firestore
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const images = document.getElementById("image").value
-            .split(",")
-            .map(img => img.trim())
-            .filter(img => img !== ""); // Hapus URL kosong
+        const images = document.getElementById("image").value.split(",").map(img => img.trim()).filter(img => img !== "");
 
         const product = {
             title: document.getElementById("title").value,
@@ -18,39 +14,47 @@ document.addEventListener("DOMContentLoaded", function () {
             categories: document.getElementById("categories").value,
             tags: document.getElementById("tags").value,
             rating: parseFloat(document.getElementById("rating").value),
-            images: images, // Simpan sebagai array
+            images: images,
             deskripsi: document.getElementById("deskripsi").value
         };
 
         try {
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Anda harus login sebagai admin!");
+                return;
+            }
+
+            const idTokenResult = await user.getIdTokenResult();
+            if (!idTokenResult.claims.admin) {
+                alert("Anda bukan admin!");
+                return;
+            }
+
             await db.collection("products").add(product);
             alert("Produk berhasil ditambahkan!");
             form.reset();
-            loadProducts(); // Refresh daftar produk
+            loadProducts();
         } catch (error) {
             console.error("Error:", error);
             alert("Gagal menambahkan produk.");
         }
     });
 
-    // Fungsi untuk mengambil dan menampilkan produk dari Firestore
     async function loadProducts() {
-        productList.innerHTML = ""; // Kosongkan daftar sebelum memperbarui
+        productList.innerHTML = "";
 
         try {
             const querySnapshot = await db.collection("products").get();
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 const productElement = document.createElement("div");
-                productElement.classList.add("product-item");
 
-                // Buat slide gambar (carousel)
-                let imageSlides = "";
-                data.images.forEach((img, index) => {
-                    imageSlides += `<div class="slide" ${index === 0 ? 'style="display:block;"' : 'style="display:none;"'}>
+                let imageSlides = data.images.map((img, index) => `
+                    <div class="slide" ${index === 0 ? 'style="display:block;"' : 'style="display:none;"'}>
                         <img src="${img}" alt="Product Image">
-                    </div>`;
-                });
+                    </div>
+                `).join("");
 
                 productElement.innerHTML = `
                     <div class="carousel">
@@ -60,12 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <h3>${data.title}</h3>
                     <p>Harga: ${data.harga}</p>
-                    <p>Stok: ${data.stok}</p>
-                    <p>Kategori: ${data.categories}</p>
-                    <p>Tag: ${data.tags}</p>
-                    <p>Rating: ${data.rating}</p>
                     <p>${data.deskripsi}</p>
-                    <hr>
                 `;
                 productList.appendChild(productElement);
             });
@@ -74,29 +73,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Fungsi untuk navigasi slide
-    window.nextSlide = function (btn) {
-        const carousel = btn.closest(".carousel");
-        const slides = carousel.querySelectorAll(".slide");
-        let current = carousel.querySelector(".slide[style*='display: block']");
-        let index = Array.from(slides).indexOf(current);
-
-        slides[index].style.display = "none";
-        let nextIndex = (index + 1) % slides.length;
-        slides[nextIndex].style.display = "block";
-    };
-
-    window.prevSlide = function (btn) {
-        const carousel = btn.closest(".carousel");
-        const slides = carousel.querySelectorAll(".slide");
-        let current = carousel.querySelector(".slide[style*='display: block']");
-        let index = Array.from(slides).indexOf(current);
-
-        slides[index].style.display = "none";
-        let prevIndex = (index - 1 + slides.length) % slides.length;
-        slides[prevIndex].style.display = "block";
-    };
-
-    // Panggil fungsi untuk memuat produk saat halaman dimuat
     loadProducts();
 });
