@@ -4,6 +4,9 @@ title: Add Produk
 permalink: /product/add/product
 ---
 
+
+<script src="{{site.baseurl}}/product/add/firebase-config.js"></script>
+
 <ion-card>
 <ion-card-content>
 <h2>Tambah Produk</h2>
@@ -23,7 +26,7 @@ permalink: /product/add/product
 <h2>Daftar Produk</h2>
 <div id="productList"></div>
 
-<script type="module" src="{{site.baseurl}}/product/add/products.js"></script>
+<script src="{{site.baseurl}}/product/add/product.js"></script>
 
 <style>
 .carousel {
@@ -34,6 +37,16 @@ permalink: /product/add/product
 
 .slide {
     display: none;
+}
+
+.slide:first-child {
+    display: block;
+}
+
+.slide img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
 }
 
 button.prev, button.next {
@@ -48,10 +61,16 @@ button.prev, button.next {
 }
 
 button.prev {
-    left: 0;
+    left: 5px;
 }
 
 button.next {
-    right: 0;
+    right: 5px;
+}
+
+.product-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
 }
 </style>
