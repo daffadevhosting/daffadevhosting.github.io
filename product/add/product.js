@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const images = document.getElementById("images").value
+        const images = document.getElementById("image").value
             .split(",")
             .map(img => img.trim())
             .filter(img => img !== ""); // Hapus URL kosong
