@@ -24,3 +24,34 @@ permalink: /product/add/product
 <div id="productList"></div>
 
 <script src="products.js"></script>
+
+<style>
+.carousel {
+    position: relative;
+    max-width: 300px;
+    margin: auto;
+}
+
+.slide {
+    display: none;
+}
+
+button.prev, button.next {
+    position: absolute;
+    top: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+button.prev {
+    left: 0;
+}
+
+button.next {
+    right: 0;
+}
+</style>
