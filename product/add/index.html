@@ -1,0 +1,26 @@
+---
+layout: default
+title: Add Produk
+permalink: /add/product
+---
+
+<ion-card>
+<ion-card-content>
+<h2>Tambah Produk</h2>
+<form id="productForm">
+    <input type="text" id="title" placeholder="Nama Produk" required><br>
+    <input type="text" id="harga" placeholder="Harga" required><br>
+    <input type="text" id="stok" placeholder="Stok (Tersedia/Habis)" required><br>
+    <input type="text" id="categories" placeholder="Kategori" required><br>
+    <input type="text" id="tags" placeholder="Tag" required><br>
+    <input type="text" id="rating" placeholder="Rating (1-5)" required><br>
+    <textarea id="images" placeholder="Masukkan URL gambar, pisahkan dengan koma" required></textarea><br>
+    <textarea id="deskripsi" placeholder="Deskripsi Produk" required></textarea><br>
+    <button type="submit">Tambah Produk</button>
+</form>
+</ion-card-content>
+</ion-card>
+<h2>Daftar Produk</h2>
+<div id="productList"></div>
+
+<script src="products.js"></script>
