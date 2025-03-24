@@ -1,18 +1,3 @@
-        // Inisialisasi Firebase
-        const firebaseConfig = {
-            apiKey: "{{site.apiKey}}",
-            authDomain: "{{site.authDomain}}",
-            databaseURL: "{{site.databaseURL}}",
-            projectId: "{{site.projectId}}",
-            storageBucket: "{{site.storageBucket}}",
-            messagingSenderId: "{{site.senderId}}",
-            appId: "{{site.appId}}"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("productForm");
     const productList = document.getElementById("productList");
@@ -21,7 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const images = document.getElementById("images").value.split(",").map(img => img.trim()); // Ubah input menjadi array
+        const images = document.getElementById("images").value
+            .split(",")
+            .map(img => img.trim())
+            .filter(img => img !== ""); // Hapus URL kosong
 
         const product = {
             title: document.getElementById("title").value,
@@ -29,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
             stok: document.getElementById("stok").value,
             categories: document.getElementById("categories").value,
             tags: document.getElementById("tags").value,
-            rating: document.getElementById("rating").value,
+            rating: parseFloat(document.getElementById("rating").value),
             images: images, // Simpan sebagai array
             deskripsi: document.getElementById("deskripsi").value
         };
@@ -59,8 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Buat slide gambar (carousel)
                 let imageSlides = "";
                 data.images.forEach((img, index) => {
-                    imageSlides += `<div class="slide" style="display:${index === 0 ? 'block' : 'none'};">
-                        <img src="${img}" alt="Product Image" style="width:100%; max-height:200px;">
+                    imageSlides += `<div class="slide" ${index === 0 ? 'style="display:block;"' : 'style="display:none;"'}>
+                        <img src="${img}" alt="Product Image">
                     </div>`;
                 });
 
@@ -90,21 +78,23 @@ document.addEventListener("DOMContentLoaded", function () {
     window.nextSlide = function (btn) {
         const carousel = btn.closest(".carousel");
         const slides = carousel.querySelectorAll(".slide");
-        let currentIndex = Array.from(slides).findIndex(slide => slide.style.display === "block");
+        let current = carousel.querySelector(".slide[style*='display: block']");
+        let index = Array.from(slides).indexOf(current);
 
-        slides[currentIndex].style.display = "none";
-        currentIndex = (currentIndex + 1) % slides.length;
-        slides[currentIndex].style.display = "block";
+        slides[index].style.display = "none";
+        let nextIndex = (index + 1) % slides.length;
+        slides[nextIndex].style.display = "block";
     };
 
     window.prevSlide = function (btn) {
         const carousel = btn.closest(".carousel");
         const slides = carousel.querySelectorAll(".slide");
-        let currentIndex = Array.from(slides).findIndex(slide => slide.style.display === "block");
+        let current = carousel.querySelector(".slide[style*='display: block']");
+        let index = Array.from(slides).indexOf(current);
 
-        slides[currentIndex].style.display = "none";
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        slides[currentIndex].style.display = "block";
+        slides[index].style.display = "none";
+        let prevIndex = (index - 1 + slides.length) % slides.length;
+        slides[prevIndex].style.display = "block";
     };
 
     // Panggil fungsi untuk memuat produk saat halaman dimuat
