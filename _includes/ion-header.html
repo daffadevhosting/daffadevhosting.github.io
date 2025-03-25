@@ -7,7 +7,7 @@
     {% if page.url == "/" %}
       <ion-buttons slot="end">
         <ion-button id="adminLogin">
-            <ion-icon size="large" name="log-in-outline"></ion-icon>
+            <ion-icon size="large" slot="icon-only" name="log-in-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
 <script>
@@ -18,7 +18,7 @@
 {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard/tambah" %}
       <ion-buttons slot="end">
         <ion-button id="myBlog">
-            <ion-icon size="large" name="newspaper-outline"></ion-icon>
+            <ion-icon size="large" slot="icon-only" name="newspaper-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
 <script>
@@ -29,12 +29,23 @@
 {% elsif page.url == "/dashboard/post" %}
       <ion-buttons slot="end">
         <ion-button id="editblog">
-            <ion-icon size="large" name="add-circle-outline"></ion-icon>
+            <ion-icon size="large" slot="icon-only" name="add-circle-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
 <script>
   document.getElementById("editblog").addEventListener("click", function () {
     window.location.href = "{{site.baseurl}}/dashboard/tambah";
+  });
+</script>
+{% elsif page.url == "/product" %}
+      <ion-buttons slot="end">
+        <ion-button id="addProduct" shape="round">
+            <ion-icon size="large" slot="icon-only" name="add-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+<script>
+  document.getElementById("addProduct").addEventListener("click", function () {
+    window.location.href = "{{site.baseurl}}/product/add/product";
   });
 </script>
 {% endif %}
