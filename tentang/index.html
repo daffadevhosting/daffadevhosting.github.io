@@ -1,14 +1,14 @@
 ---
 layout: default
 title: Tentang blog
-permalink: /tentang
+permalink: /about
 ---
 
 <div id="readme-content"></div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    fetch('README.md')
+    fetch('./README.md')
         .then(response => response.text())
         .then(markdown => {
             document.getElementById('readme-content').innerHTML = marked.parse(markdown);
