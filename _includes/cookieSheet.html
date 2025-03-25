@@ -1,15 +1,7 @@
-<ion-sheet id="cookieSheet" size="content">
-  <div class="cookie-content">
-    <p>Website ini menggunakan cookie untuk meningkatkan pengalaman Anda.</p>
-    <ion-button id="acceptCookie">Terima</ion-button>
-  </div>
-</ion-sheet>
+<script type="module">
+  import { alertController } from 'https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/index.esm.js';
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const sheet = document.getElementById("cookieSheet");
-    const acceptBtn = document.getElementById("acceptCookie");
-
+  document.addEventListener("DOMContentLoaded", async function () {
     function hasAcceptedCookie() {
       const lastAccepted = localStorage.getItem("cookieAcceptedAt");
       if (!lastAccepted) return false;
@@ -19,27 +11,26 @@
       return now - parseInt(lastAccepted) < oneDay;
     }
 
-    function showCookieSheet() {
-      sheet.present();
-    }
+    async function showCookieAlert() {
+      const alert = await alertController.create({
+        header: "Cookie Penggunaan",
+        message: "Website ini menggunakan cookie untuk meningkatkan pengalaman Anda.",
+        buttons: [
+          {
+            text: "Terima",
+            handler: () => {
+              localStorage.setItem("cookieAcceptedAt", new Date().getTime());
+            },
+          },
+        ],
+      });
 
-    function acceptCookie() {
-      localStorage.setItem("cookieAcceptedAt", new Date().getTime());
-      sheet.dismiss();
+      await alert.present();
     }
 
     // Tampilkan hanya jika belum diterima dalam 24 jam terakhir
     if (!hasAcceptedCookie()) {
-      showCookieSheet();
+      await showCookieAlert();
     }
-
-    acceptBtn.addEventListener("click", acceptCookie);
   });
 </script>
-
-<style>
-  .cookie-content {
-    padding: 16px;
-    text-align: center;
-  }
-</style>
