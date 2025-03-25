@@ -1,0 +1,19 @@
+---
+layout: default
+title: Tentang blog
+permalink: /tentang
+---
+
+<div id="readme-content"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch('README.md')
+        .then(response => response.text())
+        .then(markdown => {
+            document.getElementById('readme-content').innerHTML = marked.parse(markdown);
+        })
+        .catch(error => console.error('Error loading README.md:', error));
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
