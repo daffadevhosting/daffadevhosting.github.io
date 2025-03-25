@@ -1,14 +1,20 @@
 @use "variables/mixins" as *;
+@use "base/reset" as *;
 
-.container {
-  width: 100%;
-  @include responsive(mobile) {
-    width: 90%;
-  }
-  @include responsive(tablet) {
-    width: 80%;
-  }
+.content {
+	max-width: 900px;
+	width: 100%;
+	margin: auto;
+		.grid_post_content {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-row: auto;
+		@include responsive(mobile) {
+			grid-template-columns: repeat(1, 1fr);
+		  }
+	}
 }
+
 .flex_center {
   display: flex;
   align-items: center;
@@ -30,19 +36,29 @@
   }
 }
 
+.content {
+@include responsive(tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+	}
+}
+
 /* blogpost */
 
-    .img-thumb {
-		max-width:640px;
-		width:100%;
-		height:380px;
-        object-fit: cover;
-        background-size: cover;
-        background-position: center;
+.img-thumb {
+	max-width: -webkit-fill-available;
+	width: 100%;
+	height: 320px;
+	object-fit: cover;
+	background-size: cover;
+	background-position: center;
 @include responsive(mobile) {
-		height:220px;
-		}
-    }
+	height: 220px;
+	}
+@include responsive(tablet) {
+	height: 320px;
+	}
+}
     .flex_center {
         display: flex;
         flex-wrap: wrap;

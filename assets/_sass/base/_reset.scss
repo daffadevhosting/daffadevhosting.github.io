@@ -1,0 +1,4 @@
+@use 'variables/mixins' as *;
+
+body { font-family: $font-stack; color: $text-color; }
+a { text-decoration: none; }

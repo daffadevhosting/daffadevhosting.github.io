@@ -1,14 +1,19 @@
+$primary-color: #0054e9;
+$secondary-color: #0163aa;
+$text-color: #333;
+$font-stack: "Roboto","Helvetica Neue",sans-serif;
+
 @mixin responsive($size) {
   @if $size == mobile {
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       @content;
     }
   } @else if $size == tablet {
-    @media (max-width: 900px) {
+    @media (min-width: 768px) and (max-width: 901px) {
       @content;
     }
   } @else if $size == desktop {
-    @media (min-width: 901px) {
+    @media (min-width: 901px) and (max-width: 1024px) {
       @content;
     }
   }

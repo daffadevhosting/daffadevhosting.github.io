@@ -1,0 +1,10 @@
+@use 'variables/mixins' as *;
+
+html,
+body {
+	max-width:480px !important;
+	width:100% !important;
+	margin:auto !important;
+	overflow:hidden !important;
+	background:#424242 !important;
+}
