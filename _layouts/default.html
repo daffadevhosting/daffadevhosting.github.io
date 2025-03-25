@@ -7,7 +7,7 @@
             {% include ion-menu.html %}
 <div class="ion-page" id="main-content">
             {% include ion-header.html %}
-           <ion-content [fullscreen]="true" {% if page.url == '/product' %} class="ion-no-padding"{% elsif page.url == '/blog/post.html' %} class="ion-padding"{% endif %}>
+           <ion-content [fullscreen]="true" {% if page.url == '/product' %} class="ion-no-padding"{% elsif page.url == '/blog/post.html' or page.url == '/about' %} class="ion-padding"{% endif %}>
                 {{content}}
            </ion-content>
             {% include ion-footer.html %}

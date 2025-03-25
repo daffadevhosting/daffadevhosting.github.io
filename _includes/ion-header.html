@@ -15,23 +15,23 @@
     window.location.href = "{{site.baseurl}}/login";
   });
 </script>
-    {% elsif page.url == "/login" %}{% elsif page.url == "/dashboard/tambah" %}
+{% elsif page.url == "/login" %}{% elsif page.url == "/dashboard/tambah" %}
       <ion-buttons slot="end">
-        <ion-button id="myblog">
+        <ion-button id="myBlog">
             <ion-icon size="large" name="newspaper-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
+<script>
+  document.getElementById("myBlog").addEventListener("click", function () {
+    window.location.href = "{{site.baseurl}}/";
+  });
+</script>
 {% elsif page.url == "/dashboard/post" %}
       <ion-buttons slot="end">
         <ion-button id="editblog">
             <ion-icon size="large" name="add-circle-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
-<script>
-  document.getElementById("myblog").addEventListener("click", function () {
-    window.location.href = "{{site.baseurl}}/";
-  });
-</script>
 <script>
   document.getElementById("editblog").addEventListener("click", function () {
     window.location.href = "{{site.baseurl}}/dashboard/tambah";

@@ -5,24 +5,24 @@ permalink: /login
 ---
 
 <ion-card>
-<form id="loginForm">
-<ion-list>
-    <ion-item lines="full">
-      <ion-input type="email" id="email" labelPlacement="floating" value="">
-        <div slot="label">Email <ion-text color="danger">(Required)</ion-text></div>
-      </ion-input>
-    </ion-item>
-    <ion-item lines="full">
-      <ion-input type="password" id="password" labelPlacement="floating" value="">
-        <div slot="label">Password <ion-text color="danger">(Required)</ion-text></div>
-      </ion-input>
-    </ion-item>
-  </ion-list>
-  <ion-button expand="block" fill="outline" type="submit" id="loginButton">Sign in</ion-button>
-</form>
-  </ion-card>
-<ion-card>
 {% include iframe.html %}
+	<ion-card-content>
+		<form id="loginForm">
+			<ion-list>
+				<ion-item lines="full">
+				  <ion-input type="email" id="email" labelPlacement="floating" value="">
+					<div slot="label">Email <ion-text color="danger">(Required)</ion-text></div>
+				  </ion-input>
+				</ion-item>
+				<ion-item lines="full">
+				  <ion-input type="password" id="password" labelPlacement="floating" value="">
+					<div slot="label">Password <ion-text color="danger">(Required)</ion-text></div>
+				  </ion-input>
+				</ion-item>
+			  </ion-list>
+		  <ion-button expand="block" fill="outline" type="submit" id="loginButton">Sign in</ion-button>
+		</form>
+	</ion-card-content>
 </ion-card>
   <script src="https://www.google.com/recaptcha/api.js?render={{site.SITE_KEY}}"></script>
 
