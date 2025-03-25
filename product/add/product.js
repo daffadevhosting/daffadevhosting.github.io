@@ -21,23 +21,23 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const user = auth.currentUser;
             if (!user) {
-                alert("Anda harus login sebagai admin!");
+                showAlert("Anda harus login sebagai admin!");
                 return;
             }
 
             const idTokenResult = await user.getIdTokenResult();
             if (!idTokenResult.claims.admin) {
-                alert("Anda bukan admin!");
+                showAlert("Anda bukan admin!");
                 return;
             }
 
             await db.collection("products").add(product);
-            alert("Produk berhasil ditambahkan!");
+            showAlert("Produk berhasil ditambahkan!");
             form.reset();
             loadProducts();
         } catch (error) {
             console.error("Error:", error);
-            alert("Gagal menambahkan produk.");
+            showAlert("Gagal menambahkan produk.");
         }
     });
 
@@ -75,3 +75,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadProducts();
 });
+
+function showAlert(message) {
+    // Buat elemen ion-toast
+    const toast = document.createElement("ion-toast");
+    toast.message = message;
+    toast.duration = 5000;
+    toast.color = "danger"; // Bisa diubah sesuai kebutuhan
+    toast.position = "top"; // Posisi toast
+
+    // Tambahkan ke dalam body dan tampilkan
+    document.body.appendChild(toast);
+    toast.present();
+}

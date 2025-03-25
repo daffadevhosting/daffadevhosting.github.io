@@ -17,20 +17,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Cek apakah user adalah admin
                 const idTokenResult = await user.getIdTokenResult();
                 if (idTokenResult.claims.admin) {
-                    alert("Login berhasil sebagai admin");
+                    showAlert("Login berhasil sebagai admin");
                     updateUI(true);
                 } else {
-                    alert("Anda bukan admin!");
+                    showAlert("Anda bukan admin!");
                     auth.signOut();
                 }
             } catch (error) {
-                alert("Login gagal: " + error.message);
+                showAlert("Login gagal: " + error.message);
             }
         });
 
         logoutBtn.addEventListener("click", function () {
             auth.signOut().then(() => {
-                alert("Logout berhasil");
+                showAlert("Logout berhasil");
                 updateUI(false);
             });
         });
@@ -62,3 +62,16 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Elemen yang diperlukan tidak ditemukan di halaman!");
     }
 });
+
+function showAlert(message) {
+    // Buat elemen ion-toast
+    const toast = document.createElement("ion-toast");
+    toast.message = message;
+    toast.duration = 5000;
+    toast.color = "danger"; // Bisa diubah sesuai kebutuhan
+    toast.position = "top"; // Posisi toast
+
+    // Tambahkan ke dalam body dan tampilkan
+    document.body.appendChild(toast);
+    toast.present();
+}

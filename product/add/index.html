@@ -5,18 +5,27 @@ permalink: /product/add/product
 ---
 
 
-<!--<script src="{{site.baseurl}}/product/add/firebase-config.js"></script>-->
-
 <ion-card>
 <ion-card-content>
-    <h2>Login Admin</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="loginBtn">Login</button>
-    <button id="logoutBtn" style="display: none;">Logout</button>
+    <ion-text><h2>Login Admin Product</h2></ion-text>
+			<ion-list>
+				<ion-item lines="full">
+				  <ion-input type="email" id="email" labelPlacement="floating" value="">
+					<div slot="label">Email <ion-text color="danger">(Required)</ion-text></div>
+				  </ion-input>
+				</ion-item>
+				<ion-item lines="full">
+				  <ion-input type="password" id="password" labelPlacement="floating" value="">
+					<div slot="label">Password <ion-text color="danger">(Required)</ion-text></div>
+				  </ion-input>
+				</ion-item>
+			</ion-list>
+		  <ion-button expand="block" fill="outline" id="loginBtn">Sign in</ion-button>
+		  <ion-button expand="block" fill="outline" id="logoutBtn" style="display: none;">Logout</ion-button>
 
-    <h2>Tambah Produk</h2>
     <form id="productForm" style="display: none;">
+    <h2>Tambah Produk</h2>
+	<p/>
         <input type="text" id="title" placeholder="Nama Produk" required><br>
         <input type="text" id="harga" placeholder="Harga" required><br>
         <input type="text" id="stok" placeholder="Stok (Tersedia/Habis)" required><br>
@@ -29,18 +38,12 @@ permalink: /product/add/product
     </form>
 </ion-card-content>
 </ion-card>
-<h2>Daftar Produk</h2>
 <div id="productList"></div>
+<script src="https://www.google.com/recaptcha/api.js?render={{site.SITE_KEY}}"></script>
 
-<!--<script src="{{site.baseurl}}/product/add/auth.js"></script>
-<script src="{{site.baseurl}}/product/add/product.js"></script>-->
-<!-- Include Firebase Scripts -->
-<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js"></script>
 
-<script>
-  // Firebase configuration
-  const firebaseConfig = {
+<script type="module">
+const firebaseConfig = {
   apiKey: "AIzaSyA3ra4E7chQhRzERyKW2aFUTRULMb10vxM",
   authDomain: "blogdaffadev.firebaseapp.com",
   databaseURL: "https://blogdaffadev-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -49,12 +52,11 @@ permalink: /product/add/product
   messagingSenderId: "489703180131",
   appId: "1:489703180131:web:4383f5ef04c1d414ce3556",
   measurementId: "G-ZWW4K4NVQ6"
-  };
-
+};
   // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
   // DOM Content Loaded
   document.addEventListener("DOMContentLoaded", function () {
     const loginBtn = document.getElementById("loginBtn");
@@ -74,20 +76,20 @@ permalink: /product/add/product
           // Cek apakah user adalah admin
           const idTokenResult = await user.getIdTokenResult();
           if (idTokenResult.claims.admin) {
-            alert("Login berhasil sebagai admin");
+            showAlert("Login berhasil sebagai admin");
             updateUI(true);
           } else {
-            alert("Anda bukan admin!");
+            showAlert("Anda bukan admin product!");
             auth.signOut();
           }
         } catch (error) {
-          alert("Login gagal: " + error.message);
+          showAlert("Login gagal: " + error.message);
         }
       });
 
       logoutBtn.addEventListener("click", function () {
         auth.signOut().then(() => {
-          alert("Logout berhasil");
+          showAlert("Logout berhasil");
           updateUI(false);
         });
       });
@@ -116,7 +118,21 @@ permalink: /product/add/product
       });
     }
   });
+
+function showAlert(message) {
+    // Buat elemen ion-toast
+    const toast = document.createElement("ion-toast");
+    toast.message = message;
+    toast.duration = 5000;
+    toast.color = "danger"; // Bisa diubah sesuai kebutuhan
+    toast.position = "top"; // Posisi toast
+
+    // Tambahkan ke dalam body dan tampilkan
+    document.body.appendChild(toast);
+    toast.present();
+}
 </script>
+<script type="module" src="{{site.baseurl}}/product/add/product.js"></script>
 
 <style>
 .carousel {
