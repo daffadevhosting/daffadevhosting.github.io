@@ -3,6 +3,7 @@ title: "Daffa Blog"
 description: "Deskripsi singkat tentang blog Anda."
 baseurl: ""  # Jika di root domain, biarkan kosong. Jika di subfolder, misal "/blog"
 url: "https://daffadevhosting.github.io"  # Ganti dengan URL situs Anda
+logo: /assets/images/jekyll-logo.png
 
 # Informasi penulis (opsional)
 author:
@@ -23,8 +24,8 @@ paginate_path: "/page:num/"  # Format URL untuk paginasi
 
 # Konfigurasi SASS/SCSS
 sass:
+  sass_dir: assets/sass  # Direktori SASS
   style: compressed  # Bisa diganti ke expanded untuk debugging
-  sass_dir: assets/_sass  # Direktori SASS
 
 # Exclude (file yang tidak di-render oleh Jekyll)
 exclude:

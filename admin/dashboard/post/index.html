@@ -37,43 +37,59 @@ permalink: /dashboard/post
         });
 
         // Ambil daftar postingan
-        async function fetchPosts() {
-            const postList = document.getElementById("post-edit-list");
-            postList.innerHTML = "";
+async function fetchPosts() {
+    const postList = document.getElementById("post-edit-list");
+    postList.innerHTML = "";
 
-            const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
-            snapshot.forEach(doc => {
-                const post = doc.data();
-                const postId = doc.id;
+    const snapshot = await db.collection("posts").orderBy("timestamp", "desc").get();
+    snapshot.forEach(doc => {
+        const post = doc.data();
+        const postId = doc.id;
 
-                const postItem = document.createElement("div");
-                postItem.innerHTML = `
-                    <ion-card>
-                        <ion-card-header>
-                            <ion-card-title>${post.title}</ion-card-title>
-                        </ion-card-header>
-                        <ion-card-content>
-                            <ion-label class="ion-text-wrap">${post.content.substring(0, 40)}...</ion-label>
-                        </ion-card-content>
-                        <ion-footer>
-                            <ion-toolbar>
-                                <ion-buttons slot="start">
-                                    <ion-button color="warning" onclick="editPost('${postId}')">
-                                        <ion-icon slot="icon-only" name="create"></ion-icon>
-                                    </ion-button>
-                                </ion-buttons>
-                                <ion-buttons slot="end">
-                                    <ion-button color="danger" onclick="confirmDelete('${postId}')">
-                                        <ion-icon slot="icon-only" name="trash"></ion-icon>
-                                    </ion-button>
-                                </ion-buttons>
-                            </ion-toolbar>
-                        </ion-footer>
-                    </ion-card>
-                `;
-                postList.appendChild(postItem);
-            });
-        }
+        const postItem = document.createElement("div");
+        postItem.innerHTML = `
+            <ion-card>
+                <ion-card-header>
+                    <ion-card-title>${post.title}</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-label class="ion-text-wrap">${post.content.substring(0, 40)}...</ion-label>
+                </ion-card-content>
+                <ion-footer>
+                    <ion-toolbar>
+                        <ion-buttons slot="start">
+                            <ion-button color="primary" class="edit-btn" data-id="${postId}">
+                                <ion-icon slot="icon-only" name="create"></ion-icon>
+                            </ion-button>
+                        </ion-buttons>
+                        <ion-buttons slot="end">
+                            <ion-button color="danger" class="delete-btn" data-id="${postId}">
+                                <ion-icon slot="icon-only" name="trash"></ion-icon>
+                            </ion-button>
+                        </ion-buttons>
+                    </ion-toolbar>
+                </ion-footer>
+            </ion-card>
+        `;
+        postList.appendChild(postItem);
+    });
+
+    // Tambahkan event listener setelah elemen dimuat
+    document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", event => {
+            const postId = event.target.closest("ion-button").dataset.id;
+            editPost(postId);
+        });
+    });
+
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", event => {
+            const postId = event.target.closest("ion-button").dataset.id;
+            confirmDelete(postId);
+        });
+    });
+}
+
 
         // Fungsi konfirmasi hapus post dengan ion-alert
         async function confirmDelete(postId) {
