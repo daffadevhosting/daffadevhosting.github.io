@@ -8,6 +8,7 @@ permalink: /product/add/product
 <div class="content">
 <ion-card>
 <ion-card-content>
+<div id="loginForm">
     <ion-text><h2>Login Admin Product</h2></ion-text>
 			<ion-list>
 				<ion-item lines="full">
@@ -22,8 +23,7 @@ permalink: /product/add/product
 				</ion-item>
 			</ion-list>
 		  <ion-button expand="block" fill="outline" id="loginBtn">Sign in</ion-button>
-		  <ion-button expand="block" fill="outline" id="logoutBtn" style="display: none;">Logout</ion-button>
-
+</div>
     <form id="productForm" style="display: none;">
     <h2>Tambah Produk</h2>
 	<p/>
@@ -33,10 +33,11 @@ permalink: /product/add/product
         <input type="text" id="categories" placeholder="Kategori" required><br>
         <input type="text" id="tags" placeholder="Tag" required><br>
         <input type="number" id="rating" placeholder="Rating (1-5)" required><br>
-        <textarea id="images" placeholder="Masukkan URL gambar, pisahkan dengan koma" required></textarea><br>
+        <textarea id="image" placeholder="Masukkan URL gambar, pisahkan dengan koma" required></textarea><br>
         <textarea id="deskripsi" placeholder="Deskripsi Produk" required></textarea><br>
         <button type="submit">Tambah Produk</button>
     </form>
+		  <ion-button expand="block" fill="outline" id="logoutBtn" style="display: none;">Logout</ion-button>
 </ion-card-content>
 </ion-card>
 <div id="productList"></div>
@@ -55,15 +56,19 @@ const firebaseConfig = {
   appId: "1:489703180131:web:4383f5ef04c1d414ce3556",
   measurementId: "G-ZWW4K4NVQ6"
 };
+
+    firebase.initializeApp(firebaseConfig);
+	
   // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+
   // DOM Content Loaded
   document.addEventListener("DOMContentLoaded", function () {
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const productForm = document.getElementById("productForm");
+    const loginForm = document.getElementById("loginForm");
 
     // 🔹 Cek apakah elemen ada sebelum menambahkan event listener
     if (loginBtn && logoutBtn && productForm) {
@@ -75,10 +80,10 @@ const db = firebase.firestore();
           const userCredential = await auth.signInWithEmailAndPassword(email, password);
           const user = userCredential.user;
 
-          // Cek apakah user adalah admin
-          const idTokenResult = await user.getIdTokenResult();
-          if (idTokenResult.claims.admin) {
-            showAlert("Login berhasil sebagai admin");
+            // Cek apakah user adalah admin di Firestore
+            const adminDoc = await db.collection("admins").doc(user.uid).get();
+            if (adminDoc.exists) {
+            showAlert("Login sebagai admin berhasil");
             updateUI(true);
           } else {
             showAlert("Anda bukan admin product!");
@@ -100,10 +105,12 @@ const db = firebase.firestore();
       function updateUI(isAdmin) {
         if (isAdmin) {
           productForm.style.display = "block";
+          loginForm.style.display = "none";
           loginBtn.style.display = "none";
           logoutBtn.style.display = "block";
         } else {
           productForm.style.display = "none";
+          loginForm.style.display = "block";
           loginBtn.style.display = "block";
           logoutBtn.style.display = "none";
         }
@@ -120,6 +127,114 @@ const db = firebase.firestore();
       });
     }
   });
+  
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("productForm");
+    const productList = document.getElementById("productList");
+
+    if (!form) {
+        console.error("Form dengan ID 'productForm' tidak ditemukan!");
+        return;
+    }
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        // Pastikan semua elemen input ada
+        const titleInput = document.getElementById("title");
+        const hargaInput = document.getElementById("harga");
+        const stokInput = document.getElementById("stok");
+        const categoriesInput = document.getElementById("categories");
+        const tagsInput = document.getElementById("tags");
+        const ratingInput = document.getElementById("rating");
+        const imageInput = document.getElementById("image");
+        const deskripsiInput = document.getElementById("deskripsi");
+
+        if (!titleInput || !hargaInput || !stokInput || !categoriesInput || !tagsInput || !ratingInput || !imageInput || !deskripsiInput) {
+            console.error("Satu atau lebih elemen input tidak ditemukan!");
+            return;
+        }
+
+        const images = imageInput.value.split(",").map(img => img.trim()).filter(img => img !== "");
+
+        const product = {
+            title: titleInput.value,
+            harga: hargaInput.value,
+            stok: stokInput.value,
+            categories: categoriesInput.value,
+            tags: tagsInput.value,
+            rating: parseFloat(ratingInput.value) || 0,
+            images: images,
+            deskripsi: deskripsiInput.value
+        };
+
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                showAlert("Anda harus login sebagai admin!");
+                return;
+            }
+
+            // Refresh token untuk memastikan claims terbaru
+            await user.getIdToken(true);
+            const idTokenResult = await user.getIdTokenResult();
+
+            console.log("User claims:", idTokenResult.claims);
+
+            if (!idTokenResult.claims.admin) {
+                showAlert("Anda bukan admin!");
+                return;
+            }
+
+            await db.collection("products").add(product);
+            showAlert("Produk berhasil ditambahkan!", "success");
+            form.reset();
+            loadProducts();
+        } catch (error) {
+            console.error("Error:", error);
+            showAlert("Gagal menambahkan produk.");
+        }
+    });
+
+    async function loadProducts() {
+        if (!productList) {
+            console.error("Elemen 'productList' tidak ditemukan!");
+            return;
+        }
+        
+        productList.innerHTML = "";
+
+        try {
+            const querySnapshot = await db.collection("products").get();
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const productElement = document.createElement("div");
+
+                let imageSlides = data.images.map((img, index) => `
+                    <div class="slide" ${index === 0 ? 'style="display:block;"' : 'style="display:none;"'}>
+                        <img src="${img}" alt="Product Image">
+                    </div>
+                `).join("");
+
+                productElement.innerHTML = `
+                    <div class="carousel">
+                        ${imageSlides}
+                        <button class="prev" onclick="prevSlide(this)">&#10094;</button>
+                        <button class="next" onclick="nextSlide(this)">&#10095;</button>
+                    </div>
+                    <h3>${data.title}</h3>
+                    <p>Harga: ${data.harga}</p>
+                    <p>${data.deskripsi}</p>
+                `;
+                productList.appendChild(productElement);
+            });
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    loadProducts();
+});
 
 function showAlert(message) {
     // Buat elemen ion-toast
@@ -134,7 +249,6 @@ function showAlert(message) {
     toast.present();
 }
 </script>
-<script type="module" src="{{site.baseurl}}/product/add/product.js"></script>
 
 <style>
 .carousel {

@@ -1,21 +1,50 @@
+// Pastikan Firebase sudah diinisialisasi
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// Initialize Firebase Auth dan Firestore
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("productForm");
     const productList = document.getElementById("productList");
 
+    if (!form) {
+        console.error("Form dengan ID 'productForm' tidak ditemukan!");
+        return;
+    }
+
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const images = document.getElementById("image").value.split(",").map(img => img.trim()).filter(img => img !== "");
+        // Pastikan semua elemen input ada
+        const titleInput = document.getElementById("title");
+        const hargaInput = document.getElementById("harga");
+        const stokInput = document.getElementById("stok");
+        const categoriesInput = document.getElementById("categories");
+        const tagsInput = document.getElementById("tags");
+        const ratingInput = document.getElementById("rating");
+        const imageInput = document.getElementById("image");
+        const deskripsiInput = document.getElementById("deskripsi");
+
+        if (!titleInput || !hargaInput || !stokInput || !categoriesInput || !tagsInput || !ratingInput || !imageInput || !deskripsiInput) {
+            console.error("Satu atau lebih elemen input tidak ditemukan!");
+            return;
+        }
+
+        const images = imageInput.value.split(",").map(img => img.trim()).filter(img => img !== "");
 
         const product = {
-            title: document.getElementById("title").value,
-            harga: document.getElementById("harga").value,
-            stok: document.getElementById("stok").value,
-            categories: document.getElementById("categories").value,
-            tags: document.getElementById("tags").value,
-            rating: parseFloat(document.getElementById("rating").value),
+            title: titleInput.value,
+            harga: hargaInput.value,
+            stok: stokInput.value,
+            categories: categoriesInput.value,
+            tags: tagsInput.value,
+            rating: parseFloat(ratingInput.value) || 0,
             images: images,
-            deskripsi: document.getElementById("deskripsi").value
+            deskripsi: deskripsiInput.value
         };
 
         try {
@@ -25,14 +54,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Refresh token untuk memastikan claims terbaru
+            await user.getIdToken(true);
             const idTokenResult = await user.getIdTokenResult();
+
+            console.log("User claims:", idTokenResult.claims);
+
             if (!idTokenResult.claims.admin) {
                 showAlert("Anda bukan admin!");
                 return;
             }
 
             await db.collection("products").add(product);
-            showAlert("Produk berhasil ditambahkan!");
+            showAlert("Produk berhasil ditambahkan!", "success");
             form.reset();
             loadProducts();
         } catch (error) {
@@ -42,6 +76,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     async function loadProducts() {
+        if (!productList) {
+            console.error("Elemen 'productList' tidak ditemukan!");
+            return;
+        }
+        
         productList.innerHTML = "";
 
         try {
@@ -76,12 +115,12 @@ document.addEventListener("DOMContentLoaded", function () {
     loadProducts();
 });
 
-function showAlert(message) {
+function showAlert(message, type = "danger") {
     // Buat elemen ion-toast
     const toast = document.createElement("ion-toast");
     toast.message = message;
     toast.duration = 5000;
-    toast.color = "danger"; // Bisa diubah sesuai kebutuhan
+    toast.color = type; // Bisa "danger" atau "success"
     toast.position = "top"; // Posisi toast
 
     // Tambahkan ke dalam body dan tampilkan
