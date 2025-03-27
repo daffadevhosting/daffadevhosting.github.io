@@ -15,7 +15,6 @@ permalink: /:categories/:title/  # Struktur URL postingan
 
 # Plugins
 plugins:
-  - jekyll-sass-converter
   - jekyll-paginate
 
 # Konfigurasi Paginasi
