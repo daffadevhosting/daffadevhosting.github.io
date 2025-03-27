@@ -24,7 +24,7 @@ paginate_path: "/page:num/"  # Format URL untuk paginasi
 
 # Konfigurasi SASS/SCSS
 sass:
-  sass_dir: assets/sass  # Direktori SASS
+  sass_dir: _sass  # Direktori SASS
   style: compressed  # Bisa diganti ke expanded untuk debugging
 
 # Exclude (file yang tidak di-render oleh Jekyll)
