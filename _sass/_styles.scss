@@ -9,7 +9,7 @@
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
 			grid-template-row: auto;
-		@include responsive(mobile) {
+		@include mobile {
 			grid-template-columns: repeat(1, 1fr);
 		  }
 	}
@@ -31,13 +31,13 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-row: auto;
-@include responsive(mobile) {
+@include mobile {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .content {
-@include responsive(tablet) {
+@include mobile {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 	}
@@ -52,11 +52,8 @@
 	object-fit: cover;
 	background-size: cover;
 	background-position: center;
-@include responsive(mobile) {
+@include mobile {
 	height: 220px;
-	}
-@include responsive(tablet) {
-	height: 320px;
 	}
 }
     .flex_center {
