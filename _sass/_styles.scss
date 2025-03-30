@@ -1,5 +1,5 @@
-@use "variables/mixins" as *;
-@use "base/reset" as *;
+@forward "variables/mixins";
+@forward "base/reset";
 
 .content {
 	max-width: 900px;
