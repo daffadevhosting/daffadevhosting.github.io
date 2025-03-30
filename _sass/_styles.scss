@@ -116,7 +116,7 @@
     flex-wrap: nowrap;
     align-items: center;
     justify-content: center;
-@include responsive(mobile) {
+@include mobile {
     flex-wrap: wrap;
 	}
 	.img_login {
