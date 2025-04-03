@@ -14,7 +14,7 @@ author:
 permalink: /:title  # Struktur URL postingan
 
 collections:
-  product:
+  products:
     output: true
 
 # Plugins
