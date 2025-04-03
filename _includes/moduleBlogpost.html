@@ -49,7 +49,7 @@
 
             const post = doc.data();
 
-            postContainer.innerHTML = `
+            postContainer.innerHTML = `<ion-card>
                 <ion-text><h1 class="mb-3">${post.title}</h1></ion-text>
                 <ion-note class="text-muted"><sub>Dipublikasikan pada ${post.timestamp ? post.timestamp.toDate().toLocaleDateString() : "Tanggal tidak tersedia"}</sub></ion-note>
                 <p class="">
@@ -58,6 +58,7 @@
                         <ion-text class="text-start">${post.content}</ion-text>
                     </div>
                 </p>
+</ion-card>
             `;
         } catch (error) {
             postContainer.innerHTML = `<p class="text_center">Gagal memuat artikel.</p>`;
