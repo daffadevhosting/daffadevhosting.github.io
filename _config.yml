@@ -13,6 +13,10 @@ author:
 # Layout
 permalink: /:title  # Struktur URL postingan
 
+collections:
+  product:
+    output: true
+
 # Plugins
 plugins:
   - jekyll-paginate
