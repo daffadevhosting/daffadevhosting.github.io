@@ -50,8 +50,8 @@
             const post = doc.data();
 
             postContainer.innerHTML = `<ion-card>
-                <ion-card-header><ion-card-title class="mb-3">${post.title}</ion-card-title></ion-card-header>
-                <ion-note class="text-muted"><sub>Dipublikasikan pada ${post.timestamp ? post.timestamp.toDate().toLocaleDateString() : "Tanggal tidak tersedia"}</sub></ion-note>
+                <ion-card-header><ion-card-title class="mb-3">${post.title}</ion-card-title>
+                <ion-note class="text-muted"><sub>Dipublikasikan pada ${post.timestamp ? post.timestamp.toDate().toLocaleDateString() : "Tanggal tidak tersedia"}</sub></ion-note></ion-card-header>
                     <img src="${post.image || 'https://ionicframework.com/docs/img/demos/card-media.png'}"class="img-thumb"alt="${post.title}">
                 <ion-card-content class="">
                         <ion-text class="text-start">${post.content}</ion-text>
