@@ -11,7 +11,7 @@ author:
   email: "admin@dev.id"
 
 # Layout
-permalink: :title  # Struktur URL postingan
+permalink: /:title  # Struktur URL postingan
 
 # Plugins
 plugins:
