@@ -50,14 +50,12 @@
             const post = doc.data();
 
             postContainer.innerHTML = `<ion-card>
-                <ion-text><h1 class="mb-3">${post.title}</h1></ion-text>
+                <ion-card-header><ion-card-title class="mb-3">${post.title}</ion-card-title></ion-card-header>
                 <ion-note class="text-muted"><sub>Dipublikasikan pada ${post.timestamp ? post.timestamp.toDate().toLocaleDateString() : "Tanggal tidak tersedia"}</sub></ion-note>
-                <p class="">
                     <img src="${post.image || 'https://ionicframework.com/docs/img/demos/card-media.png'}"class="img-thumb"alt="${post.title}">
-                    <div class='card p-3 mb-2'>
+                <ion-card-content class="">
                         <ion-text class="text-start">${post.content}</ion-text>
-                    </div>
-                </p>
+                </ion-card-content>
 </ion-card>
             `;
         } catch (error) {
