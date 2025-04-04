@@ -59,8 +59,7 @@
                 if (index === querySnapshot.docs.length - 1) lastVisible = doc; // Simpan dokumen terakhir di halaman ini
                 
                 html += `
-                    <ion-card>
-    <img class="lazyload" data-src="${post.image}" alt="${post.title}">
+                    <ion-card><img src="${post.image || 'https://ionicframework.com/docs/img/demos/card-media.png'}"class=""alt="${post.title}">
                         <ion-card-header>
                             <ion-card-title>${post.title}</ion-card-title>
                         </ion-card-header>
