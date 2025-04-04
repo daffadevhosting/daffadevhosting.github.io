@@ -60,7 +60,10 @@
                 
                 html += `
                     <ion-card>
-                        <img src="${post.image || 'https://ionicframework.com/docs/img/demos/card-media.png'}" class="card-img-top" alt="${post.title}" loading="lazy">
+  <div class="image-container">
+    <ion-spinner name="crescent" class="spinner"></ion-spinner>
+    <img class="lazyload" data-src="${post.image || 'https://via.placeholder.com/600x400'}"" alt="${post.title}">
+  </div>
                         <ion-card-header>
                             <ion-card-title>${post.title}</ion-card-title>
                         </ion-card-header>
@@ -139,4 +142,53 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-row: auto;
 }
+.image-container {
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.image-container img {
+  display: none;
+  width: 100%;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const lazyImages = document.querySelectorAll(".lazyload");
+
+  if ("IntersectionObserver" in window) {
+    let observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          let img = entry.target;
+          let spinner = img.previousElementSibling;
+
+          img.src = img.dataset.src;
+          img.onload = () => {
+            img.style.display = "block";
+            spinner.style.display = "none";
+          };
+
+          observer.unobserve(img);
+        }
+      });
+    });
+
+    lazyImages.forEach(img => observer.observe(img));
+  } else {
+    // Fallback untuk browser lama
+    lazyImages.forEach(img => {
+      img.src = img.dataset.src;
+      img.style.display = "block";
+    });
+  }
+});
+</script>
