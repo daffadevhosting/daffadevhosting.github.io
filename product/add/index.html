@@ -83,6 +83,13 @@ h2 {
   box-shadow: 0 4px 12px rgba(96,165,250,0.07);
   animation: fadeIn 0.8s;
 }
+ion-toast {
+  animation: slideDown 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes slideDown {
+  from { opacity:0; transform: translateY(-40px);}
+  to { opacity:1; transform: translateY(0);}
+}
 </style>
 <div class="content">
 <ion-card>
