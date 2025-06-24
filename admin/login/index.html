@@ -4,6 +4,57 @@ title: Login
 permalink: /login
 ---
 
+<style>
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4d9fef 0%, #2a5298 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', Arial, sans-serif;
+  }
+  .center_parent {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .flex_login {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border-radius: 18px;
+    padding: 36px 28px;
+    background: #fff;
+    width: 350px;
+    margin: 0 auto;
+    animation: fadeIn 0.8s;
+  }
+  .img_login img {
+    width: 80px;
+    margin-bottom: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 16px rgba(77,159,239,0.2);
+  }
+  ion-input, ion-button {
+    margin-top: 10px !important;
+  }
+  ion-button {
+    background: linear-gradient(90deg, #4d9fef 0%, #2a5298 100%);
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  ion-button:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 2px 8px rgba(77,159,239,0.15);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
 <div class="content center_parent">
 <ion-card class="flex_login">
 <div class="img_login">
