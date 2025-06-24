@@ -328,7 +328,25 @@ function showAlert(message) {
     toast.present();
 }
 </script>
+<script>
+window.prevSlide = function(btn) {
+  const carousel = btn.closest('.carousel');
+  const slides = carousel.querySelectorAll('.slide');
+  let idx = [...slides].findIndex(slide => slide.style.display === 'block');
+  slides[idx].style.display = 'none';
+  idx = (idx - 1 + slides.length) % slides.length;
+  slides[idx].style.display = 'block';
+};
 
+window.nextSlide = function(btn) {
+  const carousel = btn.closest('.carousel');
+  const slides = carousel.querySelectorAll('.slide');
+  let idx = [...slides].findIndex(slide => slide.style.display === 'block');
+  slides[idx].style.display = 'none';
+  idx = (idx + 1) % slides.length;
+  slides[idx].style.display = 'block';
+};
+</script>
 <style>
 .carousel {
     position: relative;
