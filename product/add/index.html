@@ -4,7 +4,86 @@ title: Add Produk
 permalink: /product/add/product
 ---
 
+<style>
+body {
+  background: linear-gradient(135deg, #dbeafe 0%, #60a5fa 100%);
+  min-height: 100vh;
+  font-family: 'Inter', Arial, sans-serif;
+}
 
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+ion-card {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  border-radius: 18px;
+  padding: 36px 28px;
+  background: #fff;
+  width: 100%;
+  max-width: 420px;
+  margin: 20px auto;
+  animation: fadeIn 0.8s;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 15px;
+  background: #f9fafb;
+  transition: border 0.2s;
+}
+
+input:focus, textarea:focus {
+  border: 1.5px solid #60a5fa;
+  outline: none;
+  background: #fff;
+}
+
+button[type="submit"], ion-button {
+  margin-top: 12px;
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 100%);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(96,165,250,0.10);
+}
+
+button[type="submit"]:hover, ion-button:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 16px rgba(59,130,246,0.18);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  color: #2563eb;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+#productList > div {
+  margin-top: 22px;
+  background: #f1f5f9;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(96,165,250,0.07);
+  animation: fadeIn 0.8s;
+}
+</style>
 <div class="content">
 <ion-card>
 <ion-card-content>
