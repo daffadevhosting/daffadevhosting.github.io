@@ -1,0 +1,32 @@
+    <div id="suggestions" class="relative z-[9999] flex flex-wrap gap-2 px-3 py-2 text-sm text-gray-300 border-t border-gray-800 bg-gray-900 z-80">
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Apa produk terbaikmu?">Apa produk terbaikmu?</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Punya template CV?">Punya template CV?</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Ada ebook bisnis?">Ada ebook bisnis?</button>
+    </div>
+
+<div id="chat-launcher" class="fixed inset-0 flex items-center justify-center z-50 transition-all duration-500">
+
+  <form id="chat-launcher-form"
+    class="flex justify-center items-center bg-gray-800 w-80 text-white px-4 py-2 rounded-full shadow-md transition-all duration-500 w-60">
+    <input id="launcher-input" type="text" placeholder="Tulis pesan..."
+      class="bg-transparent outline-none w-full h-10 text-left placeholder-gray-400" autocomplete="off" />
+    <div id="chat-btn-area" class="flex gap-2 items-center hidden">
+      <button id="mic-button" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600">
+       <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>
+      </button>
+      <button id="send-button" class="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
+       <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send-icon lucide-send"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
+      </button>
+    </div>
+  </form>
+</div>
+
+<div id="chat-welcome" class="text-center text-gray-300 text-lg md:text-xl p-6 transition-all duration-700 opacity-100 blur-0">
+  👋 Hai! Saya <span class="font-bold text-blue-400">L Y Я A</span><br>
+  Siap bantu kamu cari produk digital terbaik 😎
+</div>
+
+<!-- Chat Box Area -->
+<div id="chat-box-wrapper" class="hidden max-w-sm md:max-w-xl lg:max-w-3xl fixed top-0 left-0 right-0 bottom-20 overflow-y-auto p-4 space-y-4 bg-transparent text-white z-40 transition-all duration-500 ease-in-out transform scale-0 opacity-0" style="max-height: 80vh;margin: auto;margin-top: 50px;">
+  <div id="chat-messages" class="w-full verflow-y-auto scroll-smooth h-[400px]"></div>
+</div>

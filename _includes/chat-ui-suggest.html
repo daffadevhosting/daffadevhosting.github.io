@@ -1,0 +1,25 @@
+<!-- _includes/chat-ui.html -->
+<div id="chat-wrapper" class="fixed inset-0 flex items-center justify-center z-50">
+  <div id="chat-box" class="hidden flex flex-col max-h-[70vh] w-full max-w-md mx-auto bg-gray-900 text-white border border-gray-700 rounded-lg shadow-lg overflow-hidden">
+    <div class="flex-1 overflow-y-auto p-4 space-y-2" id="chat-messages"></div>
+
+    <!-- Saran Tombol -->
+    <div id="suggestions" class="flex flex-wrap gap-2 px-3 py-2 text-sm text-gray-300 border-t border-gray-800 bg-gray-900">
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Apa produk terbaikmu?">Apa produk terbaikmu?</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Punya template CV?">Punya template CV?</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Ada ebook bisnis?">Ada ebook bisnis?</button>
+    </div>
+
+    <form id="chat-form" class="bg-gray-800 p-3 flex gap-2 border-t border-gray-700">
+      <input id="user-input" type="text" placeholder="Tulis pesan..."
+        class="flex-1 bg-gray-700 text-white placeholder-gray-400 rounded px-4 py-2 focus:outline-none focus:ring focus:ring-blue-500 transition" />
+      <button type="submit"
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Kirim</button>
+    </form>
+  </div>
+
+  <!-- Floating button -->
+  <button id="floating-input" class="absolute bg-gray-800 text-white px-6 py-3 rounded-lg shadow-md border border-gray-700 hover:bg-gray-700 transition-all">
+    Chat dengan DaffaBot 💬
+  </button>
+</div>
