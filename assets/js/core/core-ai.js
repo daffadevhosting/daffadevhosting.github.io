@@ -83,7 +83,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   launcherInput.addEventListener("blur", () => {
     setTimeout(() => {
       const isActive = document.activeElement;
-      const allowed = ["launcher-input", "send-button", "mic-button"];
+      const allowed = ["launcher-input", "send-button", "mic-button", "href"];
 
       if (!allowed.includes(isActive?.id)) {
         resetLauncher();
@@ -177,7 +177,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     bubble.className = "bg-blue-100 dark:bg-gray-800 text-gray-800 mt-4 dark:text-gray-200 px-4 py-2 rounded-xl flex items-center gap-2 shadow";
 
     const playBtn = document.createElement("button");
-    playBtn.innerHTML = `<svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>`;
+    playBtn.innerHTML = `<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>`;
     playBtn.className = "text-lg";
     playBtn.onclick = () => speakWithTTS(label.includes("Daffa") ? text : label);
 
