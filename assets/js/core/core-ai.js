@@ -5,8 +5,8 @@ import {
   resetVoiceFlag,
   setVoiceFlag
 } from '../voice-engine.js';
-import { detectIntentVn } from '../detectIntentVn.js';
 import { detectIntent } from '../intents.js';
+import { detectIntentVn } from '../detectIntentVn.js';
 import { loadProdukData, getProdukByIntent } from '../produkService.js';
 import { renderProdukCards, renderMarkdown, renderCardsFromAI } from '../render.js';
 import { buildPrompt } from '../promptBuilder.js';
@@ -44,7 +44,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     return;
   }
 
-  const prompt = buildPrompt(transcript, intent); // ✅ arahkan ke prompt AI
+  const prompt = buildPrompt(transcript, intent, intentVn); // ✅ arahkan ke prompt AI
 
   addTyping();
   try {
@@ -111,8 +111,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     hideWelcomeMessage();
 
     const intent = detectIntent(message);
-    const intentVn = detectIntentVn(message);
-    const produk = getProdukByIntent(intent, intentVn);
+    const produk = getProdukByIntent(intent);
 
     if (produk.length > 0) {
       const cardHTML = renderProdukCards(produk);
