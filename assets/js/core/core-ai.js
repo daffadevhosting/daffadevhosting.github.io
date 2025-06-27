@@ -5,7 +5,7 @@ import {
   resetVoiceFlag,
   setVoiceFlag
 } from '../voice-engine.js';
-
+import { detectIntentVn } from '../detectIntentVn.js';
 import { detectIntent } from '../intents.js';
 import { loadProdukData, getProdukByIntent } from '../produkService.js';
 import { renderProdukCards, renderMarkdown, renderCardsFromAI } from '../render.js';
@@ -29,10 +29,22 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   if (!transcript?.trim()) return;
 
   setVoiceFlag();
-
   renderVoiceMessage("user", null, "voice note dikirim");
 
-  const prompt = buildPrompt(transcript);
+  const intent = detectIntent(transcript); // ✅ intent berdasarkan VN
+  const intentVn = detectIntentVn(transcript);
+  const produk = getProdukByIntent(intent, intentVn);
+
+  if (produk.length > 0) {
+    const cardHTML = renderProdukCards(produk);
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = cardHTML;
+    messages.appendChild(wrapper);
+    scrollToBottom();
+    return;
+  }
+
+  const prompt = buildPrompt(transcript, intent); // ✅ arahkan ke prompt AI
 
   addTyping();
   try {
@@ -43,8 +55,6 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     removeTyping();
     addMessage("bot", "❌ Error: " + err.message);
   }
-
-  console.log("🎤 Voice input transcribed:", transcript);
 });
 
   await loadProdukData();
@@ -101,7 +111,8 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     hideWelcomeMessage();
 
     const intent = detectIntent(message);
-    const produk = getProdukByIntent(intent);
+    const intentVn = detectIntentVn(message);
+    const produk = getProdukByIntent(intent, intentVn);
 
     if (produk.length > 0) {
       const cardHTML = renderProdukCards(produk);
