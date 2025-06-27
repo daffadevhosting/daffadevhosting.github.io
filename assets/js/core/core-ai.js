@@ -27,8 +27,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 setupVoiceRecognition(micBtn, async (transcript) => {
   if (!transcript?.trim()) return;
+
   setVoiceFlag();
+
   renderVoiceMessage("user", null, "voice note dikirim");
+
   const prompt = buildPrompt(transcript);
 
   addTyping();
@@ -40,6 +43,8 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     removeTyping();
     addMessage("bot", "❌ Error: " + err.message);
   }
+
+  console.log("🎤 Voice input transcribed:", transcript);
 });
 
   await loadProdukData();
