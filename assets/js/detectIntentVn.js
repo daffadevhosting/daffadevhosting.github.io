@@ -5,6 +5,14 @@
  * Digunakan oleh AI chatbot untuk merespons lebih tepat.
  */
 export const detectIntentVn = (text) => {
+  text = text
+    .replace(/\*\*/g, '')
+    .replace(/[\*_`>#~]/g, '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/\\n/g, ' ')
+    .trim();
+
+  if (!text) return;
   const lower = text.toLowerCase();
   if (lower.includes("cv")) return "cv";
   if (lower.includes("ebook") || lower.includes("buku")) return "ebook";
