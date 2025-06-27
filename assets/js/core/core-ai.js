@@ -1,7 +1,14 @@
+import {
+  setupVoiceRecognition,
+  speakWithTTS,
+  isInputFromVoice,
+  resetVoiceFlag,
+  setVoiceFlag
+} from '../voice-engine.js';
+
 import { detectIntent } from '../intents.js';
 import { loadProdukData, getProdukByIntent } from '../produkService.js';
 import { renderProdukCards, renderMarkdown, renderCardsFromAI } from '../render.js';
-import { speakWithTTS } from '../tts.js';
 import { buildPrompt } from '../promptBuilder.js';
 import { sendToAI } from '../aiService.js';
 import { scrollToBottom } from '../scroll.js';
@@ -9,8 +16,6 @@ import { scrollToBottom } from '../scroll.js';
 let isVoiceMode = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadProdukData();
-
   const launcher = document.getElementById("chat-launcher");
   const launcherForm = document.getElementById("chat-launcher-form");
   const launcherInput = document.getElementById("launcher-input");
@@ -18,6 +23,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   const messages = document.getElementById("chat-messages");
   const btnArea = document.getElementById("chat-btn-area");
   const micBtn = document.getElementById("mic-button");
+  const welcome = document.getElementById("chat-welcome");
+
+setupVoiceRecognition(micBtn, async (transcript) => {
+  if (!transcript?.trim()) return;
+  setVoiceFlag();
+  renderVoiceMessage("user", null, "voice note dikirim");
+  const prompt = buildPrompt(transcript);
+
+  addTyping();
+  try {
+    const reply = await sendToAI(prompt);
+    removeTyping();
+    handleAIReply(reply);
+  } catch (err) {
+    removeTyping();
+    addMessage("bot", "❌ Error: " + err.message);
+  }
+});
+
+  await loadProdukData();
 
   const resetLauncher = () => {
     launcher.classList.remove("bottom-0", "left-0", "right-0", "items-end", "justify-center");
@@ -25,6 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     launcherForm.classList.remove("rounded-t-lg", "w-full", "max-w-xl");
     launcherForm.classList.add("rounded-full", "w-60");
     chatWrapper.classList.add("hidden", "scale-100", "opacity-100");
+    welcome.classList.remove("opacity-0", "blur-md");
     btnArea.classList.add("hidden");
   };
 
@@ -34,6 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     launcherForm.classList.remove("rounded-full", "w-60");
     launcherForm.classList.add("rounded-t-lg", "w-full", "max-w-xl");
     chatWrapper.classList.remove("hidden", "scale-0", "opacity-0");
+    welcome.classList.add("opacity-0", "blur-md");
     btnArea.classList.remove("hidden");
     launcherInput.focus();
   });
@@ -53,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const welcome = document.getElementById("chat-welcome");
     if (!welcome) return;
     welcome.classList.add("opacity-0", "blur-sm");
-    setTimeout(() => welcome.remove(), 800);
+    setTimeout(() => welcome.classList.remove("opacity-0", "blur-sm"), 800);
   }
 
   launcherForm.addEventListener("submit", async (e) => {
@@ -102,24 +129,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  micBtn?.addEventListener("click", async () => {
-    isVoiceMode = true;
-    hideWelcomeMessage();
-    renderVoiceMessage("user", null, "voice note terkirim");
-    const prompt = buildPrompt("user mengirim voice note");
-    addTyping();
-
-    try {
-      const reply = await sendToAI(prompt);
-      removeTyping();
-      handleAIReply(reply);
-    } catch (err) {
-      removeTyping();
-      addMessage("bot", "❌ Error: " + err.message);
-    }
-  });
-
   function handleAIReply(text) {
+  if (isInputFromVoice()) {
+    speakWithTTS(text);
+    renderVoiceMessage("bot", null, "Lyra mengirim voice note");
+    resetVoiceFlag();
+    return;
+  }
     if (isVoiceMode) {
       speakWithTTS(text);
       renderVoiceMessage("bot", null, "Lyra mengirim voice note");
