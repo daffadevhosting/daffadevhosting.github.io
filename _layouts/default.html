@@ -3,7 +3,7 @@
 
   {% include head.html %}
 
-  <body>
+  <body class="invisible" onload="document.body.classList.remove('invisible')">
 
     <main class="main" aria-label="Content">
       {{ content }}
