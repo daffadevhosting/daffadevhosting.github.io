@@ -116,7 +116,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     if (produk.length > 0) {
       const cardHTML = renderProdukCards(produk);
       const wrapper = document.createElement("div");
-      wrapper.className = "grid grid-cols-1 sm:grid-cols-2 gap-4";
+      wrapper.className = "grid grid-cols-1 sm:grid-cols-3 gap-4";
       wrapper.innerHTML = cardHTML;
       messages.appendChild(wrapper);
       setTimeout(() => scrollToBottom(), 50);

@@ -4,11 +4,11 @@
   {% include head.html %}
 
   <body class="invisible" onload="document.body.classList.remove('invisible')">
-
-    <main class="main" aria-label="Content">
-      {{ content }}
-    </main>
-    
+    <div class="app-container">
+        <main class="main" aria-label="Content">
+ {% include chat-launcher.html %}
+          {{ content }}
+        </main>
+    </div>
   </body>
-
 </html>

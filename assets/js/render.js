@@ -36,7 +36,7 @@ export function renderCardsFromAI(replyText) {
     </div>
   `).join("");
 
-  return `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">${html}</div>`;
+  return `<div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">${html}</div>`;
 }
 
 /**
