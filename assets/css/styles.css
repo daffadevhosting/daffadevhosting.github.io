@@ -26,17 +26,26 @@ body.ready #chat-box-wrapper {
   transition: transform 0.4s ease-in-out;
 }
 #chat-messages {
-  overflow-y: auto;
-  max-height: 100vh; /* atau height tetap sesuai desain */
+    padding: 5px;
+    overflow-y: auto;
+    max-height: 100dvh;
+    height: 100%;
 }
-
+#chat-box-wrapper {
+    max-width: 900px;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
 /* Scrollbar umum (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 2px;
 }
 
 ::-webkit-scrollbar-track {
   background: #1f2937; /* abu gelap */
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -52,4 +61,20 @@ body.ready #chat-box-wrapper {
 * {
   scrollbar-width: thin;
   scrollbar-color: #4b5563 #1f2937;
+}
+
+@media (max-width: 800px) {
+  #chat-messages {
+      padding: 5px;
+      overflow-y: auto;
+      max-height: 100dvh;
+      height: 100%;
+  }
+  #chat-box-wrapper {
+      max-width: 900px;
+      margin: auto;
+      margin-top: 85px;
+      margin-bottom: 15px;
+      overflow: hidden;
+  }
 }
