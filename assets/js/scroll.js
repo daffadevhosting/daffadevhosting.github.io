@@ -2,8 +2,8 @@
  * Scroll chat container ke bawah (smooth & aman)
  */
 export function scrollToBottom() {
-  const container = document.getElementById("chat-messages");
-  if (container) {
-    container.scrollTop = container.scrollHeight;
+  const messages = document.getElementById("chat-messages");
+  if (messages) {
+    messages.scrollTop = messages.scrollHeight;
   }
 }
