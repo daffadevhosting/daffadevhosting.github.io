@@ -40,7 +40,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     const wrapper = document.createElement("div");
     wrapper.innerHTML = cardHTML;
     messages.appendChild(wrapper);
-    scrollToBottom();
+    setTimeout(() => scrollToBottom(), 0);
     return;
   }
 
@@ -134,8 +134,10 @@ setupVoiceRecognition(micBtn, async (transcript) => {
         const cardBlock = document.createElement("div");
         cardBlock.innerHTML = cards;
         messages.appendChild(cardBlock);
+        setTimeout(() => scrollToBottom(), 50);
       } else {
         handleAIReply(reply);
+        setTimeout(() => scrollToBottom(), 50);
       }
 
     } catch (err) {
@@ -149,13 +151,16 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     speakWithTTS(text);
     renderVoiceMessage("bot", null, "Lyra mengirim voice note");
     resetVoiceFlag();
+    setTimeout(() => scrollToBottom(), 50);
     return;
   }
     if (isVoiceMode) {
       speakWithTTS(text);
       renderVoiceMessage("bot", null, "Lyra mengirim voice note");
+      setTimeout(() => scrollToBottom(), 50);
     } else {
       addMessage("bot", text);
+      setTimeout(() => scrollToBottom(), 50);
     }
   }
 
