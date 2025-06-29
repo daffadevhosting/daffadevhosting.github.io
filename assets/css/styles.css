@@ -27,7 +27,7 @@ body.ready #chat-box-wrapper {
 }
 #chat-messages {
   overflow-y: auto;
-  max-height: 60vh; /* atau height tetap sesuai desain */
+  max-height: 100vh; /* atau height tetap sesuai desain */
 }
 
 /* Scrollbar umum (Chrome, Edge, Safari) */
