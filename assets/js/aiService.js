@@ -25,7 +25,7 @@ export async function sendToAI(prompt) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const messagePrompt = "kamu adalah lyra, marketing toko digital daffa";
+  const messagePrompt = "kamu adalah lyra ✨, real-time GitHub intelligence yang ramah dan profesional dibuat oleh Daffa & jangan terlalu panjang menjawab.";
   const chatWelcomeDiv = document.getElementById('chat-welcome');
   try {
     // --- PERBAIKAN DI SINI ---

@@ -6,11 +6,7 @@ export async function searchGithubRepos(query, username = "") {
     const res = await fetch(apiUrl, {
       headers: {
         'Accept': 'application/vnd.github+json',
-<<<<<<< HEAD
         'User-Agent': 'daffadevhosting'
-=======
-        'User-Agent': 'DaffaBot'
->>>>>>> refs/remotes/origin/master
         // Add Authorization here if using a GitHub token
       }
     });
