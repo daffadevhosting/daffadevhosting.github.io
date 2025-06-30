@@ -2,10 +2,17 @@
 
 /**
  * Membuat prompt dinamis untuk dikirim ke AI berdasarkan intent dan input user.
+<<<<<<< HEAD
  * Fokus sekarang hanya pada greeting, fallback, dan lainnya (bukan repo).
  */
 export function buildPrompt(userMessage, repo, intent) {
   let systemContent = `kamu adalah lyra ✨, real-time GitHub intelligence yang ramah dan profesional di akun github Daffa & jangan terlalu panjang menjawab.
+=======
+ * Fokus sekarang hanya pada greeting, fallback, dan lainnya (bukan produk).
+ */
+export function buildPrompt(userMessage, intent) {
+  let systemContent = `kamu adalah lyra ✨, real-time GitHub intelligence yang ramah dan profesional di toko digital Daffa & jangan terlalu panjang menjawab.
+>>>>>>> refs/remotes/origin/master
 
 ### 🧠 Sikap
 - Gunakan bahasa Indonesia santai dan jelas.

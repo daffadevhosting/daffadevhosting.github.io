@@ -10,7 +10,10 @@ import { detectIntentVn } from '../detectIntentVn.js';
 import { renderMarkdown, renderCardsFromAI } from '../render.js';
 import { buildPrompt } from '../promptBuilder-github.js';
 import { sendToAI } from '../aiService.js';
+<<<<<<< HEAD
 import { renderGithubCard } from '../renderGithubCards.js';
+=======
+>>>>>>> refs/remotes/origin/master
 import { handleGithubSearchIntent } from '../githubSearchHandler.js';
 import { scrollToBottom } from '../scroll.js';
 
@@ -35,8 +38,12 @@ setupVoiceRecognition(micBtn, async (transcript) => {
 
   const intent = detectIntent(transcript); // ✅ intent berdasarkan VN
   const intentVn = detectIntentVn(transcript);
+<<<<<<< HEAD
   const card = renderGithubCard(repo); // repo: object satuan dari GitHub
   messages.innerHTML += card;
+=======
+  
+>>>>>>> refs/remotes/origin/master
 
     if (intent === "github_search") {
       await handleGithubSearchIntent(transcript, messages);
@@ -118,10 +125,16 @@ if (intent === "github_search") {
 
     const intent = detectIntent(message);
     
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/master
     if (intent === "github_search") {
       await handleGithubSearchIntent(message, messages);
       return;
     }
+
+    
 
     const prompt = buildPrompt(message, intent);
     addTyping();
