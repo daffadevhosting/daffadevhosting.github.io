@@ -1,7 +1,8 @@
     <div id="suggestions" class="relative z-[9999] flex flex-wrap gap-2 px-3 py-2 text-sm text-gray-300 border-b border-gray-800 bg-gray-900 z-80">
-      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Apa produk terbaikmu?">Apa produk terbaikmu?</button>
-      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Punya template CV?">Punya template CV?</button>
-      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Ada ebook bisnis?">Ada ebook bisnis?</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="Cari repo animasi tailwind">Cari repo animasi tailwind</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="ada repo AI chatbot?">ada repo AI chatbot?</button>
+      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="repo yang trending?">repo yang trending?</button>
+      <div id="ai-notice" class="text-gray-400 text-sm hidden md:block px-3 py-1 italic"></div>
     </div>
 
 <div id="chat-launcher" class="fixed inset-0 flex items-center justify-center z-50 transition-all duration-500">
@@ -13,7 +14,7 @@
       class="bg-transparent outline-none w-full h-10 text-left placeholder-gray-400" autocomplete="off" />
     </div>
     <div id="chat-btn-area" class="flex justify-between items-center gap-2 items-center hidden">
-      <small class="text-gray-300 opacity-0.20"><a href="https://github.com/daffadevhosting/daffadevhosting.github.io">Daffa</a></small>
+      <small class="text-gray-300 opacity-0.20"><a href="https://github.com/daffadevhosting/daffadevhosting.github.io" class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" target="_blank">Daffa</a></small>
       <div>
       <button id="mic-button" type="button" class="cursor-pointer p-2 bg-gray-700 rounded-full hover:bg-gray-600">
        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>
@@ -27,9 +28,8 @@
   </form>
 </div>
 
-<div id="chat-welcome" class="text-center text-gray-300 text-lg md:text-xl p-6 transition-all duration-700 opacity-100 blur-0" style="margin-top: 80px;">
-  👋 Hai! Saya <span class="font-bold text-blue-400">L Y Я A</span><br>
-  Siap bantu kamu cari produk digital terbaik 😎
+<div id="chat-welcome" class="text-center text-gray-300 text-lg md:text-xl p-6 transition-all duration-700 opacity-100 blur-0" style="margin: 80px auto;max-width: 800px;">
+  <span class="font-bold text-blue-400">L Y Я A</span><br>
 </div>
 
 <!-- Chat Box Area -->

@@ -5,12 +5,13 @@ import {
   resetVoiceFlag,
   setVoiceFlag
 } from '../voice-engine.js';
-import { detectIntent } from '../intents.js';
+import { detectIntent } from '../intents-github.js';
 import { detectIntentVn } from '../detectIntentVn.js';
-import { loadProdukData, getProdukByIntent } from '../produkService.js';
-import { renderProdukCards, renderMarkdown, renderCardsFromAI } from '../render.js';
-import { buildPrompt } from '../promptBuilder.js';
+import { renderMarkdown, renderCardsFromAI } from '../render.js';
+import { buildPrompt } from '../promptBuilder-github.js';
 import { sendToAI } from '../aiService.js';
+import { renderGithubCard } from '../renderGithubCards.js';
+import { handleGithubSearchIntent } from '../githubSearchHandler.js';
 import { scrollToBottom } from '../scroll.js';
 
 let isVoiceMode = false;
@@ -24,7 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnArea = document.getElementById("chat-btn-area");
   const micBtn = document.getElementById("mic-button");
   const welcome = document.getElementById("chat-welcome");
-
+  // removed default github search
+  
 setupVoiceRecognition(micBtn, async (transcript) => {
   if (!transcript?.trim()) return;
 
@@ -33,17 +35,21 @@ setupVoiceRecognition(micBtn, async (transcript) => {
 
   const intent = detectIntent(transcript); // ✅ intent berdasarkan VN
   const intentVn = detectIntentVn(transcript);
-  const produk = getProdukByIntent(intent, intentVn);
+  const card = renderGithubCard(repo); // repo: object satuan dari GitHub
+  messages.innerHTML += card;
 
-  if (produk.length > 0) {
-    const cardHTML = renderProdukCards(produk);
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = cardHTML;
-    messages.appendChild(wrapper);
+    if (intent === "github_search") {
+      await handleGithubSearchIntent(transcript, messages);
+      return;
+    }
+
+  
+
+if (intent === "github_search") {
+  await handleGithubSearchIntent(userMessage, messages);
     setTimeout(() => scrollToBottom(), 0);
-    return;
-  }
-
+  return;
+}
   const prompt = buildPrompt(transcript, intent, intentVn); // ✅ arahkan ke prompt AI
 
   addTyping();
@@ -57,7 +63,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   }
 });
 
-  await loadProdukData();
+  
 
   const resetLauncher = () => {
     launcher.classList.remove("bottom-0", "left-0", "right-0", "items-end", "justify-center");
@@ -83,7 +89,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   launcherInput.addEventListener("blur", () => {
     setTimeout(() => {
       const isActive = document.activeElement;
-      const allowed = ["launcher-input", "send-button", "mic-button", "href"];
+      const allowed = ["launcher-input", "send-button", "mic-button", "chat-launcher-form", "grid", "href", "chat-messages"];
 
       if (!allowed.includes(isActive?.id)) {
         resetLauncher();
@@ -111,15 +117,9 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     hideWelcomeMessage();
 
     const intent = detectIntent(message);
-    const produk = getProdukByIntent(intent);
-
-    if (produk.length > 0) {
-      const cardHTML = renderProdukCards(produk);
-      const wrapper = document.createElement("div");
-      wrapper.className = "grid grid-cols-1 sm:grid-cols-3 gap-4";
-      wrapper.innerHTML = cardHTML;
-      messages.appendChild(wrapper);
-      setTimeout(() => scrollToBottom(), 50);
+    
+    if (intent === "github_search") {
+      await handleGithubSearchIntent(message, messages);
       return;
     }
 
@@ -168,7 +168,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     const bubble = document.createElement("div");
     bubble.className = sender === "user"
       ? "text-right text-blue-400 my-2 text-sm"
-      : "text-left text-gray-300 my-2 text-sm";
+      : "text-left text-gray-300 my-2 text-md";
     bubble.innerHTML = sender === "bot" ? renderMarkdown(text) : `<strong>Kamu:</strong><br/> ${text}`;
     messages.appendChild(bubble);
     setTimeout(() => scrollToBottom(), 50);
@@ -227,4 +227,39 @@ document.addEventListener("DOMContentLoaded", () => {
       form.dispatchEvent(new Event("submit"));
     });
   });
+});
+
+const noticeTexts = [
+  "📝 Silakan ketik nama repository untuk melihat hasilnya...",
+  "🔍 Kamu juga bisa ketik username GitHub (misal: daffadevhosting)",
+  "✨ Contoh: \"repo tailwind animasi\" atau \"chatbot ai\""
+];
+
+function simulateTyping(texts, targetId, delay = 40, pause = 800) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+
+  let index = 0;
+
+  function typeLine(line) {
+    target.innerHTML = "";
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < line.length) {
+        target.innerHTML += line[i++];
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          index = (index + 1) % texts.length;
+          typeLine(texts[index]);
+        }, pause);
+      }
+    }, delay);
+  }
+
+  typeLine(texts[index]);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  simulateTyping(noticeTexts, "ai-notice");
 });

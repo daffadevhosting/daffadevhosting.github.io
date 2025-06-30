@@ -14,7 +14,7 @@ export const detectIntentVn = (text) => {
 
   if (!text) return;
   const lower = text.toLowerCase();
-  if (lower.includes("cv")) return "cv";
+  if (lower.includes("repo")) return "repositori";
   if (lower.includes("ebook") || lower.includes("buku")) return "ebook";
   if (lower.includes("desain") || lower.includes("promo")) return "desain";
 

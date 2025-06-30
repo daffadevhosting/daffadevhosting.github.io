@@ -2,13 +2,13 @@
 
 /**
  * Mendeteksi intent user berdasarkan kata kunci dari pesan teks.
- * Digunakan oleh AI chatbot untuk merespons lebih tepat.
+ * Sekarang difokuskan hanya untuk pencarian GitHub.
  */
 export const detectIntent = (message) => {
   const msg = message.toLowerCase();
 
   if (msg.match(/halo|hai|hi|assalam|pagi|siang|sore/)) return "greeting";
-  if (msg.match(/(ada repo)?(sitori|repo|punya repo apa|repo apa|list repo)/)) return "list_repo";
+  if (msg.match(/repo|repositori|github|cari repo/)) return "github_search";
 
-  return "fallback"; // default jika tidak dikenali
+  return "fallback";
 };
