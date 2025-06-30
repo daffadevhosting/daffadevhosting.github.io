@@ -5,12 +5,12 @@ import {
   resetVoiceFlag,
   setVoiceFlag
 } from '../voice-engine.js';
-import { detectIntent } from '../intents.js';
+import { detectIntent } from '../intents-github.js';
 import { detectIntentVn } from '../detectIntentVn.js';
-import { loadProdukData, getProdukByIntent } from '../produkService.js';
-import { renderProdukCards, renderMarkdown, renderCardsFromAI } from '../render.js';
-import { buildPrompt } from '../promptBuilder.js';
+import { renderMarkdown, renderCardsFromAI } from '../render.js';
+import { buildPrompt } from '../promptBuilder-github.js';
 import { sendToAI } from '../aiService.js';
+import { handleGithubSearchIntent } from '../githubSearchHandler.js';
 import { scrollToBottom } from '../scroll.js';
 
 let isVoiceMode = false;
@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnArea = document.getElementById("chat-btn-area");
   const micBtn = document.getElementById("mic-button");
   const welcome = document.getElementById("chat-welcome");
-
+  // removed default github search
+  
 setupVoiceRecognition(micBtn, async (transcript) => {
   if (!transcript?.trim()) return;
 
@@ -33,17 +34,20 @@ setupVoiceRecognition(micBtn, async (transcript) => {
 
   const intent = detectIntent(transcript); // ✅ intent berdasarkan VN
   const intentVn = detectIntentVn(transcript);
-  const produk = getProdukByIntent(intent, intentVn);
+  
 
-  if (produk.length > 0) {
-    const cardHTML = renderProdukCards(produk);
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = cardHTML;
-    messages.appendChild(wrapper);
+    if (intent === "github_search") {
+      await handleGithubSearchIntent(transcript, messages);
+      return;
+    }
+
+  
+
+if (intent === "github_search") {
+  await handleGithubSearchIntent(userMessage, messages);
     setTimeout(() => scrollToBottom(), 0);
-    return;
-  }
-
+  return;
+}
   const prompt = buildPrompt(transcript, intent, intentVn); // ✅ arahkan ke prompt AI
 
   addTyping();
@@ -57,7 +61,7 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   }
 });
 
-  await loadProdukData();
+  
 
   const resetLauncher = () => {
     launcher.classList.remove("bottom-0", "left-0", "right-0", "items-end", "justify-center");
@@ -111,17 +115,14 @@ setupVoiceRecognition(micBtn, async (transcript) => {
     hideWelcomeMessage();
 
     const intent = detectIntent(message);
-    const produk = getProdukByIntent(intent);
+    
 
-    if (produk.length > 0) {
-      const cardHTML = renderProdukCards(produk);
-      const wrapper = document.createElement("div");
-      wrapper.className = "grid grid-cols-1 sm:grid-cols-3 gap-4";
-      wrapper.innerHTML = cardHTML;
-      messages.appendChild(wrapper);
-      setTimeout(() => scrollToBottom(), 50);
+    if (intent === "github_search") {
+      await handleGithubSearchIntent(message, messages);
       return;
     }
+
+    
 
     const prompt = buildPrompt(message, intent);
     addTyping();
