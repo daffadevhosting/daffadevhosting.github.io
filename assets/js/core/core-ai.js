@@ -15,6 +15,7 @@ import { handleGithubSearchIntent } from '../githubSearchHandler.js';
 import { scrollToBottom } from '../scroll.js';
 
 let isVoiceMode = false;
+let repo = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
   const launcher = document.getElementById("chat-launcher");
@@ -37,13 +38,6 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   const intentVn = detectIntentVn(transcript);
   const card = renderGithubCard(repo); // repo: object satuan dari GitHub
   messages.innerHTML += card;
-
-    if (intent === "github_search") {
-      await handleGithubSearchIntent(transcript, messages);
-      return;
-    }
-
-  
 
 if (intent === "github_search") {
   await handleGithubSearchIntent(userMessage, messages);
