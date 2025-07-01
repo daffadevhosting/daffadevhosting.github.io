@@ -1,0 +1,5 @@
+{
+  "MODEL_NAME": "mistralai/mistral-7b-instruct",
+  "PROJECT_TITLE": "AI Cerita Interaktif",
+  "API_BASE_URL": "https://nama-worker.pages.dev"
+}

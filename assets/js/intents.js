@@ -8,7 +8,13 @@ export const detectIntent = (message) => {
   const msg = message.toLowerCase();
 
   if (msg.match(/halo|hai|hi|assalam|pagi|siang|sore/)) return "greeting";
-  if (msg.match(/(ada repo)?(sitori|repo|punya repo apa|repo apa|list repo)/)) return "list_repo";
+  if (msg.match(/repo|repositori|github|cari repo|cari proyek|lihat kode/)) return "github_search";
+  if (msg.match(/cerita|kisah|buatkan cerita|dongeng|kisahkan|story/)) return "make_story";
+  if (msg.match(/lanjut cerita|teruskan cerita|next chapter|continue/)) return "continue_story";
+  if (msg.match(/hapus|reset|mulai ulang|clear/)) return "reset_conversation";
+  if (msg.match(/daftar|subscribe|langganan|premium/)) return "subscribe_prompt";
+  if (msg.match(/bantuan|help|fitur|apa bisa|ngapain aja/)) return "help";
+  if (msg.match(/siapa kamu|kamu siapa|tentangmu|profil|creator|pembuat|yang buat kamu/)) return "about_ai";
 
-  return "fallback"; // default jika tidak dikenali
+  return "fallback";
 };

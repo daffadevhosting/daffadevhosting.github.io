@@ -63,39 +63,76 @@ if (intent === "github_search") {
   }
 });
 
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-repo-owner]');
+  if (card) {
+    const owner = card.dataset.repoOwner;
+    const fullName = card.dataset.repoFullname;
+
+    const modal = document.getElementById('repoModal');
+    const content = document.getElementById('repoModalContent');
+
+    content.innerHTML = `
+      <p class="mb-2">Stats untuk <strong>${fullName}</strong></p>
+      <img
+        src="https://github-readme-stats.vercel.app/api?username=${owner}&show_icons=true&theme=radical"
+        alt="${owner} GitHub Stats"
+        class="w-full rounded-md"
+      />
+    `;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+});
+
+  document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('repoModal').classList.add('hidden');
   
+});
 
-  const resetLauncher = () => {
-    launcher.classList.remove("bottom-0", "left-0", "right-0", "items-end", "justify-center");
-    launcher.classList.add("inset-0", "items-center", "justify-center");
-    launcherForm.classList.remove("rounded-t-lg", "w-full", "max-w-xl");
-    launcherForm.classList.add("rounded-full", "w-60");
-    chatWrapper.classList.add("hidden", "scale-100", "opacity-100");
-    welcome.classList.remove("opacity-0", "blur-md");
-    btnArea.classList.add("hidden");
-  };
+const resetLauncher = () => {
+  launcher.classList.remove("bottom-0", "left-0", "right-0", "items-end", "justify-center");
+  launcher.classList.add("inset-0", "items-center", "justify-center");
+  launcherForm.classList.remove("rounded-t-lg", "w-full", "max-w-xl");
+  launcherForm.classList.add("rounded-full", "w-60");
+  chatWrapper.classList.add("hidden", "scale-100", "opacity-100");
+  welcome.classList.remove("opacity-0", "blur-md");
+  btnArea.classList.add("hidden");
+};
 
-  launcherInput.addEventListener("focus", () => {
-    launcher.classList.remove("inset-0", "items-center", "justify-center");
-    launcher.classList.add("bottom-0", "left-0", "right-0", "items-end", "justify-center");
-    launcherForm.classList.remove("rounded-full", "w-60");
-    launcherForm.classList.add("rounded-t-lg", "w-full", "max-w-xl");
-    chatWrapper.classList.remove("hidden", "scale-0", "opacity-0");
-    welcome.classList.add("opacity-0", "blur-md");
-    btnArea.classList.remove("hidden");
-    launcherInput.focus();
+launcherInput.addEventListener("focus", () => {
+  launcher.classList.remove("inset-0", "items-center", "justify-center");
+  launcher.classList.add("bottom-0", "left-0", "right-0", "items-end", "justify-center");
+  launcherForm.classList.remove("rounded-full", "w-60");
+  launcherForm.classList.add("rounded-t-lg", "w-full", "max-w-xl");
+  chatWrapper.classList.remove("hidden", "scale-0", "opacity-0");
+  welcome.classList.add("opacity-0", "blur-md");
+  btnArea.classList.remove("hidden");
+  launcherInput.focus();
+});
+
+launcherInput.addEventListener("blur", () => {
+  setTimeout(() => {
+    const isActive = document.activeElement;
+    const allowed = ["launcher-input", "send-button", "mic-button", "chat-launcher-form", "grid", "href", "chat-messages", "chat-box-wrapper"];
+
+    if (!allowed.includes(isActive?.id)) {
+      resetLauncher();
+    }
+  }, 100);
+});
+
+if (messages) {
+  messages.addEventListener("dblclick", () => {
+    resetLauncher();
   });
+}
 
-  launcherInput.addEventListener("blur", () => {
-    setTimeout(() => {
-      const isActive = document.activeElement;
-      const allowed = ["launcher-input", "send-button", "mic-button", "chat-launcher-form", "grid", "href", "chat-messages"];
-
-      if (!allowed.includes(isActive?.id)) {
-        resetLauncher();
-      }
-    }, 100);
+if (chatWrapper) {
+  chatWrapper.addEventListener("dblclick", () => {
+    resetLauncher();
   });
+}
 
   function hideWelcomeMessage() {
     const welcome = document.getElementById("chat-welcome");

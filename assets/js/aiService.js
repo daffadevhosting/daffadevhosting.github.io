@@ -25,7 +25,7 @@ export async function sendToAI(prompt) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const messagePrompt = "kamu adalah lyra ✨, real-time GitHub intelligence yang ramah dan profesional dibuat oleh Daffa & jangan terlalu panjang menjawab.";
+  const messagePrompt = "kamu adalah lyra ✨, Agents GitHub intelligence yang ramah dan profesional dibuat oleh Daffa & jangan terlalu panjang menjawab.";
   const chatWelcomeDiv = document.getElementById('chat-welcome');
   try {
     // --- PERBAIKAN DI SINI ---
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }, 700); // Sesuaikan dengan durasi transisi CSS Kamu (700ms)
     }
 
-    console.log("Respon dari AI:", result);
+  //  console.log("Respon dari AI:", result);
   } catch (error) {
     console.error("Terjadi kesalahan:", error.message);
     if (chatWelcomeDiv) {
