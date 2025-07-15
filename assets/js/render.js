@@ -25,7 +25,7 @@ export function renderCardsFromAI(replyText) {
   if (!cards.length) return "";
 
   const html = cards.map(c => `
-    <div class="border overflow-hidden border-gray-700 rounded-lg mb-4 overflow-hidden bg-gray-800 shadow">
+    <div id="grid" class="border overflow-hidden border-gray-700 rounded-lg mb-4 overflow-hidden bg-gray-800 shadow">
       ${c.img ? `<img src="${c.img}" alt="${c.title}" class="w-full h-40 object-cover" />` : ''}
       <div class="p-3">
         <h3 class="text-white font-semibold">${c.title}</h3>
@@ -44,7 +44,7 @@ export function renderCardsFromAI(replyText) {
  */
 export function renderRepoCards(repoArray) {
   return repoArray.map(p => `
-    <div class="border overflow-hidden border-gray-700 rounded-lg mb-4 overflow-hidden bg-gray-800 shadow">
+    <div id="grid" class="border overflow-hidden border-gray-700 rounded-lg mb-4 overflow-hidden bg-gray-800 shadow">
       <img src="${p.img}" alt="${p.title}" class="w-full h-40 object-cover" />
       <div class="p-3">
         <h3 class="text-white font-semibold">${p.title}</h3>

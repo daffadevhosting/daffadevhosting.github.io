@@ -26,16 +26,16 @@ export function renderGithubCard(repo) {
   if (!repo || typeof repo !== "object") return "";
 
   return `
-    <div id="grid" class="border w-fit cursor-pointer overflow-hidden border-gray-700 bg-gray-800 rounded-md p-4 shadow-md flex gap-4 items-start my-4 transition-transform hover:scale-[1.02]" data-repo-owner="${repo?.owner?.login}" data-repo-fullname="${repo?.full_name}">
+    <div id="grid" class="border w-fit cursor-pointer overflow-hidden border-gray-700 bg-gray-800 rounded-md p-4 shadow-md flex gap-4 items-start my-4 transition-transform hover:scale-[1.02]" data-repo-owner="${repo?.owner?.login || ""}" data-repo-fullname="${repo?.full_name || ""}">
       <img src="${repo.owner?.avatar_url || "./assets/images/logo.png"}" alt="Avatar" class="w-14 h-14 rounded-full object-cover" />
       <div>
         <div>
-          <a href="${repo.html_url}" target="_blank" class="text-blue-400 font-bold text-base hover:underline">
+          <a href="${repo.html_url || "https://github.com/daffadevhosting/daffadevhosting.github.io"}" target="_blank" class="text-blue-400 font-bold text-base hover:underline">
             ${repo.full_name ? repo.full_name.slice(0, 25) + (repo.full_name.length > 15 ? '...' : '') : "L Y Я A"}
           </a>
           <p class="text-gray-300 text-sm mt-1">${repo.description ? repo.description.slice(0, 150) + (repo.description.length > 180 ? '...' : '') : "AI Custom User-Agent "}</p>
           <div class="flex gap-2 justify-between items-center">
-            <p class="text-yellow-400 text-xs mt-2">⭐ ${repo.stargazers_count?.toLocaleString() ?? '500'} stars</p>
+            <p class="text-yellow-400 text-xs mt-2">⭐ ${repo.stargazers_count?.toLocaleString() ?? '0'} stars</p>
             <p class="text-green-400 text-xs mt-2">${repo.language || 'Jekyll, Javascript'}</p>
           </div>
         </div>

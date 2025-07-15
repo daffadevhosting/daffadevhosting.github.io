@@ -1,5 +1,5 @@
 import { renderVoiceMessage } from './voice.js';
-import { speakWithTTS } from './tts-clean.js';
+import { speakWithTTS } from './tts.js';
 
 let isVoiceMode = false;
 let lastReply = "";
@@ -55,7 +55,7 @@ function addBotMessage(text) {
   const box = document.getElementById("chat-messages");
   const bubble = document.createElement("div");
   bubble.className = "text-left text-gray-300 my-2 text-sm";
-  bubble.innerHTML = text; // bisa diparse dengan marked
+  bubble.innerHTML = `<strong>LYRA:</strong><br>${text}`; // bisa diparse dengan marked
   box.appendChild(bubble);
   box.scrollTop = box.scrollHeight;
 }

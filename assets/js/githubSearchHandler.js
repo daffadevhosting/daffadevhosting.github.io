@@ -28,7 +28,8 @@ export async function handleGithubSearchIntent(userMessage, chatBox) {
       // Prioritas 3 (Fallback): Anggap seluruh pesan sebagai kata kunci
       // Ini akan digunakan jika tidak ada pola di atas yang cocok
       // Hati-hati dengan fallback ini, pastikan tidak menangkap input yang terlalu ambigu
-      if (!['repo', 'repositori', 'cari'].includes(normalizedMessage) &&
+      if (!['repo', 'repositori', 'cari', 'ada'].includes(normalizedMessage) &&
+          !normalizedMessage.startsWith('ada ') &&
           !normalizedMessage.startsWith('repo ') &&
           !normalizedMessage.startsWith('repositori ') &&
           !normalizedMessage.startsWith('cari ')) {
@@ -50,6 +51,7 @@ export async function handleGithubSearchIntent(userMessage, chatBox) {
   const repos = await searchGithubRepos(keyword);
   if (repos.length === 0) {
     chatBox.innerHTML += `<p class='text-gray-400'>Tidak ada repositori ditemukan untuk <strong>${keyword}</strong></p>`;
+    document.getElementById('loadingMessage')?.remove();
     return;
   }
 

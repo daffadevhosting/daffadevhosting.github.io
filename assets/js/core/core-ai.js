@@ -5,7 +5,7 @@ import {
   resetVoiceFlag,
   setVoiceFlag
 } from '../voice-engine.js';
-import { detectIntent } from '../intents-github.js';
+import { detectIntent, extractEntity } from '../intents-github.js';
 import { detectIntentVn } from '../detectIntentVn.js';
 import { renderMarkdown, renderCardsFromAI } from '../render.js';
 import { buildPrompt } from '../promptBuilder-github.js';
@@ -34,17 +34,18 @@ setupVoiceRecognition(micBtn, async (transcript) => {
   setVoiceFlag();
   renderVoiceMessage("user", null, "voice note dikirim");
 
+  const entities = detectIntent(transcript);
   const intent = detectIntent(transcript); // ✅ intent berdasarkan VN
   const intentVn = detectIntentVn(transcript);
   const card = renderGithubCard(repo); // repo: object satuan dari GitHub
   messages.innerHTML += card;
 
-if (intent === "github_search") {
+if (entities === "github_search") {
   await handleGithubSearchIntent(userMessage, messages);
     setTimeout(() => scrollToBottom(), 0);
   return;
 }
-  const prompt = buildPrompt(transcript, intent, intentVn); // ✅ arahkan ke prompt AI
+  const prompt = buildPrompt(transcript, intent, entities, intentVn); // ✅ arahkan ke prompt AI
 
   addTyping();
   try {
@@ -113,7 +114,7 @@ launcherInput.addEventListener("blur", () => {
     if (!allowed.includes(isActive?.id)) {
       resetLauncher();
     }
-  }, 100);
+  }, 200);
 });
 
 if (messages) {
@@ -147,14 +148,14 @@ if (chatWrapper) {
     launcherInput.focus();
     hideWelcomeMessage();
 
-    const intent = detectIntent(message);
+    const entities = detectIntent(message);
     
-    if (intent === "github_search") {
+    if (entities === "github_search") {
       await handleGithubSearchIntent(message, messages);
       return;
     }
 
-    const prompt = buildPrompt(message, intent);
+    const prompt = buildPrompt(message, entities);
     addTyping();
 
     try {
