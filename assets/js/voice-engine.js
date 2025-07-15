@@ -1,3 +1,5 @@
+// voice-enggine.js by daffa.
+
 let inputFromVoice = false;
 let isSpeaking = false;
 

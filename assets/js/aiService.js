@@ -1,72 +1,75 @@
-// aiService.js by **MIA**
-import { buildPrompt } from "./promptBuilder.js";
+// aiService.js **by MIA**
 /**
- * Mengirim prompt ke Groq API melalui Cloudflare Worker kamu.
+ * Mengirim pesan pengguna ke Cloudflare Worker (backend AI kamu).
+ * Worker akan menangani pemrosesan dengan Groq/Gemma dan GitHub API.
  *
- * @param {object} prompt - Object prompt yang berisi model dan messages
- * @returns {Promise<string>} - Hasil jawaban AI dalam bentuk teks
+ * @param {string} userMessage - Pesan teks mentah dari pengguna.
+ * @returns {Promise<object>} - Objek JSON yang diproses dari Cloudflare Worker
+ * (berisi { intent, query, message, results, error }).
  */
-export async function sendToAI(prompt) {
-  const response = await fetch("https://api-ai.d-adityadwiputraramadhan.workers.dev/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(prompt)
-  });
-  
-  if (!response.ok) {
-    // Lebih baik lempar error dengan detail jika respon tidak OK
-    const errorData = await response.json().catch(() => ({ message: "Respon bukan JSON" }));
-    throw new Error(`Gagal menghubungi AI: ${response.status} - ${errorData.message || response.statusText}`);
+export async function sendToAI(userMessage) {
+  // PENTING: Ganti dengan URL Cloudflare Worker kamu
+  const WORKER_URL = "https://lyra-ai.d-adityadwiputraramadhan.workers.dev/"; 
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      // PENTING: Mengirim { message: userMessage } ke Worker, bukan objek prompt mentah Groq.
+      body: JSON.stringify({ message: userMessage }) 
+    });
+
+    if (!response.ok) {
+      // Lebih baik lempar error dengan detail jika respon tidak OK
+      const errorData = await response.json().catch(() => ({ message: "Respon bukan JSON atau error parsing" }));
+      throw new Error(`Gagal menghubungi AI: ${response.status} - ${errorData.message || response.statusText || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    // Objek ini sudah diproses dan akan memiliki { intent, query, message, results, error }
+    return data; 
+
+  } catch (error) {
+    console.error("Kesalahan dalam sendToAI:", error);
+    // Lemparkan error agar bisa ditangkap di core-ai.js
+    throw new Error(`Koneksi AI gagal: ${error.message}`);
   }
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || "Maaf, tidak ada jawaban.";
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const messagePrompt = "kamu adalah lyra ✨, Agents GitHub intelligence yang ramah dan profesional dibuat oleh Daffa & jangan terlalu panjang menjawab.";
   const chatWelcomeDiv = document.getElementById('chat-welcome');
-  try {
-    // --- PERBAIKAN DI SINI ---
-    // Kirim prompt sebagai OBJEK sesuai format yang diharapkan oleh Groq API
-    const promptObject = {
-      model: "gemma2-9b-it", // Ganti dengan model Groq yang kamu gunakan rekomen gua: gemma2
-      messages: [{ role: "user", content: messagePrompt }]
-    };
+  if (chatWelcomeDiv) {
+    // Tampilkan pesan loading atau placeholder
+    chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl text-blue-400">L Y Я A</h2><br><p class="text-gray-300 animate-pulse">Memuat AI...</p>`;
 
-    const result = await sendToAI(promptObject);
+    try {
+      const initialAboutAIResponse = await sendToAI("Kamu siapa?");
 
-    // --- BAGIAN PERUBAHAN UTAMA DI SINI ---
-    // Ubah konten HTML dari div dengan hasil dari AI
-    if (chatWelcomeDiv) { // Pastikan elemen ditemukan
-      // Kamu bisa langsung menampilkan hasilnya:
-      // chatWelcomeDiv.innerText = result;
+      if (initialAboutAIResponse.error) {
+        chatWelcomeDiv.innerHTML = `<span class="font-bold text-red-500">Error:</span> ${initialAboutAIResponse.error}`;
+        chatWelcomeDiv.classList.add('text-red-500');
+      } else {
+        // Ambil pesan 'about_ai' dari properti 'message' yang dikembalikan Worker
+        const aboutAIText = initialAboutAIResponse.message || "Selamat datang! Ada yang bisa saya bantu?";
 
-      // Atau, jika Kamu ingin mempertahankan beberapa HTML bawaan dan hanya mengganti sebagian,
-      // Kamu bisa manipulasi innerHTML atau membuat elemen baru.
-      // Contoh: mengganti teks selamat datang dengan respon AI
-      chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl text-blue-400">L Y Я A</h2><br>${result}`;
-      
-      // Jika Kamu ingin efek fading atau animasinya, Kamu bisa tambahkan class
-      chatWelcomeDiv.classList.remove('opacity-100', 'blur-0');
-      chatWelcomeDiv.classList.add('opacity-0', 'blur-sm'); // Sembunyikan dulu
-      
-      setTimeout(() => {
-          chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl text-blue-400">L Y Я A</h2><br>${result}`;
-          chatWelcomeDiv.classList.remove('opacity-0', 'blur-sm');
-          chatWelcomeDiv.classList.add('opacity-100', 'blur-0'); // Munculkan kembali
-      }, 700); // Sesuaikan dengan durasi transisi CSS Kamu (700ms)
+        // Aplikasikan efek fading jika diinginkan
+        chatWelcomeDiv.classList.remove('opacity-100', 'blur-0');
+        chatWelcomeDiv.classList.add('opacity-0', 'blur-sm');
+
+        setTimeout(() => {
+            chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl text-blue-400">L Y Я A</h2><br>${aboutAIText}`;
+            chatWelcomeDiv.classList.remove('opacity-0', 'blur-sm');
+            chatWelcomeDiv.classList.add('opacity-100', 'blur-0');
+        }, 700); // Sesuaikan dengan durasi transisi CSS kamu
+      }
+
+    } catch (error) {
+      console.error("Terjadi kesalahan saat memuat respons AI:", error.message);
+      chatWelcomeDiv.innerHTML = `<span class="font-bold text-red-500">Error:</span> Gagal memuat AI. ${error.message}`;
+      chatWelcomeDiv.classList.add('text-red-500');
     }
-
-  //  console.log("Respon dari AI:", result);
-  } catch (error) {
-    console.error("Terjadi kesalahan:", error.message);
-    if (chatWelcomeDiv) {
-      chatWelcomeDiv.innerHTML = `<span class="font-bold text-red-500">Error:</span> ${error.message}`;
-      chatWelcomeDiv.classList.add('text-red-500'); // Beri warna merah untuk error
-      chatWelcomeDiv.classList.remove('opacity-0', 'blur-sm');
-      chatWelcomeDiv.classList.add('opacity-100', 'blur-0');
-    }
+  
   }
 });
