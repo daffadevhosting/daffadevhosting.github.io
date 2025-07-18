@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const chatWelcomeDiv = document.getElementById('chat-welcome');
   if (chatWelcomeDiv) {
     // Tampilkan pesan loading atau placeholder
-    chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl text-blue-400">L Y Я A</h2><br><p class="text-gray-300 animate-pulse">Memuat AI...</p>`;
+    chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl gradient-text">L Y Я A</h2><br><p class="text-gray-300 animate-pulse">Membangunkan Lyra...</p>`;
 
     try {
       const initialAboutAIResponse = await sendToAI("Kamu siapa?");
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
       console.error("Terjadi kesalahan saat memuat respons AI:", error.message);
-      chatWelcomeDiv.innerHTML = `<span class="font-bold text-red-500">Error:</span> Gagal memuat AI. ${error.message}`;
+      chatWelcomeDiv.innerHTML = `<span class="font-bold text-red-500">Error:</span> Gagal memuat Lyra. ${error.message}`;
       chatWelcomeDiv.classList.add('text-red-500');
     }
   

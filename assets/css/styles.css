@@ -4,6 +4,33 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(153, 69, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+.gradient-text {
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease infinite;
+}
+.matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.1;
+    z-index: 0;
+}
 .app-container {
     display: flex;
     flex-direction: column;
@@ -21,7 +48,7 @@ html, body {
 body.ready #chat-box-wrapper {
     opacity: 1;
     transform: scale(1);
-  }
+}
 #chat-launcher {
   transition: transform 0.4s ease-in-out;
 }
@@ -61,6 +88,17 @@ body.ready #chat-box-wrapper {
 * {
   scrollbar-width: thin;
   scrollbar-color: #4b5563 #1f2937;
+}
+.repo-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+        
+.repo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 255, 255, 0.3);
+    border-color: rgba(0, 255, 255, 0.5);
 }
 
 @media (max-width: 800px) {
