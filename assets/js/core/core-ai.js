@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnArea = document.getElementById("chat-btn-area");
   const micBtn = document.getElementById("mic-button");
   const welcome = document.getElementById("chat-welcome");
+  const notice = document.getElementById("ai-notice");
   // removed default github search
 
   setupVoiceRecognition(micBtn, async (transcript) => {
@@ -49,27 +50,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Logika modal untuk GitHub repo stats (tetap sama)
-  document.addEventListener('click', (e) => {
-    const card = e.target.closest('[data-repo-owner]');
-    if (card) {
-      const owner = card.dataset.repoOwner;
-      const fullName = card.dataset.repoFullname;
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-repo-owner]');
+  if (card) {
+    const owner = card.dataset.repoOwner;
+    const fullName = card.dataset.repoFullName;
 
-      const modal = document.getElementById('repoModal');
-      const content = document.getElementById('repoModalContent');
+    console.log("Card clicked:", card);
+    console.log("Owner:", owner);
+    console.log("Full Name from dataset:", fullName);
 
-      content.innerHTML = `
-        <p class="mb-2">Stats untuk <strong>${fullName}</strong></p>
-        <img
-          src="https://github-readme-stats.vercel.app/api?username=${owner}&show_icons=true&theme=radical"
-          alt="${owner} GitHub Stats"
-          class="w-full rounded-md"
-        />
-      `;
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-  });
+    const modal = document.getElementById('repoModal');
+    const content = document.getElementById('repoModalContent');
+
+    // ... sisanya kode kamu
+    content.innerHTML = `
+      <p class="mb-2">Stats untuk <strong>${fullName}</strong></p>
+      <img
+        src="https://github-readme-stats.vercel.app/api?username=${owner}&show_icons=true&theme=radical"
+        alt="${owner} GitHub Stats"
+        class="w-full rounded-md"
+      />
+    `;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+});
 
   document.getElementById('closeModal').addEventListener('click', () => {
     document.getElementById('repoModal').classList.add('hidden');
@@ -79,21 +85,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const resetLauncher = () => {
     launcher.classList.remove("bottom-0", "left-0", "right-0", "items-end", "justify-center");
     launcher.classList.add("inset-0", "items-center", "justify-center");
-    launcherForm.classList.remove("rounded-t-lg", "w-full", "max-w-xl");
+    launcherForm.classList.remove("static", "bottom-0", "rounded-t-lg", "w-full", "max-w-xl");
     launcherForm.classList.add("rounded-full", "w-60");
     chatWrapper.classList.add("hidden", "scale-100", "opacity-100");
     welcome.classList.remove("opacity-0", "blur-md");
     btnArea.classList.add("hidden");
+    notice.classList.remove("hidden");
   };
 
   launcherInput.addEventListener("focus", () => {
     launcher.classList.remove("inset-0", "items-center", "justify-center");
     launcher.classList.add("bottom-0", "left-0", "right-0", "items-end", "justify-center");
     launcherForm.classList.remove("rounded-full", "w-60");
-    launcherForm.classList.add("rounded-t-lg", "w-full", "max-w-xl");
+    launcherForm.classList.add("static", "bottom-0", "rounded-t-lg", "w-full", "max-w-xl");
     chatWrapper.classList.remove("hidden", "scale-0", "opacity-0");
     welcome.classList.add("opacity-0", "blur-md");
     btnArea.classList.remove("hidden");
+    notice.classList.add("hidden");
     launcherInput.focus();
   });
 
@@ -327,7 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
   simulateTyping(noticeTexts, "ai-notice");
 });
 
-// Matrix background animation
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
 

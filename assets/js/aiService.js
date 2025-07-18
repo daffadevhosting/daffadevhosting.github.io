@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         chatWelcomeDiv.classList.add('opacity-0', 'blur-sm');
 
         setTimeout(() => {
-            chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl text-blue-400">L Y Я A</h2><br>${aboutAIText}`;
+            chatWelcomeDiv.innerHTML = `<h2 class="font-bold text-4xl gradient-text">L Y Я A</h2><br>${aboutAIText}<br>`;
             chatWelcomeDiv.classList.remove('opacity-0', 'blur-sm');
             chatWelcomeDiv.classList.add('opacity-100', 'blur-0');
         }, 700); // Sesuaikan dengan durasi transisi CSS kamu

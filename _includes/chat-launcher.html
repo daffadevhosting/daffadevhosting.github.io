@@ -1,16 +1,13 @@
-    <div id="suggestions" class="relative z-[9999] flex flex-wrap gap-2 px-3 py-2 text-sm text-gray-300 border-b border-gray-800 bg-gray-900 z-80">
-      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="ada repo AI chatbot?">ada repo AI chatbot?</button>
-      <button class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" data-suggest="repo yang trending?">repo yang trending?</button>
-      <div id="ai-notice" class="text-gray-400 text-sm hidden md:block px-3 py-1 italic"></div>
-    </div>
-
+<div id="ai-notice" class="absolute bottom-4 left-2 w-full text-left h-6 typing-effect text-sm font-mono"></div>
 <div id="chat-launcher" class="fixed inset-0 flex items-center justify-center z-50 transition-all duration-500">
 
   <form id="chat-launcher-form"
-    class="sticky bottom-0 flex flex-col bg-gray-800 w-90 text-white px-4 py-2 rounded-full shadow-md transition-all duration-500 w-60">
+    class="flex flex-col glow-btn w-90 px-4 py-2 bg-cyan-500/20 border border-cyan-500 rounded-full hover:bg-cyan-500/30 transition-all">
     <div class="flex">
     <input id="launcher-input" type="text" placeholder="Mulai mencari..."
-      class="bg-transparent outline-none w-full h-10 text-left placeholder-gray-400" autocomplete="off" />
+      class="bg-transparent outline-none w-full h-10 text-left placeholder-gray-400"
+      rows="2" onresize="null" autocomplete="off" autofocus
+      style="resize: none;" />
     </div>
     <div id="chat-btn-area" class="flex justify-between items-center gap-2 items-center hidden">
       <small class="text-gray-300 opacity-0.20"><a href="https://github.com/daffadevhosting/daffadevhosting.github.io" class="cursor-pointer bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600" target="_blank">Daffa</a></small>
@@ -27,8 +24,7 @@
   </form>
 </div>
 
-<div id="chat-welcome" class="text-center text-gray-300 text-lg md:text-xl p-6 transition-all duration-700 opacity-100 blur-0" style="margin: 80px auto;max-width: 800px;">
-  <span class="font-bold text-blue-400">L Y Я A</span><br>
+<div id="chat-welcome" class="text-center text-gray-300 text-lg md:text-xl p-6 transition-all duration-700 opacity-100 blur-0" style="margin: auto;max-width: 800px;"><br>
 </div>
 
 <!-- Chat Box Area -->
