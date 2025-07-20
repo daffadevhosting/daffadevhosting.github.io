@@ -73,7 +73,7 @@ export function renderGithubCard(items, type) {
         } else if (type === 'code') {
              html += `
                 <a href="${item.html_url}" target="_blank" rel="noopener noreferrer" class="repo-card rounded-xl p-6  shadow-md block hover:bg-gray-700 transition-colors duration-200">
-                    <img src="${item.avatar_url}" alt="Avatar" class="w-12 h-12 rounded-full object-cover" />
+                    <i class="fa-solid fa-code-branch text-3xl"></i>
                     <h3 class="text-lg font-semibold text-white truncate">${item.name}</h3>
                     <p class="text-gray-400 text-sm">Repo: ${item.repository.full_name}</p>
                     <p class="text-gray-500 text-xs">Path: ${item.path}</p>
@@ -83,7 +83,7 @@ export function renderGithubCard(items, type) {
         } else if (type === 'issue') {
              html += `
                 <a href="${item.html_url}" target="_blank" rel="noopener noreferrer" class="repo-card rounded-xl p-6  shadow-md block hover:bg-gray-700 transition-colors duration-200">
-                    <img src="${item.avatar_url}" alt="Avatar" class="w-12 h-12 rounded-full object-cover" />
+                    <i class="fa-solid fa-circle-question text-3xl"></i>
                     <h3 class="text-lg font-semibold text-white truncate">${item.title}</h3>
                     <p class="text-gray-400 text-sm">Repo: ${item.repository_url.split('/').slice(-2).join('/')}</p>
                     <p class="text-gray-500 text-xs">Status: ${item.state}</p>
