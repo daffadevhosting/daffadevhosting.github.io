@@ -301,8 +301,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const noticeTexts = [
-  "📝 Silakan ketik nama repository untuk melihat hasilnya...",
-  "🔍 Kamu juga bisa ketik username GitHub (misal: daffadevhosting)",
+  "✨ Ketik nama repository untuk melihat hasilnya...",
+  "✨ Kamu juga bisa ketik username GitHub",
   "✨ Contoh: \"repo tailwind animasi\" atau \"chatbot ai\""
 ];
 
