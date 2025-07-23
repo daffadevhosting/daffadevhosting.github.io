@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relative_url }}">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  
+  <elevenlabs-convai agent-id="agent_0201k0ve73mwe7mavb6pryqzw65v"></elevenlabs-convai><script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
   <meta property="og:title" content="{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}">
   <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
   <meta property="og:image" content="{{ site.url }}/assets/images/og-image.png"> <meta property="og:url" content="{{ page.url | replace:'index.html','' | absolute_url }}">
@@ -22,7 +22,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}">
   <meta name="twitter:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
-  <meta name="twitter:image" content="{{ site.url }}/assets/images/og-image.png"> {% feed_meta %}
+  <meta name="twitter:image" content="{{ site.url }}/assets/images/og-image.png">
+  {% feed_meta %}
   {% include chat-style.html %}
 
   <script type="application/ld+json">
