@@ -1,0 +1,57 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DaffaDev - Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background-attachment: fixed;
+        color: #e2e8f0;
+    }
+    
+    .search-container:focus-within {
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+        transform: scale(1.02);
+    }
+    
+    .project-card {
+        transition: all 0.3s ease;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-10px) rotateY(5deg);
+        box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.5);
+    }
+    
+    .gradient-text {
+        background: linear-gradient(90deg, #8b5cf6, #3b82f6, #60a5fa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 200% auto;
+    }
+    
+    .glowing-border {
+        border: 1.5px solid transparent;
+        background: linear-gradient(#0f172a, #0f172a) padding-box,
+                    linear-gradient(45deg, #8b5cf6, #3b82f6) border-box;
+    }
+    
+    .high-contrast-shadow {
+        text-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+    }
+    
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .animate-text-gradient {
+        animation: text-gradient 8s ease infinite;
+    }
+</style>
