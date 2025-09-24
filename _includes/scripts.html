@@ -1,0 +1,33 @@
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'primary': '#3b82f6',
+                    'secondary': '#1e293b',
+                    'accent': '#8b5cf6'
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                    'text-gradient': 'text-gradient 8s ease infinite'
+                },
+                keyframes: {
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0)' },
+                        '50%': { transform: 'translateY(-20px)' }
+                    },
+                    'text-gradient': {
+                        '0%,100%': { 'background-position': '0% 50%' },
+                        '50%': { 'background-position': '100% 50%' }
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<div class="fixed bottom-5 right-5">
+    <button class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-lg hover:shadow-xl transition duration-300">
+        <i class="fas fa-plus text-white"></i>
+    </button>
+</div>
