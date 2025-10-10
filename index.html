@@ -38,11 +38,10 @@ layout: default
                             <input 
                                 type="text" 
                                 id="ai-trigger-input"
-                                placeholder="Click here or type to start chatting with AI..."
+                                placeholder="Click here or tap here to start chatting with AI..."
                                 class="w-full py-3 px-4 bg-slate-700/80 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer ai-trigger-input"
-                                readonly
-                            >
-                            <button class="absolute right-3 top-3 text-white bg-gradient-to-r from-green-500 to-blue-500 px-3 py-1 rounded text-sm font-semibold hover:opacity-90 transition">
+                                readonly>
+                            <button class="hidden absolute right-3 top-3 text-white bg-gradient-to-r from-green-500 to-blue-500 px-3 py-1 rounded text-sm font-semibold hover:opacity-90 transition">
                                 <i class="fas fa-paper-plane mr-1"></i>Chat
                             </button>
                         </div>
@@ -107,12 +106,12 @@ layout: default
         </div>
     </div>
 </section>
-<!-- 
-llscreen Modal -->
+
+<!-- fullscreen Modal -->
 <div id="ai-chat-modal" class="fixed inset-0 z-[100] hidden">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-lg"></div>
     
-    <div class="relative h-full flex items-center justify-center p-4">
+    <div class="relative h-full flex items-center justify-center">
         <div class="ai-chat-container w-full max-w-4xl h-[80vh] bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-slate-700/50 shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-500">
             <!-- Chat Header -->
             <div class="p-6 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 to-slate-900">
@@ -138,7 +137,7 @@ llscreen Modal -->
             </div>
 
             <!-- Chat Messages -->
-            <div id="ai-chat-messages" class="flex-1 p-6 overflow-y-auto space-y-4 max-h-[calc(80vh-200px)]">
+            <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 max-h-[calc(80vh-200px)]">
                 <div class="ai-message bot-message">
                     <div class="flex items-start space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -177,9 +176,6 @@ llscreen Modal -->
                     </button>
                     <button class="ai-quick-action px-3 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-xl text-slate-300 text-sm transition-all hover:scale-105 flex items-center" data-prompt="Show web development repositories with React or Vue">
                         <i class="fas fa-code mr-2 text-blue-400"></i>Web Dev
-                    </button>
-                    <button class="ai-quick-action px-3 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-xl text-slate-300 text-sm transition-all hover:scale-105 flex items-center" data-prompt="Find repositories about animations and UI effects">
-                        <i class="fas fa-palette mr-2 text-purple-400"></i>Animations
                     </button>
                 </div>
             </div>
