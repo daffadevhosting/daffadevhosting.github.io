@@ -121,4 +121,80 @@
 .fa-thumbtack {
   animation: thumbtack-spin 3s ease-in-out infinite;
 }
+
+#ai-chat-container {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#ai-chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+#ai-chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#ai-chat-messages::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 3px;
+}
+
+#ai-chat-messages::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 3px;
+}
+
+#ai-chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+.message-bubble {
+  animation: messageSlide 0.3s ease-out;
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quick-prompt {
+  transition: all 0.2s ease;
+}
+
+.quick-prompt:hover {
+  transform: translateY(-1px);
+}
+
+#ai-chat-toggle {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+}
 </style>
