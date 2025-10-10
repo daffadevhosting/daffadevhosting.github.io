@@ -54,4 +54,53 @@
     .animate-text-gradient {
         animation: text-gradient 8s ease infinite;
     }
+    /* Tambahkan di head.html */
+.search-container {
+  transition: all 0.3s ease;
+}
+
+.search-container.searching {
+  position: relative;
+  pointer-events: none;
+}
+
+.search-container.searching::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 1rem;
+  z-index: 10;
+}
+
+.search-container.searching::after {
+  content: 'Searching repositories...';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 11;
+  font-weight: 600;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.loading {
+  animation: pulse 2s infinite;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style>
