@@ -1,7 +1,7 @@
 // assets/js/ai-chat.js
 class AIChat {
   constructor() {
-    this.baseURL = 'https://daffadev-github-api.your-username.workers.dev';
+    this.baseURL = 'https://github-api.sendaljepit.workers.dev';
     this.chatHistory = [];
     this.isOpen = false;
     this.isLoading = false;
