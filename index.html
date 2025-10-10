@@ -38,7 +38,7 @@ layout: default
                             <input 
                                 type="text" 
                                 id="ai-trigger-input"
-                                placeholder="Type to start chatting with AI..."
+                                placeholder="Click here or type to start chatting with AI..."
                                 class="w-full py-3 px-4 bg-slate-700/80 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer ai-trigger-input"
                                 readonly
                             >
@@ -74,7 +74,7 @@ layout: default
     </div>
 </section>
 
-<!-- Section Featured Projects harus tetap ada -->
+<!-- AI <!-- Section Featured Projects harus tetap ada -->
 <section class="py-16">
     <div class="max-w-6xl mx-auto px-4">
         <div class="text-center mb-12">
@@ -107,14 +107,13 @@ layout: default
         </div>
     </div>
 </section>
-
-<!-- fullscreen Modal -->
+<!-- 
+llscreen Modal -->
 <div id="ai-chat-modal" class="fixed inset-0 z-[100] hidden">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-lg"></div>
     
     <div class="relative h-full flex items-center justify-center p-4">
-        <div class="ai-chat-container w-full max-w-4xl h-[80vh] bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-slate-700/50 shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300
-  md:rounded-3xl md:h-[80vh] md:max-w-4xl rounded-none h-screen max-h-full w-screen max-w-full">
+        <div class="ai-chat-container w-full max-w-4xl h-[80vh] bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-slate-700/50 shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-500">
             <!-- Chat Header -->
             <div class="p-6 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 to-slate-900">
                 <div class="flex items-center justify-between">
@@ -123,15 +122,15 @@ layout: default
                             <i class="fas fa-robot text-white text-lg"></i>
                         </div>
                         <div>
-                            <h2 class="text-xl font-bold text-white">DaffaDev AI</h2>
-                            <p class="text-slate-400 text-sm">I can help you find the repositories!</p>
+                            <h2 class="text-xl font-bold text-white">DaffaDev AI Assistant</h2>
+                            <p class="text-slate-400 text-sm">I can help you find the perfect repositories!</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-3">
                         <button class="ai-modal-minimize w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition">
                             <i class="fas fa-window-minimize"></i>
                         </button>
-                        <button class="hidden ai-modal-close w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-400 transition">
+                        <button class="ai-modal-close w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-400 transition">
                             <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
@@ -193,7 +192,8 @@ layout: default
                             type="text" 
                             id="ai-chat-input"
                             placeholder="Ask me about repositories, technologies, or features..."
-                            class="w-full py-4 px-6 bg-slate-700/50 border border-slate-600 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg pr-24">
+                            class="w-full py-4 px-6 bg-slate-700/50 border border-slate-600 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg pr-24"
+                        >
                         <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-2">
                             <button class="ai-send-message px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center">
                                 <i class="fas fa-paper-plane mr-2"></i>Send
