@@ -291,6 +291,61 @@ function initializeSearch() {
   });
 }
 
+// fungsi untuk trending
+async function loadTrendingRepos() {
+  try {
+    const result = await githubAPI.getTrendingRepos({ limit: 5, sort: 'stars' });
+    if (result.success) {
+      return result.data;
+    }
+  } catch (error) {
+    console.error('Error loading trending repos:', error);
+  }
+  return [];
+}
+
+// Update quick search buttons di search container
+function updateQuickSearchButtons() {
+  const quickSearchContainer = document.querySelector('.search-container .flex.space-x-3');
+  if (quickSearchContainer) {
+    quickSearchContainer.innerHTML = `
+      <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition quick-search" data-query="Tailwind Animation">
+        Tailwind Animation
+      </button>
+      <button class="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-semibold hover:bg-gray-600 transition quick-search" data-query="AI Chatbot">
+        AI Chatbot
+      </button>
+      <button class="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-semibold hover:bg-gray-600 transition quick-search" data-query="trending">
+        Trending
+      </button>
+      <button class="px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition" id="ask-ai-button">
+        <i class="fas fa-robot mr-2"></i>Ask AI
+      </button>
+    `;
+
+    // Add event listeners
+    document.querySelectorAll('.quick-search').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const query = e.target.dataset.query;
+        document.querySelector('input[type="text"]').value = query;
+        performSearch(query);
+      });
+    });
+
+    document.getElementById('ask-ai-button').addEventListener('click', () => {
+      // Trigger AI chat
+      document.getElementById('ai-chat-toggle').click();
+    });
+  }
+}
+
+// Update initialization
+document.addEventListener('DOMContentLoaded', function() {
+  initializeSearch();
+  loadPinnedProjects();
+  updateQuickSearchButtons();
+});
+
 async function performSearch(query) {
   const searchContainer = document.querySelector('.search-container');
   const projectsSection = document.querySelector('.grid.grid-cols-1');
