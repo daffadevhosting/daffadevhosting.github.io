@@ -54,7 +54,7 @@
     .animate-text-gradient {
         animation: text-gradient 8s ease infinite;
     }
-    /* Tambahkan di head.html */
+  
 .search-container {
   transition: all 0.3s ease;
 }
@@ -102,5 +102,23 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.pinned-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #fbbf24;
+  animation: pulse 2s infinite;
+}
+
+@keyframes thumbtack-spin {
+  0% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+  100% { transform: rotate(-10deg); }
+}
+
+.fa-thumbtack {
+  animation: thumbtack-spin 3s ease-in-out infinite;
 }
 </style>
