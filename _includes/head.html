@@ -197,4 +197,121 @@
     box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
   }
 }
+
+/* AI Chat Modal Styles */
+#ai-chat-modal {
+    transition: opacity 0.3s ease;
+}
+
+.ai-chat-container {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ai-trigger-container {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ai-trigger-container:hover {
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.3);
+}
+
+.ai-trigger-input {
+    transition: all 0.3s ease;
+}
+
+.ai-trigger-input:focus {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+}
+
+/* Message animations */
+.ai-message {
+    animation: messageSlideIn 0.3s ease-out;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar styling */
+#ai-chat-messages {
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937;
+}
+
+#ai-chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#ai-chat-messages::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 4px;
+}
+
+#ai-chat-messages::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+}
+
+#ai-chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Quick action buttons */
+.ai-quick-action, .ai-quick-prompt {
+    transition: all 0.2s ease;
+}
+
+.ai-quick-action:hover, .ai-quick-prompt:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+#ai-chat-loading {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Gradient text for AI */
+.gradient-text-ai {
+    background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: text-gradient 3s ease infinite;
+}
+
+/* Backdrop blur support */
+@supports (backdrop-filter: blur(20px)) {
+    #ai-chat-modal .absolute.inset-0 {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+}
 </style>
