@@ -2,6 +2,7 @@
 layout: default
 ---
 
+<!-- section search container -->
 <section class="relative py-16 md:py-24 overflow-hidden">
     <div class="max-w-6xl mx-auto px-4">
         <div class="flex flex-col lg:flex-row items-center">
@@ -10,30 +11,39 @@ layout: default
                     Explore the repo of <span class="gradient-text animate-text-gradient">DaffaDev</span>
                 </h1>
                 
-                <div class="search-container glowing-border bg-slate-800/60 rounded-2xl p-5 mt-8 transition-all duration-300">
+                <!-- AI Chat Trigger Box -->
+                <div class="ai-trigger-container glowing-border bg-slate-800/60 rounded-2xl p-5 mt-8 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer group">
                     <h2 class="text-lg md:text-xl text-white mb-3 flex items-center">
-                        <i class="fas fa-search mr-3 text-purple-400"></i>
-                        What are you searching for?
+                        <i class="fas fa-robot mr-3 text-purple-400 group-hover:text-green-400 transition-colors"></i>
+                        Ask AI Assistant
                     </h2>
                     <p class="text-slate-300 mb-3">
-                        Cari repo animasi tailwind? repo AI chatbot? repo yang trending?
+                        Chat with AI to find repositories, get recommendations, or discover trending projects!
                     </p>
-                    
+
                     <div class="mt-4 flex space-x-3">
-                        <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg text-sm font-semibold hover:opacity-90">Tailwind Animation</button>
-                        <button class="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-semibold hover:bg-gray-600">AI Chatbot</button>
-                        <button class="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-semibold hover:bg-gray-600">Trending</button>
+                        <button class="ai-quick-prompt px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-all hover:scale-105" data-prompt="Show me trending repositories">
+                            <i class="fas fa-fire mr-2"></i>Trending
+                        </button>
+                        <button class="ai-quick-prompt px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-all hover:scale-105" data-prompt="Find AI and machine learning projects">
+                            <i class="fas fa-brain mr-2"></i>AI Projects
+                        </button>
+                        <button class="ai-quick-prompt px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-all hover:scale-105" data-prompt="Show web development repositories">
+                            <i class="fas fa-code mr-2"></i>Web Dev
+                        </button>
                     </div>
-                    
+
                     <div class="mt-6">
                         <div class="relative">
                             <input 
                                 type="text" 
-                                placeholder="Search GitHub repositories..."
-                                class="w-full py-3 px-4 bg-slate-700/80 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                id="ai-trigger-input"
+                                placeholder="Click here or type to start chatting with AI..."
+                                class="w-full py-3 px-4 bg-slate-700/80 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer ai-trigger-input"
+                                readonly
                             >
-                            <button class="absolute right-3 top-3 text-white bg-purple-600 px-3 py-1 rounded text-sm">
-                                Search
+                            <button class="absolute right-3 top-3 text-white bg-gradient-to-r from-green-500 to-blue-500 px-3 py-1 rounded text-sm font-semibold hover:opacity-90 transition">
+                                <i class="fas fa-paper-plane mr-1"></i>Chat
                             </button>
                         </div>
                     </div>
@@ -41,6 +51,7 @@ layout: default
             </div>
             
             <div class="lg:w-1/2 flex justify-center">
+                <!-- Hero graphic tetap sama -->
                 <div class="relative">
                     <div class="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center animate-float">
                         <div class="w-56 h-56 md:w-72 md:h-72 rounded-full bg-slate-800/80 flex items-center justify-center">
@@ -63,73 +74,109 @@ layout: default
     </div>
 </section>
 
-<section class="py-16">
-    <div class="max-w-6xl mx-auto px-4">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Featured Projects</h2>
-            <p class="text-slate-400 max-w-xl mx-auto">Discover trending repositories and innovative creations</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="project-card group glowing-border rounded-xl overflow-hidden backdrop-blur-sm bg-[#111827]/50 shadow-lg">
-                <div class="p-6">
-                    <div class="flex items-start mb-4">
-                        <div class="w-12 h-12 rounded-md bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                            <i class="fas fa-palette text-white"></i>
+<!-- AI Chat Fullscreen Modal -->
+<div id="ai-chat-modal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-lg"></div>
+    
+    <div class="relative h-full flex items-center justify-center p-4">
+        <div class="ai-chat-container w-full max-w-4xl h-[80vh] bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-slate-700/50 shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-500">
+            <!-- Chat Header -->
+            <div class="p-6 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 to-slate-900">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-robot text-white text-lg"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-white ml-4">Tailwind Animations</h3>
+                        <div>
+                            <h2 class="text-xl font-bold text-white">DaffaDev AI Assistant</h2>
+                            <p class="text-slate-400 text-sm">I can help you find the perfect repositories!</p>
+                        </div>
                     </div>
-                    <p class="text-slate-300 mb-4">Collection of beautiful animations and UI elements created with TailwindCSS</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-2 py-1 bg-slate-700/80 text-blue-300 text-xs rounded">CSS</span>
-                        <span class="px-2 py-1 bg-slate-700/80 text-purple-300 text-xs rounded">Animations</span>
-                        <span class="px-2 py-1 bg-slate-700/80 text-green-300 text-xs rounded">TailwindCSS</span>
+                    <div class="flex items-center space-x-3">
+                        <button class="ai-modal-minimize w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition">
+                            <i class="fas fa-window-minimize"></i>
+                        </button>
+                        <button class="ai-modal-close w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-400 transition">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
                     </div>
-                    <a href="#" class="text-blue-400 hover:text-blue-300 font-semibold text-sm inline-flex items-center">
-                        Explore Project <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
                 </div>
             </div>
-            
-            <div class="project-card group glowing-border rounded-xl overflow-hidden backdrop-blur-sm bg-[#111827]/50 shadow-lg">
-                <div class="p-6">
-                    <div class="flex items-start mb-4">
-                        <div class="w-12 h-12 rounded-md bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center">
-                            <i class="fas fa-robot text-white"></i>
+
+            <!-- Chat Messages -->
+            <div id="ai-chat-messages" class="flex-1 p-6 overflow-y-auto space-y-4 max-h-[calc(80vh-200px)]">
+                <div class="ai-message bot-message">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-xs"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-white ml-4">AI Chatbot Platform</h3>
+                        <div class="flex-1">
+                            <div class="message-bubble bg-slate-800/60 rounded-2xl rounded-tl-none p-4 border border-slate-700/50">
+                                <p class="text-white">
+                                    Hello! I'm your AI assistant for exploring DaffaDev's repositories! 🚀<br><br>
+                                    I can help you:
+                                    • Find specific technologies (React, Python, etc.)<br>
+                                    • Discover trending repositories<br>
+                                    • Get project recommendations<br>
+                                    • Search by features or topics<br><br>
+                                    What would you like to explore today?
+                                </p>
+                            </div>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="text-slate-500 text-xs">DaffaDev AI</span>
+                                <span class="text-slate-600 text-xs">•</span>
+                                <span class="text-slate-500 text-xs">Just now</span>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-slate-300 mb-4">Intelligent chatbot solution with natural language processing capabilities</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-2 py-1 bg-slate-700/80 text-yellow-300 text-xs rounded">AI</span>
-                        <span class="px-2 py-1 bg-slate-700/80 text-emerald-300 text-xs rounded">Machine Learning</span>
-                        <span class="px-2 py-1 bg-slate-700/80 text-blue-300 text-xs rounded">Python</span>
-                    </div>
-                    <a href="#" class="text-emerald-400 hover:text-emerald-300 font-semibold text-sm inline-flex items-center">
-                        Explore Project <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
                 </div>
             </div>
-            
-            <div class="project-card group glowing-border rounded-xl overflow-hidden backdrop-blur-sm bg-[#111827]/50 shadow-lg">
-                <div class="p-6">
-                    <div class="flex items-start mb-4">
-                        <div class="w-12 h-12 rounded-md bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
-                            <i class="fas fa-fire text-white"></i>
+
+            <!-- Quick Actions -->
+            <div id="ai-quick-actions" class="px-6 py-4 border-t border-slate-700/50 bg-slate-800/30">
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <button class="ai-quick-action px-3 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-xl text-slate-300 text-sm transition-all hover:scale-105 flex items-center" data-prompt="Show me the most popular repositories">
+                        <i class="fas fa-star mr-2 text-yellow-400"></i>Trending
+                    </button>
+                    <button class="ai-quick-action px-3 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-xl text-slate-300 text-sm transition-all hover:scale-105 flex items-center" data-prompt="Find AI and machine learning projects">
+                        <i class="fas fa-brain mr-2 text-green-400"></i>AI Projects
+                    </button>
+                    <button class="ai-quick-action px-3 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-xl text-slate-300 text-sm transition-all hover:scale-105 flex items-center" data-prompt="Show web development repositories with React or Vue">
+                        <i class="fas fa-code mr-2 text-blue-400"></i>Web Dev
+                    </button>
+                    <button class="ai-quick-action px-3 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-xl text-slate-300 text-sm transition-all hover:scale-105 flex items-center" data-prompt="Find repositories about animations and UI effects">
+                        <i class="fas fa-palette mr-2 text-purple-400"></i>Animations
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="p-6 border-t border-slate-700/50 bg-slate-800/50">
+                <div class="flex space-x-3">
+                    <div class="flex-1 relative">
+                        <input 
+                            type="text" 
+                            id="ai-chat-input"
+                            placeholder="Ask me about repositories, technologies, or features..."
+                            class="w-full py-4 px-6 bg-slate-700/50 border border-slate-600 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg pr-24"
+                        >
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-2">
+                            <button class="ai-send-message px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center">
+                                <i class="fas fa-paper-plane mr-2"></i>Send
+                            </button>
                         </div>
-                        <h3 class="text-xl font-bold text-white ml-4">Trending Utilities</h3>
                     </div>
-                    <p class="text-slate-300 mb-4">Curated collection of trending developer tools and resources</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-2 py-1 bg-slate-700/80 text-red-300 text-xs rounded">Popular</span>
-                        <span class="px-2 py-1 bg-slate-700/80 text-yellow-300 text-xs rounded">Tools</span>
-                        <span class="px-2 py-1 bg-slate-700/80 text-orange-300 text-xs rounded">Dev Resources</span>
-                    </div>
-                    <a href="#" class="text-red-400 hover:text-red-300 font-semibold text-sm inline-flex items-center">
-                        Explore Project <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="ai-chat-loading" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+                    <p class="text-white text-lg">AI is thinking...</p>
+                    <p class="text-slate-400 text-sm mt-2">Searching through repositories</p>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
