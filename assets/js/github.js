@@ -413,3 +413,5 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeSearch();
   loadPinnedProjects(); // Ganti dari loadFeaturedProjects()
 });
+
+window.aiChatModal = new AIChatModal();
