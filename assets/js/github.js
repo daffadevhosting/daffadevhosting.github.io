@@ -1,7 +1,6 @@
-// assets/js/github-integration.js
+// assets/js/github.js
 class GitHubAPI {
   constructor(baseURL = null) {
-    // Gunakan URL worker yang sudah di-deploy atau local fallback
     this.baseURL = baseURL || 'https://github-api.sendaljepit.workers.dev';
     this.cache = new Map();
     this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
@@ -33,6 +32,13 @@ class GitHubAPI {
       console.error('API Fetch Error:', error);
       throw error;
     }
+  }
+
+  async getPinnedRepos(username = 'daffadevhosting') {
+    const cacheKey = `pinned-${username}`;
+    const endpoint = `${this.baseURL}/api/pinned?username=${username}`;
+    
+    return await this.#fetchWithCache(endpoint, cacheKey);
   }
 
   async getUserRepos(options = {}) {
@@ -130,9 +136,16 @@ function formatDate(dateString) {
 
 function createRepoCard(repo) {
   const languageColor = getLanguageColor(repo.language);
+  const isPinned = repo.is_pinned;
   
   return `
-    <div class="project-card group glowing-border rounded-xl overflow-hidden backdrop-blur-sm bg-[#111827]/50 shadow-lg h-full flex flex-col">
+    <div class="project-card group glowing-border rounded-xl overflow-hidden backdrop-blur-sm bg-[#111827]/50 shadow-lg h-full flex flex-col relative">
+      ${isPinned ? `
+        <div class="absolute top-3 right-3 text-yellow-400" title="Pinned Repository">
+          <i class="fas fa-thumbtack"></i>
+        </div>
+      ` : ''}
+      
       <div class="p-6 flex-1">
         <div class="flex items-start mb-4">
           <div class="w-12 h-12 rounded-md bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center flex-shrink-0">
@@ -163,7 +176,7 @@ function createRepoCard(repo) {
           </span>
           
           ${repo.topics.slice(0, 2).map(topic => `
-            <span class="px-2 py-1 bg-slate-700/80 text-purple-300 text-xs rounded truncate max-w-20">${topic}</span>
+            <span class="px-2 py-1 bg-slate-700/80 text-purple-300 text-xs rounded truncate max-w-20" title="${topic}">${topic}</span>
           `).join('')}
         </div>
       </div>
@@ -177,7 +190,68 @@ function createRepoCard(repo) {
   `;
 }
 
-// Search functionality
+// Load pinned projects
+async function loadPinnedProjects() {
+  const projectsContainer = document.querySelector('.grid.grid-cols-1');
+  
+  if (!projectsContainer) return;
+
+  try {
+    // Show loading state
+    projectsContainer.innerHTML = `
+      <div class="col-span-3 text-center py-12">
+        <div class="inline-flex items-center">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mr-3"></div>
+          <span class="text-white">Loading pinned repositories...</span>
+        </div>
+      </div>
+    `;
+
+    const result = await githubAPI.getPinnedRepos();
+    
+    if (result.success && result.data.length > 0) {
+      // Update section title to show these are pinned repos
+      const sectionTitle = document.querySelector('.text-center.mb-12 h2');
+      const sectionDesc = document.querySelector('.text-center.mb-12 p');
+      
+      if (sectionTitle) {
+        sectionTitle.innerHTML = `Pinned Projects <span class="text-yellow-400 text-xl ml-2"><i class="fas fa-thumbtack"></i></span>`;
+      }
+      
+      if (sectionDesc) {
+        sectionDesc.textContent = 'Featured repositories from my GitHub profile';
+      }
+      
+      projectsContainer.innerHTML = result.data.map(repo => createRepoCard(repo)).join('');
+      
+      // Add source indicator
+      const sourceIndicator = document.createElement('div');
+      sourceIndicator.className = 'text-center mt-6 text-slate-500 text-sm';
+      sourceIndicator.innerHTML = `Source: ${result.source === 'graphql' ? 'GitHub Pinned Repositories' : 'Latest Updated Repositories'}`;
+      projectsContainer.parentElement.appendChild(sourceIndicator);
+      
+    } else {
+      projectsContainer.innerHTML = `
+        <div class="col-span-3 text-center py-12">
+          <i class="fas fa-thumbtack text-4xl text-slate-500 mb-4"></i>
+          <h3 class="text-xl font-bold text-white mb-2">No pinned repositories</h3>
+          <p class="text-slate-400">Check back later for featured projects</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Error loading pinned projects:', error);
+    projectsContainer.innerHTML = `
+      <div class="col-span-3 text-center py-12">
+        <i class="fas fa-wifi text-4xl text-red-500 mb-4"></i>
+        <h3 class="text-xl font-bold text-white mb-2">Failed to load projects</h3>
+        <p class="text-slate-400">Please check your connection and try again</p>
+      </div>
+    `;
+  }
+}
+
+// Search functionality (tetap sama)
 function initializeSearch() {
   const searchInput = document.querySelector('input[type="text"]');
   const searchButton = document.querySelector('.search-container button');
@@ -279,50 +353,8 @@ async function performSearch(query) {
   }
 }
 
-// Load featured projects
-async function loadFeaturedProjects() {
-  const projectsContainer = document.querySelector('.grid.grid-cols-1');
-  
-  if (!projectsContainer) return;
-
-  try {
-    // Show loading state
-    projectsContainer.innerHTML = `
-      <div class="col-span-3 text-center py-12">
-        <div class="inline-flex items-center">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mr-3"></div>
-          <span class="text-white">Loading repositories...</span>
-        </div>
-      </div>
-    `;
-
-    const result = await githubAPI.getUserRepos({ per_page: 6, sort: 'updated' });
-    
-    if (result.success && result.data.length > 0) {
-      projectsContainer.innerHTML = result.data.map(repo => createRepoCard(repo)).join('');
-    } else {
-      projectsContainer.innerHTML = `
-        <div class="col-span-3 text-center py-12">
-          <i class="fas fa-box-open text-4xl text-slate-500 mb-4"></i>
-          <h3 class="text-xl font-bold text-white mb-2">No repositories found</h3>
-          <p class="text-slate-400">Check back later for new projects</p>
-        </div>
-      `;
-    }
-  } catch (error) {
-    console.error('Error loading featured projects:', error);
-    projectsContainer.innerHTML = `
-      <div class="col-span-3 text-center py-12">
-        <i class="fas fa-wifi text-4xl text-red-500 mb-4"></i>
-        <h3 class="text-xl font-bold text-white mb-2">Failed to load projects</h3>
-        <p class="text-slate-400">Please check your connection and try again</p>
-      </div>
-    `;
-  }
-}
-
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
   initializeSearch();
-  loadFeaturedProjects();
+  loadPinnedProjects(); // Ganti dari loadFeaturedProjects()
 });
