@@ -227,8 +227,8 @@ async function loadPinnedProjects() {
       // Add source indicator
       const sourceIndicator = document.createElement('div');
       sourceIndicator.className = 'text-center mt-6 text-slate-500 text-sm';
-      sourceIndicator.innerHTML = `Source: ${result.source === 'graphql' ? 'GitHub Pinned Repositories' : ''}`;
-      projectsContainer.parentElement.appendChild(sourceIndicator);
+      sourceIndicator.innerHTML = `Source: ${result.source === 'graphql' ? 'GitHub Pinned Repositories' : 'Latest Updated Repositories'}`;
+     // projectsContainer.parentElement.appendChild(sourceIndicator);
       
     } else {
       projectsContainer.innerHTML = `
@@ -414,4 +414,4 @@ document.addEventListener('DOMContentLoaded', function() {
   loadPinnedProjects(); // Ganti dari loadFeaturedProjects()
 });
 
-window.aiChatModal = new AIChatModal();
+//window.aiChatModal = new AIChatModal();
