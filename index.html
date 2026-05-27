@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GitHub AI Assistant</title>
+  
+  <!-- Ionic Core v8 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core@8/css/ionic.bundle.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.js"></script>
+  
+  <style>
+    :root {
+      --bg-color: #f7f3f0;
+      --text-color: #2e2c2b;
+      --text-muted: #5e5a57;
+      --card-bg: #ffffff;
+      --tab-active-bg: #ede7e3;
+      --user-bubble: #f0ece9;
+      --ai-bubble: transparent;
+      --border-color: #e8e4e1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    ion-content {
+      --background: radial-gradient(circle at top, #fdfbf9 0%, #f7f3f0 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: linear-gradient(to bottom, rgba(247,243,240,1) 60%, rgba(247,243,240,0) 100%);
+    }
+    .menu-btn, .model-selector {
+      --background: #ffffff;
+      --color: var(--text-color);
+      --border-radius: 50%;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .model-selector {
+      --border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: none;
+      height: 38px;
+    }
+    .placeholder-right {
+      width: 44px;
+    }
+
+    /* Tab content containers */
+    .tab-content {
+      display: none;
+      padding: 80px 16px 140px 16px; /* Ruang untuk top bar & bottom nav */
+      height: 100%;
+      overflow-y: auto;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* --- Chat Messages Area (Gaya Copilot) --- */
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+    .message-wrapper {
+      display: flex;
+      width: 100%;
+    }
+    .message-wrapper.user {
+      justify-content: flex-end;
+    }
+    .message-wrapper.ai {
+      justify-content: flex-start;
+      gap: 12px;
+    }
+    .ai-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--text-color);
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .ai-avatar ion-icon {
+      font-size: 20px;
+    }
+    .message {
+      display: flex;
+      flex-direction: column;
+      max-width: 85%;
+    }
+    .bubble {
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+    
+    /* User Message */
+    .user .bubble {
+      background: var(--user-bubble);
+      color: var(--text-color);
+      border-radius: 20px;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    
+    /* AI Message */
+    .ai .bubble {
+      background: var(--ai-bubble);
+      color: var(--text-color);
+      padding: 6px 0; /* Lebih bersih tanpa kotak menonjol */
+    }
+    .ai .message {
+      max-width: calc(100% - 44px);
+    }
+
+    .timestamp {
+      font-size: 11px;
+      color: #999;
+      margin-top: 6px;
+    }
+    .user .timestamp {
+      text-align: right;
+      margin-right: 4px;
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 5px;
+      padding: 12px 0;
+      align-items: center;
+    }
+    .typing-indicator span {
+      width: 6px;
+      height: 6px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: blink 1.4s infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+      0%, 60%, 100% { opacity: 0.4; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    /* Fixed Footer (Input + Bottom Nav) */
+    .footer-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 16px 16px 16px;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+      transition: all 0.3s ease;
+    }
+    .chat-box {
+      background: var(--card-bg);
+      border-radius: 24px;
+      display: flex;
+      align-items: flex-end;
+      padding: 4px 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .chat-box.hidden {
+      display: none !important;
+    }
+    .chat-textarea {
+      flex: 1;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text-color);
+      padding: 14px 12px;
+      line-height: 1.4;
+      font-family: inherit;
+      max-height: 120px;
+    }
+    .chat-textarea::placeholder {
+      color: #a39f9c;
+    }
+    .send-btn-container {
+      padding-bottom: 4px;
+    }
+    #sendBtn {
+      --color: #ffffff;
+      --background: #1f2328;
+      --background-hover: #24292e;
+      --border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      margin: 0 4px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-pill-box {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 6px;
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      color: #8c8784;
+      text-decoration: none;
+      padding: 8px 0;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 24px;
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+    .nav-item ion-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+      transition: transform 0.2s;
+    }
+    .nav-item.active {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .nav-item.active ion-icon {
+      transform: scale(1.1);
+      color: #0969da; /* Aksen biru khas GitHub */
+    }
+    .side-action-btn {
+      --background: rgba(255, 255, 255, 0.8);
+      --color: var(--text-color);
+      --border-radius: 50%;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      width: 52px;
+      height: 52px;
+      margin: 0;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Headers */
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 8px 0 20px 0;
+      color: var(--text-color);
+      letter-spacing: -0.5px;
+    }
+
+    /* --- Discover Tab: Jekyll Blog Cards --- */
+    .jekyll-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s;
+    }
+    .jekyll-card:active {
+      transform: scale(0.98);
+    }
+    .jekyll-img {
+      height: 120px;
+      width: 100%;
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .img-2 { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+    .img-3 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    
+    .jekyll-content {
+      padding: 16px;
+    }
+    .jekyll-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      line-height: 1.3;
+    }
+    .jekyll-excerpt {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+      line-height: 1.5;
+    }
+    .jekyll-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .jekyll-tags {
+      display: flex;
+      gap: 6px;
+    }
+    .tag {
+      background: #f0ece9;
+      color: #4a4644;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .read-time {
+      font-size: 11px;
+      color: #999;
+      font-weight: 500;
+    }
+
+    /* --- Library Tab: Modern Repo Cards --- */
+    .modern-repo-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid var(--border-color);
+    }
+    .repo-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .repo-icon {
+      color: #5e5a57;
+      font-size: 18px;
+    }
+    .repo-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #0969da;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .repo-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #d0d7de;
+      color: #57606a;
+      font-weight: 600;
+    }
+    .repo-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .repo-meta-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: #57606a;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .lang-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-js { background-color: #f1e05a; }
+    .dot-html { background-color: #e34c26; }
+    .dot-css { background-color: #563d7c; }
+    .dot-ts { background-color: #3178c6; }
+    .dot-default { background-color: #8b949e; }
+
+    .loading, .error-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .error-msg {
+      color: #cf222e;
+      background: #ffebe9;
+      border-radius: 12px;
+      border: 1px solid rgba(207, 34, 46, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+<ion-app>
+  <ion-content scroll-y="false">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <ion-button class="menu-btn" fill="clear" size="small">
+        <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+      </ion-button>
+      <ion-button class="model-selector" fill="clear">
+        Repo Chat
+        <ion-icon name="chevron-down-outline" style="margin-left:4px; font-size:14px;"></ion-icon>
+      </ion-button>
+      <div class="placeholder-right"></div>
+    </div>
+
+    <!-- Tab 1: Home (Chat) -->
+    <div id="homeTab" class="tab-content active">
+      <div class="chat-messages" id="chatMessages">
+        <!-- AI Greeting -->
+        <div class="message-wrapper ai">
+          <div class="ai-avatar"><ion-icon name="logo-github"></ion-icon></div>
+          <div class="message">
+            <div class="bubble">
+              👋 Halo! Saya asisten Copilot Anda. Ada yang bisa saya bantu hari ini terkait repositori GitHub atau kode Anda?
+            </div>
+            <div class="timestamp">Sekarang</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Discover (Jekyll Blog Cards) -->
+    <div id="discoverTab" class="tab-content">
+      <div class="section-title">Discover</div>
+      <div id="blogList">
+        
+        <!-- Card 1 -->
+        <div class="jekyll-card">
+          <div class="jekyll-img">Blogging</div>
+          <div class="jekyll-content">
+            <h3 class="jekyll-title">Membuat Tema Minimalis Jekyll</h3>
+            <p class="jekyll-excerpt">Panduan langkah demi langkah membangun tema Jekyll yang bersih, cepat, dan SEO-friendly dari nol.</p>
+            <div class="jekyll-meta">
+              <div class="jekyll-tags">
+                <span class="tag">Jekyll</span>
+                <span class="tag">Design</span>
+              </div>
+              <span class="read-time">5 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="jekyll-card">
+          <div class="jekyll-img img-2">Deployment</div>
+          <div class="jekyll-content">
+            <h3 class="jekyll-title">Otomatisasi GitHub Pages & Actions</h3>
+            <p class="jekyll-excerpt">Cara mudah deploy situs Jekyll Anda secara otomatis menggunakan GitHub Actions tanpa build lokal.</p>
+            <div class="jekyll-meta">
+              <div class="jekyll-tags">
+                <span class="tag">CI/CD</span>
+                <span class="tag">Tutorial</span>
+              </div>
+              <span class="read-time">8 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="jekyll-card">
+          <div class="jekyll-img img-3">Markdown</div>
+          <div class="jekyll-content">
+            <h3 class="jekyll-title">Markdown Lanjutan untuk Blogger</h3>
+            <p class="jekyll-excerpt">Tingkatkan penulisan konten Anda dengan sintaks Markdown kustom, tabel, dan ekstensi Liquid.</p>
+            <div class="jekyll-meta">
+              <div class="jekyll-tags">
+                <span class="tag">Markdown</span>
+                <span class="tag">Tips</span>
+              </div>
+              <span class="read-time">4 min read</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab 3: Library (Modern Repo Cards) -->
+    <div id="libraryTab" class="tab-content">
+      <div class="section-title">Repositories</div>
+      <div id="repoList" class="repo-list">
+        <div class="loading">
+          <ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>
+          Memuat repositori...
+        </div>
+      </div>
+    </div>
+
+    <!-- Fixed Footer (Input + Bottom Nav) -->
+    <div class="footer-container">
+      <!-- Input Box (Akan disembunyikan jika bukan tab Home) -->
+      <div class="chat-box" id="chatBoxContainer">
+        <textarea class="chat-textarea" id="chatInput" rows="1" placeholder="Tanyakan kepada Copilot..."></textarea>
+        <div class="send-btn-container">
+          <ion-button id="sendBtn" fill="solid">
+            <ion-icon slot="icon-only" name="arrow-up-outline" style="font-size: 18px;"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+      
+      <!-- Bottom Navigation -->
+      <div class="bottom-nav-row">
+        <div class="nav-pill-box">
+          <div class="nav-item active" data-tab="home">
+            <ion-icon name="chatbubbles"></ion-icon>
+            Chat
+          </div>
+          <div class="nav-item" data-tab="discover">
+            <ion-icon name="compass-outline"></ion-icon>
+            Discover
+          </div>
+          <div class="nav-item" data-tab="library">
+            <ion-icon name="folder-outline"></ion-icon>
+            Library
+          </div>
+        </div>
+        <ion-button class="side-action-btn" fill="clear" id="refreshLibraryBtn">
+          <ion-icon slot="icon-only" name="sync-outline" style="font-size: 22px;"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-app>
+
+<style>
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+
+<script type="module">
+  const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev'; 
+  
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const chatMessagesDiv = document.getElementById('chatMessages');
+  const repoListDiv = document.getElementById('repoList');
+  const refreshLibBtn = document.getElementById('refreshLibraryBtn');
+  const chatBoxContainer = document.getElementById('chatBoxContainer');
+  
+  let isTyping = false;
+  
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(`${tabId}Tab`).classList.add('active');
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+      const icon = item.querySelector('ion-icon');
+      if(item.getAttribute('data-tab') === 'home') icon.setAttribute('name', 'chatbubbles-outline');
+      if(item.getAttribute('data-tab') === 'discover') icon.setAttribute('name', 'compass-outline');
+      if(item.getAttribute('data-tab') === 'library') icon.setAttribute('name', 'folder-outline');
+    });
+    
+    const activeItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+    activeItem.classList.add('active');
+    
+    const activeIcon = activeItem.querySelector('ion-icon');
+    if(tabId === 'home') activeIcon.setAttribute('name', 'chatbubbles');
+    if(tabId === 'discover') activeIcon.setAttribute('name', 'compass');
+    if(tabId === 'library') activeIcon.setAttribute('name', 'folder');
+
+    if (tabId === 'home') {
+      chatBoxContainer.style.display = 'flex';
+      setTimeout(() => chatBoxContainer.style.opacity = '1', 10);
+    } else {
+      chatBoxContainer.style.opacity = '0';
+      setTimeout(() => chatBoxContainer.style.display = 'none', 300);
+    }
+    
+    if (tabId === 'library') {
+      loadRepositories();
+    }
+  }
+  
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const tab = item.getAttribute('data-tab');
+      if (tab) switchTab(tab);
+    });
+  });
+  
+  function getLangClass(lang) {
+    if(!lang) return 'dot-default';
+    const l = lang.toLowerCase();
+    if(l === 'javascript') return 'dot-js';
+    if(l === 'html') return 'dot-html';
+    if(l === 'css') return 'dot-css';
+    if(l === 'typescript') return 'dot-ts';
+    return 'dot-default';
+  }
+
+  async function loadRepositories() {
+    repoListDiv.innerHTML = `
+      <div class="loading">
+        <ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>
+        Sinkronisasi repositori...
+      </div>`;
+    try {
+      const response = await fetch(`${WORKER_URL}/api/github/user/repos`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const repos = await response.json();
+      if (!Array.isArray(repos)) throw new Error('Invalid response');
+      
+      const sorted = repos.sort((a,b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+      const topRepos = sorted.slice(0, 10);
+      
+      if (topRepos.length === 0) {
+        repoListDiv.innerHTML = '<div class="loading">Tidak ada repositori ditemukan.</div>';
+        return;
+      }
+      
+      let html = '';
+      topRepos.forEach(repo => {
+        const lang = repo.language || 'Unknown';
+        const langDot = getLangClass(repo.language);
+        
+        html += `
+          <div class="modern-repo-card">
+            <div class="repo-header">
+              <ion-icon name="book-outline" class="repo-icon"></ion-icon>
+              <span class="repo-name">${repo.name}</span>
+              <span class="repo-badge">${repo.private ? 'Private' : 'Public'}</span>
+            </div>
+            <div class="repo-desc">${repo.description || 'Tidak ada deskripsi yang disediakan.'}</div>
+            
+            <div class="repo-meta-footer">
+              <div class="meta-item">
+                <span class="lang-dot ${langDot}"></span>
+                <span>${lang}</span>
+              </div>
+              <div class="meta-item">
+                <ion-icon name="star-outline"></ion-icon>
+                <span>${repo.stargazers_count || 0}</span>
+              </div>
+              <div class="meta-item">
+                <ion-icon name="git-network-outline"></ion-icon>
+                <span>${repo.forks_count || 0}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      repoListDiv.innerHTML = html;
+    } catch (err) {
+      console.error(err);
+      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori: ${err.message}. Pastikan URL Worker benar.</div>`;
+    }
+  }
+  
+  function getCurrentTime() {
+    return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit' });
+  }
+
+  async function sendMessage() {
+    const query = chatInput.value.trim();
+    if (!query) return;
+    
+    appendUserMessage(query);
+    chatInput.value = '';
+    chatInput.rows = 1;
+    
+    const typingId = showTypingIndicator();
+    
+    try {
+      const response = await fetch(`${WORKER_URL}/api/ai`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: query })
+      });
+      
+      removeTypingIndicator(typingId);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errorText}`);
+      }
+      
+      const data = await response.json();
+      const answer = data.answer || data.message || 'Maaf, saya tidak bisa merespon saat ini.';
+      appendAIMessage(answer);
+    } catch (err) {
+      removeTypingIndicator(typingId);
+      appendAIMessage(`❌ Error: ${err.message}. Periksa koneksi dan worker Anda.`);
+    }
+  }
+  
+  function appendUserMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper user';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+    
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(messageDiv);
+    
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+  
+  function appendAIMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper ai';
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+    
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+    
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+  
+  function showTypingIndicator() {
+    const id = 'typing-' + Date.now();
+    const wrapper = document.createElement('div');
+    wrapper.id = id;
+    wrapper.className = 'message-wrapper ai';
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    
+    messageDiv.innerHTML = `
+      <div class="bubble">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+    
+    return id;
+  }
+  
+  function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function scrollToBottom() {
+    const container = document.querySelector('#homeTab');
+    container.scrollTop = container.scrollHeight;
+  }
+  
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  
+  chatInput.addEventListener('input', function() {
+    this.rows = 1;
+    const lineCount = Math.ceil(this.scrollHeight / 24);
+    this.rows = Math.min(lineCount, 4);
+  });
+  
+  refreshLibBtn.addEventListener('click', () => {
+    const icon = refreshLibBtn.querySelector('ion-icon');
+    icon.style.animation = 'spin 1s linear';
+    setTimeout(() => icon.style.animation = '', 1000);
+    
+    if (document.querySelector('#libraryTab').classList.contains('active')) {
+      loadRepositories();
+    }
+  });
+  
+  async function checkWorkerHealth() {
+    try {
+      const res = await fetch(`${WORKER_URL}/health`);
+      if (!res.ok) appendAIMessage('⚠️ Worker merespon dengan error, periksa konfigurasi Worker Anda.');
+    } catch (e) {
+      console.warn('Cek koneksi worker gagal di background.');
+    }
+  }
+  checkWorkerHealth();
+</script>
+
+
+<!-- Ionicons -->
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
