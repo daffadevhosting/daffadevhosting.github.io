@@ -447,9 +447,15 @@
 
     /* --- Discover Tab: Jekyll Blog Cards --- */
     #blogList {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media screen and (max-width: 600px) {
+      #blogList {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
     }
     .jekyll-card {
       background: var(--card-bg);
