@@ -618,158 +618,160 @@
       <div class="placeholder-right"></div>
     </div>
 
-    <!-- Tab 1: Home (Chat) -->
-    <div id="homeTab" class="tab-content active">
-      
-      <!-- Welcome Screen (Copilot Style) -->
-      <div class="welcome-container" id="welcomeScreen">
-        <div class="welcome-icon-box">
-          <ion-icon name="logo-github"></ion-icon>
-        </div>
-        <h2 class="welcome-title">Halo, saya Copilot</h2>
-        <p class="welcome-subtitle">Partner AI Anda untuk mengeksplorasi kode, repositori, dan mengotomatiskan workflow.</p>
+    <div class="container">
+      <!-- Tab 1: Home (Chat) -->
+      <div id="homeTab" class="tab-content active">
         
-        <div style="height: 24px;"></div>
+        <!-- Welcome Screen (Copilot Style) -->
+        <div class="welcome-container" id="welcomeScreen">
+          <div class="welcome-icon-box">
+            <ion-icon name="logo-github"></ion-icon>
+          </div>
+          <h2 class="welcome-title">Halo, saya Copilot</h2>
+          <p class="welcome-subtitle">Partner AI Anda untuk mengeksplorasi kode, repositori, dan mengotomatiskan workflow.</p>
+          
+          <div style="height: 24px;"></div>
+          
+          <!-- Suggestions Grid -->
+          <div class="suggestions-grid">
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Jelaskan perbedaan Git Rebase dan Git Merge')">
+              <div>
+                <div class="card-icon">💡</div>
+                <div class="card-title">Jelaskan Konsep</div>
+              </div>
+              <div class="card-desc">Git Rebase vs Git Merge secara singkat.</div>
+            </div>
+            
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Bagaimana cara membuat file README.md yang menarik untuk project GitHub?')">
+              <div>
+                <div class="card-icon">📝</div>
+                <div class="card-title">Tulis README</div>
+              </div>
+              <div class="card-desc">Panduan menyusun README project yang keren.</div>
+            </div>
+            
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Berikan contoh script GitHub Actions untuk auto-deploy ke GitHub Pages')">
+              <div>
+                <div class="card-icon">🚀</div>
+                <div class="card-title">GitHub Actions</div>
+              </div>
+              <div class="card-desc">Template CI/CD auto-deploy pages.</div>
+            </div>
+            
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Bagaimana cara mendeteksi memori bocor (memory leak) di JavaScript?')">
+              <div>
+                <div class="card-icon">🐛</div>
+                <div class="card-title">Temukan Bug</div>
+              </div>
+              <div class="card-desc">Tips debug memory leak di JavaScript.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <!-- AI Messages akan ditambahkan di sini secara dinamis -->
+        </div>
+      </div>
+
+      <!-- Tab 2: Discover (Jekyll Blog Cards) -->
+      <div id="discoverTab" class="tab-content">
+        <div class="section-title">Discover</div>
+        <div id="blogList">
+          
+          <!-- Card 1 -->
+          <div class="jekyll-card">
+            <div class="jekyll-img">Blogging</div>
+            <div class="jekyll-content">
+              <h3 class="jekyll-title">Membuat Tema Minimalis Jekyll</h3>
+              <p class="jekyll-excerpt">Panduan langkah demi langkah membangun tema Jekyll yang bersih, cepat, dan SEO-friendly dari nol.</p>
+              <div class="jekyll-meta">
+                <div class="jekyll-tags">
+                  <span class="tag">Jekyll</span>
+                  <span class="tag">Design</span>
+                </div>
+                <span class="read-time">5 min read</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="jekyll-card">
+            <div class="jekyll-img img-2">Deployment</div>
+            <div class="jekyll-content">
+              <h3 class="jekyll-title">Otomatisasi GitHub Pages & Actions</h3>
+              <p class="jekyll-excerpt">Cara mudah deploy situs Jekyll Anda secara otomatis menggunakan GitHub Actions tanpa build lokal.</p>
+              <div class="jekyll-meta">
+                <div class="jekyll-tags">
+                  <span class="tag">CI/CD</span>
+                  <span class="tag">Tutorial</span>
+                </div>
+                <span class="read-time">8 min read</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="jekyll-card">
+            <div class="jekyll-img img-3">Markdown</div>
+            <div class="jekyll-content">
+              <h3 class="jekyll-title">Markdown Lanjutan untuk Blogger</h3>
+              <p class="jekyll-excerpt">Tingkatkan penulisan konten Anda dengan sintaks Markdown kustom, tabel, dan ekstensi Liquid.</p>
+              <div class="jekyll-meta">
+                <div class="jekyll-tags">
+                  <span class="tag">Markdown</span>
+                  <span class="tag">Tips</span>
+                </div>
+                <span class="read-time">4 min read</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tab 3: Library (Modern Repo Cards) -->
+      <div id="libraryTab" class="tab-content">
+        <div class="section-title">Repositories</div>
+        <div id="repoList" class="repo-list">
+          <div class="loading">
+            <ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>
+            Memuat repositori...
+          </div>
+        </div>
+      </div>
+
+      <!-- Fixed Footer (Input + Bottom Nav) -->
+      <div class="footer-container">
+        <!-- Input Box (Akan disembunyikan jika bukan tab Home) -->
+        <div class="chat-box" id="chatBoxContainer">
+          <textarea class="chat-textarea" id="chatInput" rows="1" placeholder="Tanyakan kepada Copilot..."></textarea>
+          <div class="send-btn-container">
+            <ion-button id="sendBtn" fill="solid">
+              <ion-icon slot="icon-only" name="arrow-up-outline" style="font-size: 18px;"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
         
-        <!-- Suggestions Grid -->
-        <div class="suggestions-grid">
-          <div class="suggestion-card" onclick="fillAndSendPrompt('Jelaskan perbedaan Git Rebase dan Git Merge')">
-            <div>
-              <div class="card-icon">💡</div>
-              <div class="card-title">Jelaskan Konsep</div>
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav-row">
+          <div class="nav-pill-box">
+            <div class="nav-item active" data-tab="home">
+              <ion-icon name="chatbubbles"></ion-icon>
+              Chat
             </div>
-            <div class="card-desc">Git Rebase vs Git Merge secara singkat.</div>
-          </div>
-          
-          <div class="suggestion-card" onclick="fillAndSendPrompt('Bagaimana cara membuat file README.md yang menarik untuk project GitHub?')">
-            <div>
-              <div class="card-icon">📝</div>
-              <div class="card-title">Tulis README</div>
+            <div class="nav-item" data-tab="discover">
+              <ion-icon name="compass-outline"></ion-icon>
+              Discover
             </div>
-            <div class="card-desc">Panduan menyusun README project yang keren.</div>
-          </div>
-          
-          <div class="suggestion-card" onclick="fillAndSendPrompt('Berikan contoh script GitHub Actions untuk auto-deploy ke GitHub Pages')">
-            <div>
-              <div class="card-icon">🚀</div>
-              <div class="card-title">GitHub Actions</div>
-            </div>
-            <div class="card-desc">Template CI/CD auto-deploy pages.</div>
-          </div>
-          
-          <div class="suggestion-card" onclick="fillAndSendPrompt('Bagaimana cara mendeteksi memori bocor (memory leak) di JavaScript?')">
-            <div>
-              <div class="card-icon">🐛</div>
-              <div class="card-title">Temukan Bug</div>
-            </div>
-            <div class="card-desc">Tips debug memory leak di JavaScript.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chat-messages" id="chatMessages">
-        <!-- AI Messages akan ditambahkan di sini secara dinamis -->
-      </div>
-    </div>
-
-    <!-- Tab 2: Discover (Jekyll Blog Cards) -->
-    <div id="discoverTab" class="tab-content">
-      <div class="section-title">Discover</div>
-      <div id="blogList">
-        
-        <!-- Card 1 -->
-        <div class="jekyll-card">
-          <div class="jekyll-img">Blogging</div>
-          <div class="jekyll-content">
-            <h3 class="jekyll-title">Membuat Tema Minimalis Jekyll</h3>
-            <p class="jekyll-excerpt">Panduan langkah demi langkah membangun tema Jekyll yang bersih, cepat, dan SEO-friendly dari nol.</p>
-            <div class="jekyll-meta">
-              <div class="jekyll-tags">
-                <span class="tag">Jekyll</span>
-                <span class="tag">Design</span>
-              </div>
-              <span class="read-time">5 min read</span>
+            <div class="nav-item" data-tab="library">
+              <ion-icon name="folder-outline"></ion-icon>
+              Library
             </div>
           </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="jekyll-card">
-          <div class="jekyll-img img-2">Deployment</div>
-          <div class="jekyll-content">
-            <h3 class="jekyll-title">Otomatisasi GitHub Pages & Actions</h3>
-            <p class="jekyll-excerpt">Cara mudah deploy situs Jekyll Anda secara otomatis menggunakan GitHub Actions tanpa build lokal.</p>
-            <div class="jekyll-meta">
-              <div class="jekyll-tags">
-                <span class="tag">CI/CD</span>
-                <span class="tag">Tutorial</span>
-              </div>
-              <span class="read-time">8 min read</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="jekyll-card">
-          <div class="jekyll-img img-3">Markdown</div>
-          <div class="jekyll-content">
-            <h3 class="jekyll-title">Markdown Lanjutan untuk Blogger</h3>
-            <p class="jekyll-excerpt">Tingkatkan penulisan konten Anda dengan sintaks Markdown kustom, tabel, dan ekstensi Liquid.</p>
-            <div class="jekyll-meta">
-              <div class="jekyll-tags">
-                <span class="tag">Markdown</span>
-                <span class="tag">Tips</span>
-              </div>
-              <span class="read-time">4 min read</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Tab 3: Library (Modern Repo Cards) -->
-    <div id="libraryTab" class="tab-content">
-      <div class="section-title">Repositories</div>
-      <div id="repoList" class="repo-list">
-        <div class="loading">
-          <ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>
-          Memuat repositori...
-        </div>
-      </div>
-    </div>
-
-    <!-- Fixed Footer (Input + Bottom Nav) -->
-    <div class="footer-container">
-      <!-- Input Box (Akan disembunyikan jika bukan tab Home) -->
-      <div class="chat-box" id="chatBoxContainer">
-        <textarea class="chat-textarea" id="chatInput" rows="1" placeholder="Tanyakan kepada Copilot..."></textarea>
-        <div class="send-btn-container">
-          <ion-button id="sendBtn" fill="solid">
-            <ion-icon slot="icon-only" name="arrow-up-outline" style="font-size: 18px;"></ion-icon>
+          <ion-button class="side-action-btn" fill="clear" id="refreshLibraryBtn">
+            <ion-icon slot="icon-only" name="sync-outline" style="font-size: 22px;"></ion-icon>
           </ion-button>
         </div>
-      </div>
-      
-      <!-- Bottom Navigation -->
-      <div class="bottom-nav-row">
-        <div class="nav-pill-box">
-          <div class="nav-item active" data-tab="home">
-            <ion-icon name="chatbubbles"></ion-icon>
-            Chat
-          </div>
-          <div class="nav-item" data-tab="discover">
-            <ion-icon name="compass-outline"></ion-icon>
-            Discover
-          </div>
-          <div class="nav-item" data-tab="library">
-            <ion-icon name="folder-outline"></ion-icon>
-            Library
-          </div>
-        </div>
-        <ion-button class="side-action-btn" fill="clear" id="refreshLibraryBtn">
-          <ion-icon slot="icon-only" name="sync-outline" style="font-size: 22px;"></ion-icon>
-        </ion-button>
       </div>
     </div>
 
