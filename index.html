@@ -446,11 +446,16 @@
     }
 
     /* --- Discover Tab: Jekyll Blog Cards --- */
+    #blogList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    }
     .jekyll-card {
       background: var(--card-bg);
       border-radius: 20px;
       overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 0px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.03);
       border: 1px solid var(--border-color);
       transition: transform 0.2s;
