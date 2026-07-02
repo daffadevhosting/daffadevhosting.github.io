@@ -132,7 +132,7 @@
     repoListDiv.innerHTML = `
       <div class="loading">
         <ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>
-        Sinkronisasi repositori...
+        Memuat repositori publik ${GITHUB_OWNER}...
       </div>`;
     try {
       const response = await fetch(`${WORKER_URL}/api/github/users/${GITHUB_OWNER}/repos?sort=updated&per_page=20`, {
@@ -140,10 +140,40 @@
           'Accept': 'application/vnd.github.v3+json'
         }
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`Worker error ${response.status}`);
+      }
+
       const repos = await response.json();
       if (!Array.isArray(repos)) throw new Error('Invalid response');
 
+      renderRepoCards(repos);
+    } catch (err) {
+      console.warn('Primary repo fetch failed, mencoba fallback publik GitHub:', err);
+      await loadPublicRepositoriesFallback(err);
+    }
+  }
+
+  async function loadPublicRepositoriesFallback(primaryError) {
+    try {
+      const response = await fetch(`https://api.github.com/users/${GITHUB_OWNER}/repos?sort=updated&per_page=20`, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      if (!response.ok) throw new Error(`GitHub public API error ${response.status}`);
+      const repos = await response.json();
+      if (!Array.isArray(repos)) throw new Error('Invalid public GitHub response');
+
+      renderRepoCards(repos);
+    } catch (fallbackError) {
+      console.error('Fallback repo fetch failed:', fallbackError);
+      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori publik ${GITHUB_OWNER}. Pastikan worker aktif atau coba lagi nanti.</div>`;
+    }
+  }
+
+  function renderRepoCards(repos) {
       const sorted = repos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
       const topRepos = sorted.slice(0, 10);
 
@@ -184,10 +214,6 @@
         `;
       });
       repoListDiv.innerHTML = html;
-    } catch (err) {
-      console.error(err);
-      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori: ${err.message}. Pastikan Anda sudah login GitHub.</div>`;
-    }
   }
 
   function getCurrentTime() {
