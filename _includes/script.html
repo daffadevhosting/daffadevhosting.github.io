@@ -1,6 +1,31 @@
 <script type="module">
   const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev'; 
-  
+
+  // ============================================================
+  // BARU & PENTING: MENANGKAP HASIL CALLBACK LOGIN DARI URL
+  // ============================================================
+  function handleOAuthCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('access_token');
+    const username = urlParams.get('username');
+    const avatar = urlParams.get('avatar');
+
+    if (accessToken) {
+      // Simpan token secara seragam di localStorage menggunakan key 'access_token'
+      localStorage.setItem('access_token', accessToken);
+      if (username) localStorage.setItem('github_username', username);
+      if (avatar) localStorage.setItem('github_avatar', avatar);
+
+      // Bersihkan query parameter di URL agar terlihat bersih tanpa reload page
+      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      
+      console.log("Login sukses! Token berhasil disimpan.");
+    }
+  }
+  // Eksekusi penangkap callback begitu script dimuat
+  handleOAuthCallback();
+
   const chatInput = document.getElementById('chatInput');
   const sendBtn = document.getElementById('sendBtn');
   const chatMessagesDiv = document.getElementById('chatMessages');
@@ -9,10 +34,15 @@
   const refreshLibBtn = document.getElementById('refreshLibraryBtn');
   const chatBoxContainer = document.getElementById('chatBoxContainer');
   const welcomeScreen = document.getElementById('welcomeScreen');
-  const token = localStorage.getItem('github_token'); // Ambil token simpanan
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+
+  // Gunakan fungsi helper dinamis untuk mengambil header terbaru
+  function getHeaders() {
+    const token = localStorage.getItem('access_token'); // Konsisten menggunakan 'access_token'
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
   }
 
   if (modelSelect) {
@@ -47,7 +77,7 @@
   function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.getElementById(`${tabId}Tab`).classList.add('active');
-    
+
     document.querySelectorAll('.nav-item').forEach(item => {
       item.classList.remove('active');
       const icon = item.querySelector('ion-icon');
@@ -55,10 +85,10 @@
       if(item.getAttribute('data-tab') === 'discover') icon.setAttribute('name', 'compass-outline');
       if(item.getAttribute('data-tab') === 'library') icon.setAttribute('name', 'folder-outline');
     });
-    
+
     const activeItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
     activeItem.classList.add('active');
-    
+
     const activeIcon = activeItem.querySelector('ion-icon');
     if(tabId === 'home') activeIcon.setAttribute('name', 'chatbubbles');
     if(tabId === 'discover') activeIcon.setAttribute('name', 'compass');
@@ -71,19 +101,19 @@
       chatBoxContainer.style.opacity = '0';
       setTimeout(() => chatBoxContainer.style.display = 'none', 300);
     }
-    
+
     if (tabId === 'library') {
       loadRepositories();
     }
   }
-  
+
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
       const tab = item.getAttribute('data-tab');
       if (tab) switchTab(tab);
     });
   });
-  
+
   function getLangClass(lang) {
     if(!lang) return 'dot-default';
     const l = lang.toLowerCase();
@@ -94,6 +124,9 @@
     return 'dot-default';
   }
 
+  // ============================================================
+  // PERBAIKAN: MENAMBAHKAN AUTH TOKEN PADA REQUEST REPOSITORY
+  // ============================================================
   async function loadRepositories() {
     repoListDiv.innerHTML = `
       <div class="loading">
@@ -101,26 +134,30 @@
         Sinkronisasi repositori...
       </div>`;
     try {
+      const headers = getHeaders(); // Dapatkan token akses terbaru
       const response = await fetch(`${WORKER_URL}/api/github/user/repos`, {
-        headers: { 'Accept': 'application/json' }
+        headers: { 
+          'Accept': 'application/vnd.github.v3+json',
+          'Authorization': headers['Authorization'] // Sertakan Token OAuth disini!
+        }
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const repos = await response.json();
       if (!Array.isArray(repos)) throw new Error('Invalid response');
-      
+
       const sorted = repos.sort((a,b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
       const topRepos = sorted.slice(0, 10);
-      
+
       if (topRepos.length === 0) {
         repoListDiv.innerHTML = '<div class="loading">Tidak ada repositori ditemukan.</div>';
         return;
       }
-      
+
       let html = '';
       topRepos.forEach(repo => {
         const lang = repo.language || 'Unknown';
         const langDot = getLangClass(repo.language);
-        
+
         html += `
           <div class="modern-repo-card">
             <div class="repo-header">
@@ -150,193 +187,207 @@
       repoListDiv.innerHTML = html;
     } catch (err) {
       console.error(err);
-      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori: ${err.message}. Pastikan URL Worker benar.</div>`;
+      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori: ${err.message}. Pastikan Anda sudah login GitHub.</div>`;
     }
   }
-  
+
   function getCurrentTime() {
     return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit' });
   }
 
-async function sendMessage() {
-  const query = chatInput.value.trim();
-  if (!query) return;
-  
-  // Sembunyikan welcome screen secara halus begitu chat pertama dikirim
-  if (welcomeScreen.style.display !== 'none') {
-    welcomeScreen.style.opacity = '0';
-    welcomeScreen.style.transition = 'opacity 0.3s ease';
-    setTimeout(() => welcomeScreen.style.display = 'none', 300);
+  async function sendMessage() {
+    const query = chatInput.value.trim();
+    if (!query) return;
+
+    // Sembunyikan welcome screen secara halus begitu chat pertama dikirim
+    if (welcomeScreen.style.display !== 'none') {
+      welcomeScreen.style.opacity = '0';
+      welcomeScreen.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => welcomeScreen.style.display = 'none', 300);
+    }
+
+    appendUserMessage(query);
+    chatInput.value = '';
+    chatInput.rows = 1;
+
+    const typingId = showTypingIndicator();
+    const headers = getHeaders(); // Gunakan helper terpusat
+
+    try {
+      const response = await fetch(`${WORKER_URL}/api/ai`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ query: query })
+      });
+
+      removeTypingIndicator(typingId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      // Deteksi jika Worker menyatakan user belum masuk (anonim)
+      if (data.authenticated === false) {
+        const answer = data.answer || 'Kamu belum login, silahkan login terlebih dahulu yah.';
+        const loginUrl = data.action?.url || `${WORKER_URL}/api/auth/github`;
+
+        // Panggil generator chat khusus dengan efek mengetik & tombol login yang sudah distyle
+        appendAIMessageWithLogin(answer, loginUrl);
+      } else {
+        const answer = data.answer || data.message || 'Maaf, saya tidak bisa merespon saat ini.';
+        appendAIMessage(answer);
+      }
+    } catch (err) {
+      removeTypingIndicator(typingId);
+      appendAIMessage(`❌ **Error:** ${err.message}. Periksa koneksi dan worker Anda.`);
+    }
   }
 
-  appendUserMessage(query);
-  chatInput.value = '';
-  chatInput.rows = 1;
-  
-  const typingId = showTypingIndicator();
-  
-  // Ambil token akses GitHub yang tersimpan setelah proses login OAuth berhasil
-  const token = localStorage.getItem('access_token');
-  const headers = { 'Content-Type': 'application/json' };
-  
-  // Jika token tersedia, sertakan dalam Authorization Header
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  
-  try {
-    const response = await fetch(`${WORKER_URL}/api/ai`, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({ query: query })
-    });
-    
-    removeTypingIndicator(typingId);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Server error ${response.status}: ${errorText}`);
-    }
-    
-    const data = await response.json();
-    
-    // Deteksi jika Worker menyatakan user belum masuk (anonim)
-    if (data.authenticated === false) {
-      const answer = data.answer || 'Kamu belum login, silahkan login terlebih dahulu yah.';
-      const loginUrl = data.action?.url || `${WORKER_URL}/api/auth/github`;
-      
-      // Panggil generator chat khusus dengan efek mengetik & tombol login
-      appendAIMessageWithLogin(answer, loginUrl);
-    } else {
-      const answer = data.answer || data.message || 'Maaf, saya tidak bisa merespon saat ini.';
-      appendAIMessage(answer);
-    }
-  } catch (err) {
-    removeTypingIndicator(typingId);
-    appendAIMessage(`❌ **Error:** ${err.message}. Periksa koneksi dan worker Anda.`);
-  }
-}
-
-function appendAIMessageWithLogin(text, loginUrl) {
-  // Cari container chat pembungkus (Ganti ID dengan milik kontainer chat Anda jika berbeda)
-  const chatContainer = document.getElementById('chatContainer') || document.getElementById('chatMessages');
-  if (!chatContainer) return;
-  
-  // Buat element pembungkus baris chat
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'flex flex-col items-start gap-2 mb-4 transition-all duration-300';
-  
-  // Buat element bubble chat asisten (menyesuaikan tema gelap GitHub Worker)
-  const bubble = document.createElement('div');
-  bubble.className = 'bg-[#161b22] text-[#c9d1d9] border border-[#30363d] rounded-2xl rounded-tl-none p-4 max-w-[85%] text-sm leading-relaxed shadow-md';
-  
-  // Tempat penulisan teks simulasi mengetik
-  const textSpan = document.createElement('span');
-  textSpan.className = 'font-sans whitespace-pre-wrap';
-  
-  bubble.appendChild(textSpan);
-  messageDiv.appendChild(bubble);
-  chatContainer.appendChild(messageDiv);
-  
-  // Auto-scroll ke bagian chat terbawah
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-  
-  // Simulasi pengetikan asisten karakter demi karakter
-  let i = 0;
-  function typeEffect() {
-    if (i < text.length) {
-      textSpan.textContent += text.charAt(i);
-      i++;
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-      setTimeout(typeEffect, 20); // Kecepatan mengetik 20ms per karakter
-    } else {
-      // Setelah pengetikan selesai, tambahkan tombol login secara smooth (fade-in)
-      const btnContainer = document.createElement('div');
-      btnContainer.className = 'mt-3 opacity-0 transition-opacity duration-500 ease-in-out';
-      
-      const loginBtn = document.createElement('a');
-      loginBtn.href = loginUrl;
-      loginBtn.className = 'inline-flex items-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition duration-200 shadow-lg shadow-green-950/20';
-      loginBtn.innerHTML = `
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-          <polyline points="10 17 15 12 10 7" />
-          <line x1="15" y1="12" x2="3" y2="12" />
-        </svg>
-        Login dengan GitHub
-      `;
-      
-      btnContainer.appendChild(loginBtn);
-      bubble.appendChild(btnContainer);
-      
-      // Berikan jeda sangat tipis agar animasi transisi opacity-100 ter-trigger
-      setTimeout(() => {
-        btnContainer.classList.remove('opacity-0');
-        btnContainer.classList.add('opacity-100');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 50);
-    }
-  }
-  
-  // Mulai efek pengetikan
-  typeEffect();
-}
-  
-  function appendUserMessage(text) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'message-wrapper user';
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message';
-    
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = text;
-    
-    const timeSpan = document.createElement('div');
-    timeSpan.className = 'timestamp';
-    timeSpan.textContent = getCurrentTime();
-    
-    messageDiv.appendChild(bubble);
-    messageDiv.appendChild(timeSpan);
-    wrapper.appendChild(messageDiv);
-    
-    chatMessagesDiv.appendChild(wrapper);
-    scrollToBottom();
-  }
-  
-  function appendAIMessage(text) {
+  // ============================================================
+  // PERBAIKAN: STYLE TOMBOL LOGIN DISEMANDIRIKAN SUPAYA CANTIK
+  // ============================================================
+  function appendAIMessageWithLogin(text, loginUrl) {
     const wrapper = document.createElement('div');
     wrapper.className = 'message-wrapper ai';
-    
+
     const avatar = document.createElement('div');
     avatar.className = 'ai-avatar';
     avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
-    
+
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message';
-    
+
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
     
-    // Memproses Markdown dengan marked.js lalu menyaringnya dengan DOMPurify agar aman
-    const rawHtml = marked.parse(text);
-    const cleanHtml = DOMPurify.sanitize(rawHtml);
-    bubble.innerHTML = cleanHtml;
-    
+    // Siapkan wadah teks mengetik
+    const textSpan = document.createElement('div');
+    textSpan.style.display = 'inline';
+    bubble.appendChild(textSpan);
+
     const timeSpan = document.createElement('div');
     timeSpan.className = 'timestamp';
     timeSpan.textContent = getCurrentTime();
-    
+
     messageDiv.appendChild(bubble);
     messageDiv.appendChild(timeSpan);
     wrapper.appendChild(avatar);
     wrapper.appendChild(messageDiv);
-    
+
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+
+    // Simulasi pengetikan asisten karakter demi karakter
+    let i = 0;
+    function typeEffect() {
+      if (i < text.length) {
+        textSpan.textContent += text.charAt(i);
+        i++;
+        scrollToBottom();
+        setTimeout(typeEffect, 15); // Kecepatan mengetik
+      } else {
+        // Setelah pengetikan selesai, tambahkan tombol login yang telah distyle dengan rapi
+        const btnContainer = document.createElement('div');
+        btnContainer.style.marginTop = '12px';
+        btnContainer.style.opacity = '0';
+        btnContainer.style.transition = 'opacity 0.4s ease';
+
+        // Gunakan struktur CSS tombol bawaan aplikasi kamu agar menyatu indah
+        const loginBtn = document.createElement('a');
+        loginBtn.href = loginUrl;
+        // Inject style langsung (inline) agar tombol terlihat sangat modern & rapi tanpa Tailwind
+        loginBtn.style.display = 'inline-flex';
+        loginBtn.style.alignItems = 'center';
+        loginBtn.style.gap = '8px';
+        loginBtn.style.backgroundColor = '#238636';
+        loginBtn.style.color = '#ffffff';
+        loginBtn.style.padding = '10px 16px';
+        loginBtn.style.borderRadius = '8px';
+        loginBtn.style.fontSize = '13px';
+        loginBtn.style.fontWeight = '600';
+        loginBtn.style.textDecoration = 'none';
+        loginBtn.style.boxShadow = '0 4px 12px rgba(35, 134, 54, 0.2)';
+        loginBtn.style.transition = 'all 0.2s';
+        
+        loginBtn.onmouseover = () => { loginBtn.style.backgroundColor = '#2ea043'; };
+        loginBtn.onmouseout = () => { loginBtn.style.backgroundColor = '#238636'; };
+
+        loginBtn.innerHTML = `
+          <ion-icon name="logo-github" style="font-size: 18px;"></ion-icon>
+          <span>Hubungkan Akun GitHub</span>
+        `;
+
+        btnContainer.appendChild(loginBtn);
+        bubble.appendChild(btnContainer);
+
+        setTimeout(() => {
+          btnContainer.style.opacity = '1';
+          scrollToBottom();
+        }, 100);
+      }
+    }
+
+    typeEffect();
+  }
+
+  function appendUserMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper user';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(messageDiv);
+
     chatMessagesDiv.appendChild(wrapper);
     scrollToBottom();
   }
-  
+
+  function appendAIMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper ai';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    // Memproses Markdown dengan marked.js lalu menyaringnya dengan DOMPurify agar aman
+    const rawHtml = marked.parse(text);
+    const cleanHtml = DOMPurify.sanitize(rawHtml);
+    bubble.innerHTML = cleanHtml;
+
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+
   function appendLoginButton(url) {
     const wrapper = document.createElement('div');
     wrapper.className = 'message-wrapper ai';
@@ -357,19 +408,22 @@ function appendAIMessageWithLogin(text, loginUrl) {
     scrollToBottom();
   }
 
+  // ============================================================
+  // TYPING INDICATOR INTEGRITY FIX
+  // ============================================================
   function showTypingIndicator() {
     const id = 'typing-' + Date.now();
     const wrapper = document.createElement('div');
     wrapper.id = id;
     wrapper.className = 'message-wrapper ai';
-    
+
     const avatar = document.createElement('div');
     avatar.className = 'ai-avatar';
     avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
-    
+
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message';
-    
+
     messageDiv.innerHTML = `
       <div class="bubble">
         <div class="typing-indicator">
@@ -377,25 +431,30 @@ function appendAIMessageWithLogin(text, loginUrl) {
         </div>
       </div>
     `;
-    
+
     wrapper.appendChild(avatar);
     wrapper.appendChild(messageDiv);
     chatMessagesDiv.appendChild(wrapper);
     scrollToBottom();
-    
+
     return id;
   }
-  
+
   function removeTypingIndicator(id) {
     const el = document.getElementById(id);
     if (el) el.remove();
   }
 
+  // Sempurnakan scroll ke bagian paling bawah area chat aktif
   function scrollToBottom() {
-    const container = document.querySelector('#homeTab');
-    container.scrollTop = container.scrollHeight;
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab) {
+      activeTab.scrollTop = activeTab.scrollHeight;
+    } else {
+      chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }
   }
-  
+
   sendBtn.addEventListener('click', sendMessage);
   chatInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -403,23 +462,23 @@ function appendAIMessageWithLogin(text, loginUrl) {
       sendMessage();
     }
   });
-  
+
   chatInput.addEventListener('input', function() {
     this.rows = 1;
     const lineCount = Math.ceil(this.scrollHeight / 24);
     this.rows = Math.min(lineCount, 4);
   });
-  
+
   refreshLibBtn.addEventListener('click', () => {
     const icon = refreshLibBtn.querySelector('ion-icon');
     icon.style.animation = 'spin 1s linear';
     setTimeout(() => icon.style.animation = '', 1000);
-    
+
     if (document.querySelector('#libraryTab').classList.contains('active')) {
       loadRepositories();
     }
   });
-  
+
   async function checkWorkerHealth() {
     try {
       const res = await fetch(`${WORKER_URL}/health`);
@@ -430,84 +489,7 @@ function appendAIMessageWithLogin(text, loginUrl) {
   }
   checkWorkerHealth();
 </script>
-<script>
-  const blogPostModal = document.getElementById('blogPostModal');
-  const blogPostModalTitle = document.getElementById('blogPostModalTitle');
-  const blogPostModalContent = document.getElementById('blogPostModalContent');
 
-  async function openBlogPost(url, imageFromLink = '') {
-    if (!blogPostModal || !blogPostModalContent) return;
-
-    if (blogPostModalTitle) {
-      blogPostModalTitle.textContent = 'Memuat artikel...';
-    }
-
-    blogPostModalContent.innerHTML = '<div class="loading">Memuat artikel...</div>';
-
-    try {
-      if (typeof blogPostModal.present === 'function') {
-        await blogPostModal.present();
-      }
-
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const article = doc.querySelector('main') || doc.querySelector('article') || doc.body;
-      const title = doc.querySelector('h1')?.textContent?.trim() || 'Artikel';
-      const image = imageFromLink || doc.querySelector('meta[property="og:image"]')?.content || doc.querySelector('img')?.getAttribute('src');
-
-      if (blogPostModalTitle) {
-        blogPostModalTitle.textContent = title;
-      }
-
-      blogPostModalContent.innerHTML = '';
-
-      if (image) {
-        const hero = document.createElement('img');
-        hero.src = image;
-        hero.alt = title;
-        hero.className = 'blog-post-hero-image';
-        blogPostModalContent.appendChild(hero);
-      }
-
-      const contentContainer = document.createElement('div');
-      contentContainer.innerHTML = article.innerHTML;
-      contentContainer.querySelectorAll('h1').forEach(el => el.remove());
-      blogPostModalContent.appendChild(contentContainer);
-      blogPostModalContent.querySelectorAll('a').forEach(link => {
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
-      });
-    } catch (error) {
-      if (blogPostModalTitle) {
-        blogPostModalTitle.textContent = 'Artikel tidak tersedia';
-      }
-      blogPostModalContent.innerHTML = `<div class="error-msg">Gagal memuat artikel: ${error.message}</div>`;
-    }
-  }
-
-  window.openBlogPost = openBlogPost;
-  window.closeBlogPostModal = function() {
-    if (typeof blogPostModal?.dismiss === 'function') {
-      blogPostModal.dismiss();
-    }
-  };
-
-  document.addEventListener('click', (event) => {
-    const link = event.target.closest('.blog-post-link');
-    if (!link) return;
-
-    event.preventDefault();
-    const url = link.getAttribute('data-post-url');
-    const image = link.getAttribute('data-post-image');
-    if (url) {
-      openBlogPost(url, image);
-    }
-  });
-</script>
 <script>
   // Menambahkan event listener untuk menutup keyboard virtual di perangkat mobile saat klik di luar input
   document.addEventListener('click', function(event) {
