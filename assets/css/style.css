@@ -716,12 +716,18 @@
       text-align: center;
     }
 
+    #repoList.repo-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
+    }
+
     /* --- Library Tab: Modern Repo Cards --- */
     .modern-repo-card {
       background: var(--card-bg);
       border-radius: 16px;
       padding: 18px;
-      margin-bottom: 16px;
+      margin-bottom: 0px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
       border: 1px solid var(--border-color);
     }
@@ -811,6 +817,10 @@
 
     .loading,
     .error-msg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       text-align: center;
       padding: 40px 20px;
       color: var(--text-muted);
