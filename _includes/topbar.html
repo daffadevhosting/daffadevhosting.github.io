@@ -1,5 +1,5 @@
 <div class="top-bar">
-  <ion-button class="menu-btn" fill="clear">
+  <ion-button class="menu-btn" fill="clear" aria-label="Buka menu pengguna">
     <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
   </ion-button>
   <div class="model-selector-wrap">
@@ -9,5 +9,29 @@
       {% endfor %}
     </select>
   </div>
-  <div class="placeholder-right"></div>
+  <div class="topbar-profile" id="topbarProfile">
+    <button type="button" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
+      <span class="topbar-avatar" id="topbarAvatar"></span>
+      <span class="topbar-username" id="topbarMiniUsername">Tamu</span>
+    </button>
+  </div>
 </div>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+<aside class="sidebar-panel" id="sidebarPanel" inert>
+  <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="Tutup menu">
+    <ion-icon name="close-outline"></ion-icon>
+  </button>
+  <div class="sidebar-header">
+    <div class="sidebar-avatar" id="sidebarAvatar"></div>
+    <div>
+      <p class="sidebar-label">Profil GitHub</p>
+      <h3 id="sidebarUsername">Tamu</h3>
+    </div>
+  </div>
+  <div class="sidebar-body">
+    <p class="sidebar-status" id="sidebarStatus">Belum login.</p>
+    <a href="#" id="sidebarLoginBtn" class="sidebar-action-btn">Login GitHub</a>
+    <button type="button" id="sidebarLogoutBtn" class="sidebar-action-btn sidebar-logout-btn hidden">Logout</button>
+  </div>
+</aside>

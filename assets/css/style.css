@@ -78,6 +78,168 @@
       width: 44px;
     }
 
+    .topbar-profile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topbar-profile-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-color);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 10px 0;
+    }
+
+    .topbar-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d9d3cd, #f7f3f0);
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+
+    .topbar-username {
+      display: none;
+      font-size: 14px;
+      color: var(--text-color);
+    }
+
+    @media (min-width: 640px) {
+      .topbar-username {
+        display: inline-block;
+      }
+    }
+
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      z-index: 90;
+    }
+
+    .sidebar-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: min(320px, 100%);
+      background: #ffffff;
+      box-shadow: -20px 0 60px rgba(0, 0, 0, 0.12);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 100;
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-panel.active {
+      transform: translateX(0);
+    }
+
+    .sidebar-close {
+      align-self: flex-end;
+      border: none;
+      background: transparent;
+      color: var(--text-color);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #d9d3cd, #f7f3f0);
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-label {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .sidebar-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--text-color);
+      line-height: 1.2;
+    }
+
+    .sidebar-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-status {
+      margin: 0;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .sidebar-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-color);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sidebar-action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-logout-btn {
+      border-color: #f04438;
+      color: #f04438;
+    }
+
+    .sidebar-action-btn.hidden {
+      display: none;
+    }
+
     /* Tab content containers */
     .tab-content {
       max-width: 800px;
@@ -189,7 +351,7 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
 
     .message-wrapper {
@@ -562,6 +724,11 @@
 
       .jekyll-card {
         margin-bottom: 20px;
+      }
+
+      #repoList.repo-list {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
       }
     }
 
