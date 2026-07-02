@@ -3,16 +3,7 @@ layout: default
 title: {{ page.title }}
 description: {{ page.description | default: site.description }}
 ---
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if page.img %}
-    <meta property="og:image" content="{{ page.img | absolute_url }}">
-    {% endif %}
-  </head>
-  <body>
+
   <main style="padding: 24px; max-width: 760px; margin: 0 auto; font-family: Arial, sans-serif;">
     <h1>{{ page.title }}</h1>
     <p><em>{{ page.date | date: "%d %B %Y" }}</em> · {{ page.read_time }}</p>
