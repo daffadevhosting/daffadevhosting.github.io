@@ -1,0 +1,28 @@
+title: DaffaDev
+email: your@email.com
+description: >-
+  Situs sederhana yang memadukan tampilan personal dan blog Jekyll.
+baseurl: ""
+url: "https://daffadevhosting.github.io"
+lang: "id-ID"
+
+license_b64: "aHR0cHM6Ly9kYWZmYWRldmhvc3RpbmcuZ2l0aHViLmlv"
+ads_image: "/vildaesa.jpg"
+ads_link: "https://www.instagram.com/vildaesamlysri/"
+
+collections:
+  blog:
+    output: true
+    permalink: /blog/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "blog"
+    values:
+      layout: "post"
+      author: "Daffa"
+
+markdown: kramdown
+plugins:
+  - jekyll-feed

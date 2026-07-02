@@ -1,0 +1,52 @@
+      <div id="homeTab" class="tab-content active">
+        
+        <!-- Welcome Screen (Copilot Style) -->
+        <div class="welcome-container" id="welcomeScreen">
+          <div class="welcome-icon-box">
+            <ion-icon name="logo-github"></ion-icon>
+          </div>
+          <h2 class="welcome-title">Halo, saya Copilot</h2>
+          <p class="welcome-subtitle">Partner AI Anda untuk mengeksplorasi kode, repositori, dan mengotomatiskan workflow.</p>
+          
+          <div style="height: 24px;"></div>
+          
+          <!-- Suggestions Grid -->
+          <div class="suggestions-grid">
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Jelaskan perbedaan Git Rebase dan Git Merge')">
+              <div>
+                <div class="card-icon">💡</div>
+                <div class="card-title">Jelaskan Konsep</div>
+              </div>
+              <div class="card-desc">Git Rebase vs Git Merge secara singkat.</div>
+            </div>
+            
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Bagaimana cara membuat file README.md yang menarik untuk project GitHub?')">
+              <div>
+                <div class="card-icon">📝</div>
+                <div class="card-title">Tulis README</div>
+              </div>
+              <div class="card-desc">Panduan menyusun README project yang keren.</div>
+            </div>
+            
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Berikan contoh script GitHub Actions untuk auto-deploy ke GitHub Pages')">
+              <div>
+                <div class="card-icon">🚀</div>
+                <div class="card-title">GitHub Actions</div>
+              </div>
+              <div class="card-desc">Template CI/CD auto-deploy pages.</div>
+            </div>
+            
+            <div class="suggestion-card" onclick="fillAndSendPrompt('Bagaimana cara mendeteksi memori bocor (memory leak) di JavaScript?')">
+              <div>
+                <div class="card-icon">🐛</div>
+                <div class="card-title">Temukan Bug</div>
+              </div>
+              <div class="card-desc">Tips debug memory leak di JavaScript.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <!-- AI Messages akan ditambahkan di sini secara dinamis -->
+        </div>
+      </div>

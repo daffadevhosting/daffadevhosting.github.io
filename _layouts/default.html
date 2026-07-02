@@ -1,0 +1,18 @@
+---
+---
+<!DOCTYPE html>
+<html lang="{% if page.lang %}{{ page.lang }}{% else %}{{ site.lang | default: 'id' }}{% endif %}">
+{% include head.html %}
+<body>
+
+<ion-app>
+  <ion-content scroll-y="false">
+    
+{{ content }}
+
+  </ion-content>
+</ion-app>
+
+{% include script.html %}
+</body>
+</html>

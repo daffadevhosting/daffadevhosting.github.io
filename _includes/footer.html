@@ -1,0 +1,32 @@
+      <footer class="footer footer-container">
+        <!-- Input Box (Akan disembunyikan jika bukan tab Home) -->
+        <div class="chat-box" id="chatBoxContainer">
+          <textarea class="chat-textarea" id="chatInput" rows="1" placeholder="Tanyakan kepada Copilot..."></textarea>
+          <div class="send-btn-container">
+            <ion-button id="sendBtn" fill="solid">
+              <ion-icon slot="icon-only" name="arrow-up-outline" style="font-size: 18px;"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav-row">
+          <div class="nav-pill-box">
+            <div class="nav-item active" data-tab="home">
+              <ion-icon name="chatbubbles"></ion-icon>
+              Chat
+            </div>
+            <div class="nav-item" data-tab="discover">
+              <ion-icon name="compass-outline"></ion-icon>
+              Discover
+            </div>
+            <div class="nav-item" data-tab="library">
+              <ion-icon name="folder-outline"></ion-icon>
+              Library
+            </div>
+          </div>
+          <ion-button class="side-action-btn" fill="clear" id="refreshLibraryBtn">
+            <ion-icon slot="icon-only" name="sync-outline" style="font-size: 22px;"></ion-icon>
+          </ion-button>
+        </div>
+      </footer>

@@ -1,0 +1,523 @@
+<script type="module">
+  const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev'; 
+  
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const chatMessagesDiv = document.getElementById('chatMessages');
+  const modelSelect = document.querySelector('.model-selector-select');
+  const repoListDiv = document.getElementById('repoList');
+  const refreshLibBtn = document.getElementById('refreshLibraryBtn');
+  const chatBoxContainer = document.getElementById('chatBoxContainer');
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const token = localStorage.getItem('github_token'); // Ambil token simpanan
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  if (modelSelect) {
+    const storedModel = localStorage.getItem('selectedModel');
+    if (storedModel) {
+      const match = Array.from(modelSelect.options).find(option => option.value === storedModel);
+      if (match) {
+        modelSelect.value = storedModel;
+      }
+    }
+
+    window.selectedModel = modelSelect.value;
+
+    modelSelect.addEventListener('change', () => {
+      window.selectedModel = modelSelect.value;
+      localStorage.setItem('selectedModel', modelSelect.value);
+    });
+  }
+
+  // Konfigurasi marked untuk line breaks alami
+  marked.setOptions({
+    breaks: true,
+    gfm: true
+  });
+
+  // Fungsi global untuk starter card yang diklik
+  window.fillAndSendPrompt = function(promptText) {
+    chatInput.value = promptText;
+    sendMessage();
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(`${tabId}Tab`).classList.add('active');
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+      const icon = item.querySelector('ion-icon');
+      if(item.getAttribute('data-tab') === 'home') icon.setAttribute('name', 'chatbubbles-outline');
+      if(item.getAttribute('data-tab') === 'discover') icon.setAttribute('name', 'compass-outline');
+      if(item.getAttribute('data-tab') === 'library') icon.setAttribute('name', 'folder-outline');
+    });
+    
+    const activeItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+    activeItem.classList.add('active');
+    
+    const activeIcon = activeItem.querySelector('ion-icon');
+    if(tabId === 'home') activeIcon.setAttribute('name', 'chatbubbles');
+    if(tabId === 'discover') activeIcon.setAttribute('name', 'compass');
+    if(tabId === 'library') activeIcon.setAttribute('name', 'folder');
+
+    if (tabId === 'home') {
+      chatBoxContainer.style.display = 'flex';
+      setTimeout(() => chatBoxContainer.style.opacity = '1', 10);
+    } else {
+      chatBoxContainer.style.opacity = '0';
+      setTimeout(() => chatBoxContainer.style.display = 'none', 300);
+    }
+    
+    if (tabId === 'library') {
+      loadRepositories();
+    }
+  }
+  
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const tab = item.getAttribute('data-tab');
+      if (tab) switchTab(tab);
+    });
+  });
+  
+  function getLangClass(lang) {
+    if(!lang) return 'dot-default';
+    const l = lang.toLowerCase();
+    if(l === 'javascript') return 'dot-js';
+    if(l === 'html') return 'dot-html';
+    if(l === 'css') return 'dot-css';
+    if(l === 'typescript') return 'dot-ts';
+    return 'dot-default';
+  }
+
+  async function loadRepositories() {
+    repoListDiv.innerHTML = `
+      <div class="loading">
+        <ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>
+        Sinkronisasi repositori...
+      </div>`;
+    try {
+      const response = await fetch(`${WORKER_URL}/api/github/user/repos`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const repos = await response.json();
+      if (!Array.isArray(repos)) throw new Error('Invalid response');
+      
+      const sorted = repos.sort((a,b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+      const topRepos = sorted.slice(0, 10);
+      
+      if (topRepos.length === 0) {
+        repoListDiv.innerHTML = '<div class="loading">Tidak ada repositori ditemukan.</div>';
+        return;
+      }
+      
+      let html = '';
+      topRepos.forEach(repo => {
+        const lang = repo.language || 'Unknown';
+        const langDot = getLangClass(repo.language);
+        
+        html += `
+          <div class="modern-repo-card">
+            <div class="repo-header">
+              <ion-icon name="book-outline" class="repo-icon"></ion-icon>
+              <span class="repo-name">${repo.name}</span>
+              <span class="repo-badge">${repo.private ? 'Private' : 'Public'}</span>
+            </div>
+            <div class="repo-desc">${repo.description || 'Tidak ada deskripsi yang disediakan.'}</div>
+            
+            <div class="repo-meta-footer">
+              <div class="meta-item">
+                <span class="lang-dot ${langDot}"></span>
+                <span>${lang}</span>
+              </div>
+              <div class="meta-item">
+                <ion-icon name="star-outline"></ion-icon>
+                <span>${repo.stargazers_count || 0}</span>
+              </div>
+              <div class="meta-item">
+                <ion-icon name="git-network-outline"></ion-icon>
+                <span>${repo.forks_count || 0}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      repoListDiv.innerHTML = html;
+    } catch (err) {
+      console.error(err);
+      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori: ${err.message}. Pastikan URL Worker benar.</div>`;
+    }
+  }
+  
+  function getCurrentTime() {
+    return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit' });
+  }
+
+async function sendMessage() {
+  const query = chatInput.value.trim();
+  if (!query) return;
+  
+  // Sembunyikan welcome screen secara halus begitu chat pertama dikirim
+  if (welcomeScreen.style.display !== 'none') {
+    welcomeScreen.style.opacity = '0';
+    welcomeScreen.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => welcomeScreen.style.display = 'none', 300);
+  }
+
+  appendUserMessage(query);
+  chatInput.value = '';
+  chatInput.rows = 1;
+  
+  const typingId = showTypingIndicator();
+  
+  // Ambil token akses GitHub yang tersimpan setelah proses login OAuth berhasil
+  const token = localStorage.getItem('access_token');
+  const headers = { 'Content-Type': 'application/json' };
+  
+  // Jika token tersedia, sertakan dalam Authorization Header
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  try {
+    const response = await fetch(`${WORKER_URL}/api/ai`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ query: query })
+    });
+    
+    removeTypingIndicator(typingId);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Server error ${response.status}: ${errorText}`);
+    }
+    
+    const data = await response.json();
+    
+    // Deteksi jika Worker menyatakan user belum masuk (anonim)
+    if (data.authenticated === false) {
+      const answer = data.answer || 'Kamu belum login, silahkan login terlebih dahulu yah.';
+      const loginUrl = data.action?.url || `${WORKER_URL}/api/auth/github`;
+      
+      // Panggil generator chat khusus dengan efek mengetik & tombol login
+      appendAIMessageWithLogin(answer, loginUrl);
+    } else {
+      const answer = data.answer || data.message || 'Maaf, saya tidak bisa merespon saat ini.';
+      appendAIMessage(answer);
+    }
+  } catch (err) {
+    removeTypingIndicator(typingId);
+    appendAIMessage(`❌ **Error:** ${err.message}. Periksa koneksi dan worker Anda.`);
+  }
+}
+
+function appendAIMessageWithLogin(text, loginUrl) {
+  // Cari container chat pembungkus (Ganti ID dengan milik kontainer chat Anda jika berbeda)
+  const chatContainer = document.getElementById('chatContainer') || document.getElementById('chatMessages');
+  if (!chatContainer) return;
+  
+  // Buat element pembungkus baris chat
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'flex flex-col items-start gap-2 mb-4 transition-all duration-300';
+  
+  // Buat element bubble chat asisten (menyesuaikan tema gelap GitHub Worker)
+  const bubble = document.createElement('div');
+  bubble.className = 'bg-[#161b22] text-[#c9d1d9] border border-[#30363d] rounded-2xl rounded-tl-none p-4 max-w-[85%] text-sm leading-relaxed shadow-md';
+  
+  // Tempat penulisan teks simulasi mengetik
+  const textSpan = document.createElement('span');
+  textSpan.className = 'font-sans whitespace-pre-wrap';
+  
+  bubble.appendChild(textSpan);
+  messageDiv.appendChild(bubble);
+  chatContainer.appendChild(messageDiv);
+  
+  // Auto-scroll ke bagian chat terbawah
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  
+  // Simulasi pengetikan asisten karakter demi karakter
+  let i = 0;
+  function typeEffect() {
+    if (i < text.length) {
+      textSpan.textContent += text.charAt(i);
+      i++;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      setTimeout(typeEffect, 20); // Kecepatan mengetik 20ms per karakter
+    } else {
+      // Setelah pengetikan selesai, tambahkan tombol login secara smooth (fade-in)
+      const btnContainer = document.createElement('div');
+      btnContainer.className = 'mt-3 opacity-0 transition-opacity duration-500 ease-in-out';
+      
+      const loginBtn = document.createElement('a');
+      loginBtn.href = loginUrl;
+      loginBtn.className = 'inline-flex items-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition duration-200 shadow-lg shadow-green-950/20';
+      loginBtn.innerHTML = `
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+        Login dengan GitHub
+      `;
+      
+      btnContainer.appendChild(loginBtn);
+      bubble.appendChild(btnContainer);
+      
+      // Berikan jeda sangat tipis agar animasi transisi opacity-100 ter-trigger
+      setTimeout(() => {
+        btnContainer.classList.remove('opacity-0');
+        btnContainer.classList.add('opacity-100');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 50);
+    }
+  }
+  
+  // Mulai efek pengetikan
+  typeEffect();
+}
+  
+  function appendUserMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper user';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+    
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(messageDiv);
+    
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+  
+  function appendAIMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper ai';
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    
+    // Memproses Markdown dengan marked.js lalu menyaringnya dengan DOMPurify agar aman
+    const rawHtml = marked.parse(text);
+    const cleanHtml = DOMPurify.sanitize(rawHtml);
+    bubble.innerHTML = cleanHtml;
+    
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+    
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+    
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+  
+  function appendLoginButton(url) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper ai';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+
+    const button = document.createElement('a');
+    button.className = 'login-btn';
+    button.href = url;
+    button.target = '_blank';
+    button.rel = 'noopener noreferrer';
+    button.textContent = 'Login / Connect';
+
+    messageDiv.appendChild(button);
+    wrapper.appendChild(messageDiv);
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function showTypingIndicator() {
+    const id = 'typing-' + Date.now();
+    const wrapper = document.createElement('div');
+    wrapper.id = id;
+    wrapper.className = 'message-wrapper ai';
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    
+    messageDiv.innerHTML = `
+      <div class="bubble">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+    
+    return id;
+  }
+  
+  function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function scrollToBottom() {
+    const container = document.querySelector('#homeTab');
+    container.scrollTop = container.scrollHeight;
+  }
+  
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  
+  chatInput.addEventListener('input', function() {
+    this.rows = 1;
+    const lineCount = Math.ceil(this.scrollHeight / 24);
+    this.rows = Math.min(lineCount, 4);
+  });
+  
+  refreshLibBtn.addEventListener('click', () => {
+    const icon = refreshLibBtn.querySelector('ion-icon');
+    icon.style.animation = 'spin 1s linear';
+    setTimeout(() => icon.style.animation = '', 1000);
+    
+    if (document.querySelector('#libraryTab').classList.contains('active')) {
+      loadRepositories();
+    }
+  });
+  
+  async function checkWorkerHealth() {
+    try {
+      const res = await fetch(`${WORKER_URL}/health`);
+      if (!res.ok) appendAIMessage('⚠️ Worker merespon dengan error, periksa konfigurasi Worker Anda.');
+    } catch (e) {
+      console.warn('Cek koneksi worker gagal di background.');
+    }
+  }
+  checkWorkerHealth();
+</script>
+<script>
+  const blogPostModal = document.getElementById('blogPostModal');
+  const blogPostModalTitle = document.getElementById('blogPostModalTitle');
+  const blogPostModalContent = document.getElementById('blogPostModalContent');
+
+  async function openBlogPost(url, imageFromLink = '') {
+    if (!blogPostModal || !blogPostModalContent) return;
+
+    if (blogPostModalTitle) {
+      blogPostModalTitle.textContent = 'Memuat artikel...';
+    }
+
+    blogPostModalContent.innerHTML = '<div class="loading">Memuat artikel...</div>';
+
+    try {
+      if (typeof blogPostModal.present === 'function') {
+        await blogPostModal.present();
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const article = doc.querySelector('main') || doc.querySelector('article') || doc.body;
+      const title = doc.querySelector('h1')?.textContent?.trim() || 'Artikel';
+      const image = imageFromLink || doc.querySelector('meta[property="og:image"]')?.content || doc.querySelector('img')?.getAttribute('src');
+
+      if (blogPostModalTitle) {
+        blogPostModalTitle.textContent = title;
+      }
+
+      blogPostModalContent.innerHTML = '';
+
+      if (image) {
+        const hero = document.createElement('img');
+        hero.src = image;
+        hero.alt = title;
+        hero.className = 'blog-post-hero-image';
+        blogPostModalContent.appendChild(hero);
+      }
+
+      const contentContainer = document.createElement('div');
+      contentContainer.innerHTML = article.innerHTML;
+      contentContainer.querySelectorAll('h1').forEach(el => el.remove());
+      blogPostModalContent.appendChild(contentContainer);
+      blogPostModalContent.querySelectorAll('a').forEach(link => {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      });
+    } catch (error) {
+      if (blogPostModalTitle) {
+        blogPostModalTitle.textContent = 'Artikel tidak tersedia';
+      }
+      blogPostModalContent.innerHTML = `<div class="error-msg">Gagal memuat artikel: ${error.message}</div>`;
+    }
+  }
+
+  window.openBlogPost = openBlogPost;
+  window.closeBlogPostModal = function() {
+    if (typeof blogPostModal?.dismiss === 'function') {
+      blogPostModal.dismiss();
+    }
+  };
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('.blog-post-link');
+    if (!link) return;
+
+    event.preventDefault();
+    const url = link.getAttribute('data-post-url');
+    const image = link.getAttribute('data-post-image');
+    if (url) {
+      openBlogPost(url, image);
+    }
+  });
+</script>
+<script>
+  // Menambahkan event listener untuk menutup keyboard virtual di perangkat mobile saat klik di luar input
+  document.addEventListener('click', function(event) {
+    const isClickInside = chatInput.contains(event.target) || sendBtn.contains(event.target);
+    if (!isClickInside) {
+      chatInput.blur();
+    }
+  });
+</script>
+<script src="{{ 'assets/js/app.js' | relative_url }}"></script>
+<!-- Ionicons -->
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

@@ -1,0 +1,5 @@
+model: "gpt-4o"
+models:
+  - "gpt-4o"
+  - "Claude 3.0"
+  - "Gemini 2.5"
