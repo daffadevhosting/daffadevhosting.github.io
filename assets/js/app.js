@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
            rel="noopener noreferrer"
            id="git-credit-link"
            style="color: inherit; text-decoration: none;">
-           &copy; Powered by Daffa • License #${creditId}
+           &copy; Daffadev • License #${creditId}
         </a>
     `;
 
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 4. Cek manipulasi Teks Kredit (Mencegah nama diganti)
-        if (!linkEl.textContent.includes('Daffa')) {
+        if (!linkEl.textContent.includes('Daffadev')) {
             lockTemplate('Credit Text Renamed');
             return;
         }
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <style>
                 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-                .modal-overlay-ad {
+                .modal-overlay-ads {
                     position: fixed;
                     inset: 0;
                     background: rgba(9, 9, 11, 0.6);
@@ -385,12 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     box-sizing: border-box;
                 }
 
-                .modal-overlay-ad.show {
+                .modal-overlay-ads.show {
                     opacity: 1;
                     pointer-events: auto;
                 }
 
-                .modal-content-ad {
+                .modal-content-ads {
                     width: 100%;
                     max-width: 380px;
                     background: #ffffff;
@@ -405,12 +405,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     box-sizing: border-box;
                 }
 
-                .modal-overlay-ad.show .modal-content-ad {
+                .modal-overlay-ads.show .modal-content-ads {
                     transform: scale(1) translateY(0);
                 }
 
                 /* Close button mobile friendly dengan area ketuk 44px */
-                .close-ad-btn {
+                .close-ads-btn {
                     position: absolute;
                     top: 12px;
                     right: 12px;
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     -webkit-tap-highlight-color: transparent;
                 }
 
-                .close-ad-btn-inner {
+                .close-ads-btn-inner {
                     background: rgba(0, 0, 0, 0.04);
                     width: 30px;
                     height: 30px;
@@ -439,18 +439,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     transition: all 0.2s ease;
                 }
 
-                .close-ad-btn:hover .close-ad-btn-inner {
+                .close-ads-btn:hover .close-ads-btn-inner {
                     background: rgba(0, 0, 0, 0.08);
                     color: #18181b;
                     transform: rotate(90deg);
                 }
 
-                .close-ad-btn svg {
+                .close-ads-btn svg {
                     width: 12px;
                     height: 12px;
                 }
 
-                .modal-content-ad h3 {
+                .modal-content-ads h3 {
                     margin: 8px 0 6px;
                     font-size: 11px;
                     font-weight: 600;
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     color: #3b82f6;
                 }
 
-                .modal-content-ad h2 {
+                .modal-content-ads h2 {
                     margin: 0 0 16px;
                     font-size: 18px;
                     font-weight: 700;
@@ -471,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .ad-image-container {
                     position: relative;
                     width: 100%;
+                    height: 400px;
                     border-radius: 16px;
                     overflow: hidden;
                     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
@@ -481,6 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     width: 100%;
                     height: auto;
                     display: block;
+                    object-fit: cover;
                     transition: transform 0.5s ease;
                 }
 
@@ -533,19 +535,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 /* Penyesuaian khusus HP Layar Kecil */
                 @media (max-width: 360px) {
-                    .modal-content-ad {
+                    .modal-content-ads {
                         padding: 24px 16px 16px;
                     }
-                    .modal-content-ad h2 {
+                    .modal-content-ads h2 {
                         font-size: 16px;
                     }
                 }
             </style>
 
-            <div class="modal-overlay-ad" id="adModal">
-                <div class="modal-content-ad">
-                    <button id="closeAdBtn" class="close-ad-btn" aria-label="Close ad">
-                        <div class="close-ad-btn-inner">
+            <div class="modal-overlay-ads" id="adModal">
+                <div class="modal-content-ads">
+                    <button id="closeAdBtn" class="close-ads-btn" aria-label="Close ad">
+                        <div class="close-ads-btn-inner">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -553,7 +555,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
 
                     <h3>Limited Offer</h3>
-                    <h2>Promo Spesial Hari Ini!</h2>
 
                     <div class="ad-image-container">
                         <a href="${adTargetUrl}" target="_blank">
