@@ -1,5 +1,5 @@
 <script type="module">
-  const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev'; 
+  const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev';
 
   // ============================================================
   // BARU & PENTING: MENANGKAP HASIL CALLBACK LOGIN DARI URL
@@ -19,7 +19,7 @@
       // Bersihkan query parameter di URL agar terlihat bersih tanpa reload page
       const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
-      
+
       console.log("Login sukses! Token berhasil disimpan.");
     }
   }
@@ -40,7 +40,7 @@
     const token = localStorage.getItem('access_token'); // Konsisten menggunakan 'access_token'
     const headers = { 'Content-Type': 'application/json' };
     if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      headers['Authorization'] = `Bearer ${token}`;
     }
     return headers;
   }
@@ -69,7 +69,7 @@
   });
 
   // Fungsi global untuk starter card yang diklik
-  window.fillAndSendPrompt = function(promptText) {
+  window.fillAndSendPrompt = function (promptText) {
     chatInput.value = promptText;
     sendMessage();
   }
@@ -81,18 +81,18 @@
     document.querySelectorAll('.nav-item').forEach(item => {
       item.classList.remove('active');
       const icon = item.querySelector('ion-icon');
-      if(item.getAttribute('data-tab') === 'home') icon.setAttribute('name', 'chatbubbles-outline');
-      if(item.getAttribute('data-tab') === 'discover') icon.setAttribute('name', 'compass-outline');
-      if(item.getAttribute('data-tab') === 'library') icon.setAttribute('name', 'folder-outline');
+      if (item.getAttribute('data-tab') === 'home') icon.setAttribute('name', 'chatbubbles-outline');
+      if (item.getAttribute('data-tab') === 'discover') icon.setAttribute('name', 'compass-outline');
+      if (item.getAttribute('data-tab') === 'library') icon.setAttribute('name', 'folder-outline');
     });
 
     const activeItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
     activeItem.classList.add('active');
 
     const activeIcon = activeItem.querySelector('ion-icon');
-    if(tabId === 'home') activeIcon.setAttribute('name', 'chatbubbles');
-    if(tabId === 'discover') activeIcon.setAttribute('name', 'compass');
-    if(tabId === 'library') activeIcon.setAttribute('name', 'folder');
+    if (tabId === 'home') activeIcon.setAttribute('name', 'chatbubbles');
+    if (tabId === 'discover') activeIcon.setAttribute('name', 'compass');
+    if (tabId === 'library') activeIcon.setAttribute('name', 'folder');
 
     if (tabId === 'home') {
       chatBoxContainer.style.display = 'flex';
@@ -115,12 +115,12 @@
   });
 
   function getLangClass(lang) {
-    if(!lang) return 'dot-default';
+    if (!lang) return 'dot-default';
     const l = lang.toLowerCase();
-    if(l === 'javascript') return 'dot-js';
-    if(l === 'html') return 'dot-html';
-    if(l === 'css') return 'dot-css';
-    if(l === 'typescript') return 'dot-ts';
+    if (l === 'javascript') return 'dot-js';
+    if (l === 'html') return 'dot-html';
+    if (l === 'css') return 'dot-css';
+    if (l === 'typescript') return 'dot-ts';
     return 'dot-default';
   }
 
@@ -136,7 +136,7 @@
     try {
       const headers = getHeaders(); // Dapatkan token akses terbaru
       const response = await fetch(`${WORKER_URL}/api/github/user/repos`, {
-        headers: { 
+        headers: {
           'Accept': 'application/vnd.github.v3+json',
           'Authorization': headers['Authorization'] // Sertakan Token OAuth disini!
         }
@@ -145,7 +145,7 @@
       const repos = await response.json();
       if (!Array.isArray(repos)) throw new Error('Invalid response');
 
-      const sorted = repos.sort((a,b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+      const sorted = repos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
       const topRepos = sorted.slice(0, 10);
 
       if (topRepos.length === 0) {
@@ -192,7 +192,7 @@
   }
 
   function getCurrentTime() {
-    return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit' });
+    return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   }
 
   async function sendMessage() {
@@ -262,7 +262,7 @@
 
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    
+
     // Siapkan wadah teks mengetik
     const textSpan = document.createElement('div');
     textSpan.style.display = 'inline';
@@ -311,7 +311,7 @@
         loginBtn.style.textDecoration = 'none';
         loginBtn.style.boxShadow = '0 4px 12px rgba(35, 134, 54, 0.2)';
         loginBtn.style.transition = 'all 0.2s';
-        
+
         loginBtn.onmouseover = () => { loginBtn.style.backgroundColor = '#2ea043'; };
         loginBtn.onmouseout = () => { loginBtn.style.backgroundColor = '#238636'; };
 
@@ -463,7 +463,7 @@
     }
   });
 
-  chatInput.addEventListener('input', function() {
+  chatInput.addEventListener('input', function () {
     this.rows = 1;
     const lineCount = Math.ceil(this.scrollHeight / 24);
     this.rows = Math.min(lineCount, 4);
@@ -491,8 +491,87 @@
 </script>
 
 <script>
+  const blogPostModal = document.getElementById('blogPostModal');
+  const blogPostModalTitle = document.getElementById('blogPostModalTitle');
+  const blogPostModalContent = document.getElementById('blogPostModalContent');
+
+  async function openBlogPost(url, imageFromLink = '') {
+    if (!blogPostModal || !blogPostModalContent) return;
+
+    if (blogPostModalTitle) {
+      blogPostModalTitle.textContent = 'Memuat artikel...';
+    }
+
+    blogPostModalContent.innerHTML = '<div class="loading">Memuat artikel...</div>';
+
+    try {
+      if (typeof blogPostModal.present === 'function') {
+        await blogPostModal.present();
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const article = doc.querySelector('main') || doc.querySelector('article') || doc.body;
+      const title = doc.querySelector('h1')?.textContent?.trim() || 'Artikel';
+      const image = imageFromLink || doc.querySelector('meta[property="og:image"]')?.content || doc.querySelector('img')?.getAttribute('src');
+
+      if (blogPostModalTitle) {
+        blogPostModalTitle.textContent = title;
+      }
+
+      blogPostModalContent.innerHTML = '';
+
+      if (image) {
+        const hero = document.createElement('img');
+        hero.src = image;
+        hero.alt = title;
+        hero.className = 'blog-post-hero-image';
+        blogPostModalContent.appendChild(hero);
+      }
+
+      const contentContainer = document.createElement('div');
+      contentContainer.innerHTML = article.innerHTML;
+      contentContainer.querySelectorAll('h1').forEach(el => el.remove());
+      blogPostModalContent.appendChild(contentContainer);
+      blogPostModalContent.querySelectorAll('a').forEach(link => {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      });
+    } catch (error) {
+      if (blogPostModalTitle) {
+        blogPostModalTitle.textContent = 'Artikel tidak tersedia';
+      }
+      blogPostModalContent.innerHTML = `<div class="error-msg">Gagal memuat artikel: ${error.message}</div>`;
+    }
+  }
+
+  window.openBlogPost = openBlogPost;
+  window.closeBlogPostModal = function () {
+    if (typeof blogPostModal?.dismiss === 'function') {
+      blogPostModal.dismiss();
+    }
+  };
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('.blog-post-link');
+    if (!link) return;
+
+    event.preventDefault();
+    const url = link.getAttribute('data-post-url');
+    const image = link.getAttribute('data-post-image');
+    if (url) {
+      openBlogPost(url, image);
+    }
+  });
+</script>
+
+<script>
   // Menambahkan event listener untuk menutup keyboard virtual di perangkat mobile saat klik di luar input
-  document.addEventListener('click', function(event) {
+  document.addEventListener('click', function (event) {
     const isClickInside = chatInput.contains(event.target) || sendBtn.contains(event.target);
     if (!isClickInside) {
       chatInput.blur();

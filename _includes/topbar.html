@@ -1,13 +1,13 @@
-    <div class="top-bar">
-      <ion-button class="menu-btn" fill="clear">
-        <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
-      </ion-button>
-      <div class="model-selector-wrap">
-        <select class="model-selector-select" aria-label="Pilih model AI">
-          {% for model in site.data.config.models %}
-          <option value="{{ model }}" {% if model == site.data.config.model %}selected{% endif %}>{{ model }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="placeholder-right"></div>
-    </div>
+<div class="top-bar">
+  <ion-button class="menu-btn" fill="clear">
+    <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+  </ion-button>
+  <div class="model-selector-wrap">
+    <select class="model-selector-select" aria-label="Pilih model AI">
+      {% for model in site.data.config.models %}
+      <option value="{{ model }}" {% if model==site.data.config.model %}selected{% endif %}>{{ model }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="placeholder-right"></div>
+</div>
