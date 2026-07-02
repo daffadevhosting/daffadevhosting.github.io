@@ -1,5 +1,6 @@
 <script type="module">
   const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev';
+  const GITHUB_OWNER = 'daffadevhosting';
 
   // ============================================================
   // BARU & PENTING: MENANGKAP HASIL CALLBACK LOGIN DARI URL
@@ -134,11 +135,9 @@
         Sinkronisasi repositori...
       </div>`;
     try {
-      const headers = getHeaders(); // Dapatkan token akses terbaru
-      const response = await fetch(`${WORKER_URL}/api/github/user/repos`, {
+      const response = await fetch(`${WORKER_URL}/api/github/users/${GITHUB_OWNER}/repos?sort=updated&per_page=20`, {
         headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'Authorization': headers['Authorization'] // Sertakan Token OAuth disini!
+          'Accept': 'application/vnd.github.v3+json'
         }
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -505,11 +504,18 @@
     blogPostModalContent.innerHTML = '<div class="loading">Memuat artikel...</div>';
 
     try {
+      if (window.customElements && typeof window.customElements.whenDefined === 'function') {
+        await window.customElements.whenDefined('ion-modal');
+      }
+      if (typeof blogPostModal.componentOnReady === 'function') {
+        await blogPostModal.componentOnReady();
+      }
       if (typeof blogPostModal.present === 'function') {
         await blogPostModal.present();
       }
 
-      const response = await fetch(url);
+      const fetchUrl = new URL(url, window.location.origin).href;
+      const response = await fetch(fetchUrl, { credentials: 'same-origin' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const html = await response.text();
