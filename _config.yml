@@ -5,10 +5,17 @@ description: >-
 baseurl: ""
 url: "https://daffadevhosting.github.io"
 lang: "id-ID"
+author: "DaffaDev"
 
-license_b64: "aHR0cHM6Ly9kYWZmYWRldmhvc3RpbmcuZ2l0aHViLmlv"
+license_key: "<%= ENV['license_key'] %>"
 ads_image: "https://files.sitestatic.net/promotion_banners/202607011814070000009a730a087d__INTER33__1600x2668.jpg"
 ads_link: "https://mam.inter33lap.com/register?ref=SGGABAG0982"
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - dotenv
 
 collections:
   blog:
@@ -21,8 +28,11 @@ defaults:
       type: "blog"
     values:
       layout: "post"
-      author: "Daffa"
+      writer: "Daffa"
 
 markdown: kramdown
-plugins:
-  - jekyll-feed
+
+exclude:
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
