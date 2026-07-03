@@ -1,15 +1,25 @@
 <div class="top-bar">
-  <button class="menu-btn" fill="clear" aria-label="Buka menu pengguna" style="background: none; border: none; color: inherit; font-size: 24px; cursor: pointer; display: flex; align-items: center;">
+  <!-- Menu-btn utama yang memicu sidebar profil pengembang (Kiri) -->
+  <button class="menu-btn" fill="clear" aria-label="Buka menu gallery R2" style="background: none; border: none; color: inherit; font-size: 24px; cursor: pointer; display: flex; align-items: center;">
     <ion-icon name="menu-outline"></ion-icon>
   </button>
+  
+  <!-- Pilihan Model AI yang Terintegrasi di Topbar -->
   <div class="model-selector-wrap">
     <select class="model-selector-select" aria-label="Pilih model AI">
-      {% for model in site.data.config.models %}
-      <option value="{{ model }}" {% if model==site.data.config.model %}selected{% endif %}>{{ model }}</option>
-      {% endfor %}
+      <!-- Menggunakan model pengembang coder default -->
+      <option value="@cf/qwen/qwen2.5-coder-32b-instruct" selected>Qwen Coder 32B</option>
+      <option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen 3 30B</option>
+      <option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</option>
     </select>
   </div>
-  <div class="topbar-profile" id="topbarProfile">
+
+  <div class="topbar-profile" id="topbarProfile" style="display: flex; align-items: center; gap: 8px;">
+    <!-- Tombol R2 Explorer Tambahan di Topbar (Membuka laci kanan secara mandiri) -->
+    <button type="button" id="openR2Btn" aria-label="Buka R2 Cloud Storage" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f4f4f5; font-size: 18px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <ion-icon name="folder-open-outline"></ion-icon>
+    </button>
+
     <button type="button" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
       <span class="topbar-avatar" id="topbarAvatar" style="display: inline-block; width: 28px; height: 28px; border-radius: 50%; background-color: #30363d;"></span>
       <span class="topbar-username" id="topbarMiniUsername">Tamu</span>
@@ -17,7 +27,7 @@
   </div>
 </div>
 
-<!-- SIDEBAR COMPONENT -->
+<!-- SIDEBAR PROFIL PENGEMBANG (Sisi Kiri) -->
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 <aside class="sidebar-panel" id="sidebarPanel" inert>
   <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="Tutup menu">
@@ -26,19 +36,20 @@
   <div class="sidebar-header">
     <div class="sidebar-avatar" id="sidebarAvatar" style="width: 48px; height: 48px; border-radius: 50%; background-color: #30363d; display: block;"></div>
     <div>
-      <p class="sidebar-label">Profil GitHub</p>
       <h3 id="sidebarUsername">Tamu</h3>
+      <!-- MENAMPILKAN FOLLOWERS TEPAT DI BAWAH USERNAME -->
+      <p class="sidebar-followers-tag" id="sidebarFollowers" style="font-size: 11px; color: #58a6ff; margin: 2px 0 0; font-weight: 500;">0 Followers</p>
     </div>
   </div>
 
-  <!-- BARU & CANGGIH: GLOBAL DAILY NEURON USAGE WIDGET -->
+  <!-- GLOBAL DAILY NEURON USAGE WIDGET -->
   <div class="sidebar-neuron-card" id="sidebarNeuronCard">
     <div class="neuron-card-header">
       <ion-icon name="speedometer-outline" class="neuron-icon"></ion-icon>
       <span class="neuron-title">Kuota AI Harian</span>
     </div>
     <div class="neuron-card-stats">
-      <span id="sidebarNeuronText" class="neuron-count">10,000,000 NRN</span>
+      <span id="sidebarNeuronText" class="neuron-count">10,000 NRN</span>
       <span class="neuron-percent" id="sidebarNeuronPercent">100%</span>
     </div>
     <div class="neuron-progress-bg">
@@ -52,3 +63,85 @@
     <button type="button" id="sidebarLogoutBtn" class="sidebar-action-btn sidebar-logout-btn hidden">Logout</button>
   </div>
 </aside>
+
+<!-- SIDEBAR BARU: PANEL FILE EXPLORER CLOUDFLARE R2 (Sisi Kanan) -->
+<div class="r2-sidebar-backdrop" id="r2Backdrop"></div>
+<aside class="r2-sidebar-panel" id="r2Panel" inert>
+  <button type="button" class="sidebar-close" id="r2CloseBtn" aria-label="Tutup File R2">
+    <ion-icon name="close-outline"></ion-icon>
+  </button>
+  
+  <div class="sidebar-header" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 20px;">
+    <div class="r2-header-icon" style="width: 44px; height: 44px; border-radius: 12px; background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.2); display: flex; justify-content: center; align-items: center; color: #58a6ff; font-size: 20px; margin-right: 12px;">
+      <ion-icon name="cloud-done-outline"></ion-icon>
+    </div>
+    <div>
+      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">R2 File Storage</h3>
+      <p style="font-size: 11px; color: #8b949e; margin: 2px 0 0;">Cloudflare Bucket Manager</p>
+    </div>
+  </div>
+
+  <!-- Drag and Drop Area untuk Unggah File ke R2 -->
+  <div class="r2-upload-zone" id="r2UploadZone" style="border: 2px dashed rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px 16px; text-align: center; margin: 16px; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.01);">
+    <input type="file" id="r2FileInput" style="display: none;" />
+    <ion-icon name="arrow-up-circle-outline" style="font-size: 32px; color: #58a6ff; margin-bottom: 8px;"></ion-icon>
+    <p style="font-size: 12px; font-weight: 500; margin: 0; color: #e6edf3;">Unggah File ke Cloud R2</p>
+    <p style="font-size: 10px; color: #8b949e; margin: 4px 0 0;">Klik atau seret file ke area ini</p>
+  </div>
+
+  <!-- Kontainer List File R2 -->
+  <div class="r2-file-section" style="flex: 1; overflow-y: auto; padding: 0 16px 20px;">
+    <h4 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #8b949e; margin: 0 0 12px 4px; font-weight: 600;">File Saya</h4>
+    <div id="r2FileList" style="display: flex; flex-direction: column; gap: 8px;">
+      <!-- File list item di-render secara dinamis lewat js -->
+      <div style="text-align: center; color: #8b949e; font-size: 12px; padding: 30px 0;">Belum ada file terunggah.</div>
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* GAYA SPESIFIK DAN INDEPENDEN UNTUK SIDEBAR R2 SISI KANAN */
+  .r2-sidebar-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100%;
+    background: #161b22;
+    z-index: 1000000; /* Ditinggikan agar selalu di atas elemen lain */
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .r2-sidebar-panel.active {
+    transform: translateX(0) !important;
+  }
+  
+  /* Backdrop transparan khusus untuk R2 agar terisolasi sempurna */
+  .r2-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .r2-sidebar-backdrop.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Transisi Efek Hover Zona R2 */
+  .r2-upload-zone:hover {
+    border-color: #58a6ff !important;
+    background: rgba(88, 166, 255, 0.03) !important;
+  }
+</style>
