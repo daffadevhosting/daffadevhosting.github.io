@@ -2,6 +2,96 @@
   const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev';
   const GITHUB_OWNER = 'daffadevhosting';
 
+  // MENYISIPKAN GAYA CSS DINAMIS UNTUK TOMBOL SALIN KODE
+  const style = document.createElement('style');
+  style.textContent = `
+    pre {
+      position: relative;
+      padding-right: 44px !important;
+    }
+    .copy-code-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(22, 27, 34, 0.8);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #8b949e;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 10;
+      padding: 0;
+    }
+    .copy-code-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .copy-code-btn ion-icon {
+      font-size: 15px;
+      pointer-events: none;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // FUNGSI UNTUK MENYALIN TEKS (Menggunakan execCommand untuk melewati proteksi iframe)
+  function copyToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Gagal menyalin teks:', err);
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // FUNGSI UNTUK MENAMBAHKAN TOMBOL SALIN PADA BLOK KODE (<pre>)
+  function addCopyButtonsToPre(bubble) {
+    const preElements = bubble.querySelectorAll('pre');
+    preElements.forEach(pre => {
+      if (pre.querySelector('.copy-code-btn')) return;
+
+      const btn = document.createElement('button');
+      btn.className = 'copy-code-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Salin Kode');
+      btn.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
+
+      btn.addEventListener('click', () => {
+        const codeElement = pre.querySelector('code');
+        const textToCopy = codeElement ? codeElement.innerText : pre.innerText;
+        
+        copyToClipboard(textToCopy);
+
+        // Umpan balik visual sukses
+        btn.innerHTML = '<ion-icon name="checkmark-outline" style="color: #3fb950;"></ion-icon>';
+        btn.style.borderColor = '#2ea043';
+        
+        setTimeout(() => {
+          btn.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
+          btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }, 2000);
+      });
+
+      pre.appendChild(btn);
+    });
+  }
+
   function handleOAuthCallback() {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('access_token');
@@ -147,7 +237,7 @@
       return;
     }
 
-    r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;"><ion-icon name="sync-outline" style="animation: spin 1.5s linear infinite; font-size: 18px; margin-bottom: 4px;"></ion-icon><br>Memproses database...</div>`;
+    r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;"><ion-icon name="sync-outline" style="animation: spin 1.5s linear infinite; font-size: 18px; margin-bottom: 4px;"></ion-icon><br>Memproses database cloud...</div>`;
     
     try {
       const response = await fetch(`${WORKER_URL}/api/r2`, {
@@ -181,7 +271,7 @@
       });
       r2FileList.innerHTML = html;
     } catch(err) {
-      r2FileList.innerHTML = `<div style="text-align: center; color: #f85149; font-size: 11px; padding: 20px 0;">Gagal memuat file R2.</div>`;
+      r2FileList.innerHTML = `<div style="text-align: center; color: #f85149; font-size: 11px; padding: 20px 0;">Gagal memuat file.</div>`;
     }
   }
 
@@ -208,14 +298,14 @@
       if (!response.ok) throw new Error('Upload gagal');
       await loadR2Files();
     } catch(err) {
-      alert('Gagal mengunggah file ke R2: ' + err.message);
+      alert('Gagal mengunggah file ke cloud: ' + err.message);
       await loadR2Files();
     }
   }
 
   // API Call: Hapus berkas dari Cloudflare R2
   window.deleteR2File = async function(filename) {
-    if(!confirm(`Apakah Anda yakin ingin menghapus "${filename}" dari R2?`)) return;
+    if(!confirm(`Apakah Anda yakin ingin menghapus "${filename}" dari cloud?`)) return;
     const token = localStorage.getItem('access_token');
     try {
       const response = await fetch(`${WORKER_URL}/api/r2`, {
@@ -754,6 +844,9 @@
     const rawHtml = marked.parse(text);
     const cleanHtml = DOMPurify.sanitize(rawHtml);
     bubble.innerHTML = cleanHtml;
+    
+    // MENAMPILKAN TOMBOL SALIN KODE PADA BLOK KODE
+    addCopyButtonsToPre(bubble);
 
     const timeSpan = document.createElement('div');
     timeSpan.className = 'timestamp';
@@ -784,6 +877,9 @@
     const rawHtml = marked.parse(text);
     const cleanHtml = DOMPurify.sanitize(rawHtml);
     bubble.innerHTML = cleanHtml;
+    
+    // MENAMPILKAN TOMBOL SALIN KODE PADA BLOK KODE
+    addCopyButtonsToPre(bubble);
 
     const timeSpan = document.createElement('div');
     timeSpan.className = 'timestamp';
@@ -867,10 +963,6 @@
   }
   checkWorkerHealth();
 </script>
-
-<!-- Ionicons -->
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 <!-- Ionicons -->
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
