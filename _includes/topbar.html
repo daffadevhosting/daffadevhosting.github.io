@@ -1,7 +1,7 @@
 <div class="top-bar">
-  <ion-button class="menu-btn" fill="clear" aria-label="Buka menu pengguna">
-    <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
-  </ion-button>
+  <button class="menu-btn" fill="clear" aria-label="Buka menu pengguna" style="background: none; border: none; color: inherit; font-size: 24px; cursor: pointer; display: flex; align-items: center;">
+    <ion-icon name="menu-outline"></ion-icon>
+  </button>
   <div class="model-selector-wrap">
     <select class="model-selector-select" aria-label="Pilih model AI">
       {% for model in site.data.config.models %}
@@ -11,24 +11,41 @@
   </div>
   <div class="topbar-profile" id="topbarProfile">
     <button type="button" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
-      <span class="topbar-avatar" id="topbarAvatar"></span>
+      <span class="topbar-avatar" id="topbarAvatar" style="display: inline-block; width: 28px; height: 28px; border-radius: 50%; background-color: #30363d;"></span>
       <span class="topbar-username" id="topbarMiniUsername">Tamu</span>
     </button>
   </div>
 </div>
 
+<!-- SIDEBAR COMPONENT -->
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 <aside class="sidebar-panel" id="sidebarPanel" inert>
   <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="Tutup menu">
     <ion-icon name="close-outline"></ion-icon>
   </button>
   <div class="sidebar-header">
-    <div class="sidebar-avatar" id="sidebarAvatar"></div>
+    <div class="sidebar-avatar" id="sidebarAvatar" style="width: 48px; height: 48px; border-radius: 50%; background-color: #30363d; display: block;"></div>
     <div>
       <p class="sidebar-label">Profil GitHub</p>
       <h3 id="sidebarUsername">Tamu</h3>
     </div>
   </div>
+
+  <!-- BARU & CANGGIH: GLOBAL DAILY NEURON USAGE WIDGET -->
+  <div class="sidebar-neuron-card" id="sidebarNeuronCard">
+    <div class="neuron-card-header">
+      <ion-icon name="speedometer-outline" class="neuron-icon"></ion-icon>
+      <span class="neuron-title">Kuota AI Harian</span>
+    </div>
+    <div class="neuron-card-stats">
+      <span id="sidebarNeuronText" class="neuron-count">10,000,000 NRN</span>
+      <span class="neuron-percent" id="sidebarNeuronPercent">100%</span>
+    </div>
+    <div class="neuron-progress-bg">
+      <div class="neuron-progress-bar" id="sidebarNeuronBar" style="width: 100%"></div>
+    </div>
+  </div>
+
   <div class="sidebar-body">
     <p class="sidebar-status" id="sidebarStatus">Belum login.</p>
     <a href="#" id="sidebarLoginBtn" class="sidebar-action-btn">Login GitHub</a>
