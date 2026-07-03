@@ -1,8 +1,10 @@
 <div class="top-bar">
-  <!-- Menu-btn utama yang memicu sidebar profil pengembang (Kiri) -->
-  <button class="menu-btn" fill="clear" aria-label="Buka menu gallery R2" style="background: none; border: none; color: inherit; font-size: 24px; cursor: pointer; display: flex; align-items: center;">
-    <ion-icon name="menu-outline"></ion-icon>
-  </button>
+    <!-- Tombol R2 Explorer Tambahan di Topbar (Membuka laci kanan secara mandiri) -->
+     <ion-buttons>
+      <ion-button id="openR2Btn" aria-label="Buka R2 Cloud Storage" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+        <ion-icon name="folder-open-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+     </ion-buttons>
   
   <!-- Pilihan Model AI yang Terintegrasi di Topbar -->
   <div class="model-selector-wrap">
@@ -15,24 +17,21 @@
   </div>
 
   <div class="topbar-profile" id="topbarProfile" style="display: flex; align-items: center; gap: 8px;">
-    <!-- Tombol R2 Explorer Tambahan di Topbar (Membuka laci kanan secara mandiri) -->
-    <button type="button" id="openR2Btn" aria-label="Buka R2 Cloud Storage" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f4f4f5; font-size: 18px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-      <ion-icon name="folder-open-outline"></ion-icon>
-    </button>
-
-    <button type="button" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
+    <ion-button class="topbar-profile-btn" fill="clear" id="topbarProfileBtn" aria-label="Buka menu pengguna">
       <span class="topbar-avatar" id="topbarAvatar" style="display: inline-block; width: 28px; height: 28px; border-radius: 50%; background-color: #30363d;"></span>
       <span class="topbar-username" id="topbarMiniUsername">Tamu</span>
-    </button>
+    </ion-button>
   </div>
 </div>
 
-<!-- SIDEBAR PROFIL PENGEMBANG (Sisi Kiri) -->
+<!-- SIDEBAR PROFIL PENGEMBANG -->
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 <aside class="sidebar-panel" id="sidebarPanel" inert>
-  <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="Tutup menu">
-    <ion-icon name="close-outline"></ion-icon>
-  </button>
+  <ion-buttons style="justify-content: flex-end;">
+    <ion-button id="sidebarCloseBtn" aria-label="Tutup menu">
+      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </ion-buttons>
   <div class="sidebar-header">
     <div class="sidebar-avatar" id="sidebarAvatar" style="width: 48px; height: 48px; border-radius: 50%; background-color: #30363d; display: block;"></div>
     <div>
@@ -76,7 +75,7 @@
       <ion-icon name="cloud-done-outline"></ion-icon>
     </div>
     <div>
-      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">R2 File Storage</h3>
+      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">File Storage</h3>
       <p style="font-size: 11px; color: #8b949e; margin: 2px 0 0;">Cloudflare Bucket Manager</p>
     </div>
   </div>
@@ -85,7 +84,7 @@
   <div class="r2-upload-zone" id="r2UploadZone" style="border: 2px dashed rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px 16px; text-align: center; margin: 16px; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.01);">
     <input type="file" id="r2FileInput" style="display: none;" />
     <ion-icon name="arrow-up-circle-outline" style="font-size: 32px; color: #58a6ff; margin-bottom: 8px;"></ion-icon>
-    <p style="font-size: 12px; font-weight: 500; margin: 0; color: #e6edf3;">Unggah File ke Cloud R2</p>
+    <p style="font-size: 12px; font-weight: 500; margin: 0; color: #e6edf3;">Unggah File ke Cloud</p>
     <p style="font-size: 10px; color: #8b949e; margin: 4px 0 0;">Klik atau seret file ke area ini</p>
   </div>
 
@@ -103,6 +102,7 @@
   /* GAYA SPESIFIK DAN INDEPENDEN UNTUK SIDEBAR R2 SISI KANAN */
   .r2-sidebar-panel {
     position: fixed;
+    padding: 18px 8px;
     top: 0;
     right: 0;
     width: 320px;
