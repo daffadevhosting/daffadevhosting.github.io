@@ -57,13 +57,26 @@
      </ion-buttons>
   
   <!-- Pilihan Model AI yang Terintegrasi di Topbar dengan Mode iOS Popover -->
-  <div class="model-selector-wrap" style="min-width: 140px; margin-right: 8px;">
-    <ion-select class="model-selector-select" mode="ios" interface="popover" aria-label="Pilih model AI" style="--padding-start: 12px; --padding-end: 12px; font-size: 13px; font-weight: 500;">
-      <ion-select-option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen Coder 32B</ion-select-option>
-      <ion-select-option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen 3 30B</ion-select-option>
-      <ion-select-option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</ion-select-option>
-    </ion-select>
-  </div>
+<div class="model-selector-wrap">
+  <ion-select
+    class="model-selector-select"
+    mode="ios"
+    interface="popover"
+    aria-label="Pilih model AI"
+    placeholder="Pilih model"
+    value="@cf/qwen/qwen2.5-coder-32b-instruct"
+  >
+    <ion-select-option value="@cf/qwen/qwen2.5-coder-32b-instruct">
+      Qwen Coder 32B
+    </ion-select-option>
+    <ion-select-option value="@cf/qwen/qwen3-30b-a3b-fp8">
+      Qwen 3 30B
+    </ion-select-option>
+    <ion-select-option value="@cf/meta/llama-3-8b-instruct">
+      Llama 3 8B
+    </ion-select-option>
+  </ion-select>
+</div>
 
   <div class="topbar-profile" id="topbarProfile" style="display: flex; align-items: center; gap: 8px;">
     <ion-button fill="clear" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
@@ -148,6 +161,17 @@
 </aside>
 
 <style>
+.model-selector-wrap {
+  min-width: 140px;
+  margin-right: 8px;
+}
+
+.model-selector-select {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
   /* GAYA SPESIFIK DAN INDEPENDEN UNTUK SIDEBAR R2 SISI KANAN */
   .r2-sidebar-panel {
     position: fixed;
