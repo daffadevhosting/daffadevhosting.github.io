@@ -51,23 +51,22 @@
       <div class="top-bar">
     <!-- Tombol R2 Explorer Tambahan di Topbar (Membuka laci kanan secara mandiri) -->
      <ion-buttons>
-      <ion-button id="openR2Btn" aria-label="Buka R2 Cloud Storage" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <ion-button id="openR2Btn" aria-label="Buka Cloud Storage" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
         <ion-icon name="folder-open-outline" slot="icon-only"></ion-icon>
       </ion-button>
      </ion-buttons>
   
-  <!-- Pilihan Model AI yang Terintegrasi di Topbar -->
-  <div class="model-selector-wrap">
-    <select class="model-selector-select" aria-label="Pilih model AI">
-      <!-- Menggunakan model pengembang coder default -->
-      <option value="@cf/qwen/qwen2.5-coder-32b-instruct" selected>Qwen Coder 32B</option>
-      <option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen 3 30B</option>
-      <option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</option>
-    </select>
+  <!-- Pilihan Model AI yang Terintegrasi di Topbar dengan Mode iOS Popover -->
+  <div class="model-selector-wrap" style="min-width: 140px; margin-right: 8px;">
+    <ion-select class="model-selector-select" mode="ios" interface="popover" aria-label="Pilih model AI" style="--padding-start: 12px; --padding-end: 12px; font-size: 13px; font-weight: 500;">
+      <ion-select-option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen Coder 32B</ion-select-option>
+      <ion-select-option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen 3 30B</ion-select-option>
+      <ion-select-option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</ion-select-option>
+    </ion-select>
   </div>
 
   <div class="topbar-profile" id="topbarProfile" style="display: flex; align-items: center; gap: 8px;">
-    <ion-button class="topbar-profile-btn" fill="clear" id="topbarProfileBtn" aria-label="Buka menu pengguna">
+    <ion-button fill="clear" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
       <span class="topbar-avatar" id="topbarAvatar" style="display: inline-block; width: 28px; height: 28px; border-radius: 50%; background-color: #30363d;"></span>
       <span class="topbar-username" id="topbarMiniUsername">Tamu</span>
     </ion-button>
@@ -116,7 +115,7 @@
 <!-- SIDEBAR BARU: PANEL FILE EXPLORER CLOUDFLARE R2 (Sisi Kanan) -->
 <div class="r2-sidebar-backdrop" id="r2Backdrop"></div>
 <aside class="r2-sidebar-panel" id="r2Panel" inert>
-  <button type="button" class="sidebar-close" id="r2CloseBtn" aria-label="Tutup File R2">
+  <button type="button" class="sidebar-close" id="r2CloseBtn" aria-label="Tutup File Cloud">
     <ion-icon name="close-outline"></ion-icon>
   </button>
   
@@ -125,7 +124,7 @@
       <ion-icon name="cloud-done-outline"></ion-icon>
     </div>
     <div>
-      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">File Storage</h3>
+      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">Cloud File Storage</h3>
       <p style="font-size: 11px; color: #8b949e; margin: 2px 0 0;">Cloudflare Bucket Manager</p>
     </div>
   </div>
@@ -152,7 +151,7 @@
   /* GAYA SPESIFIK DAN INDEPENDEN UNTUK SIDEBAR R2 SISI KANAN */
   .r2-sidebar-panel {
     position: fixed;
-    padding: 18px 8px;
+    padding: 20px 8px;
     top: 0;
     right: 0;
     width: 320px;
@@ -619,7 +618,7 @@
   const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev';
   const GITHUB_OWNER = 'daffadevhosting';
 
-  // MENYISIPKAN GAYA CSS DINAMIS UNTUK TOMBOL SALIN KODE
+  // MENYISIPKAN GAYA CSS DINAMIS UNTUK TOMBOL SALIN KODE, DIALOG KUSTOM iOS, & HOVER KARTU REPO
   const style = document.createElement('style');
   style.textContent = `
     pre {
@@ -655,8 +654,189 @@
       font-size: 15px;
       pointer-events: none;
     }
+
+    /* GAYA DIALOG KUSTOM iOS */
+    .ios-dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20000000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .ios-dialog-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ios-dialog-container {
+      background: rgba(30, 30, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      width: 280px;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+      transform: scale(1.1);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s;
+      opacity: 0;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-align: center;
+    }
+    .ios-dialog-backdrop.active .ios-dialog-container {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .ios-dialog-body {
+      padding: 22px 16px;
+    }
+    .ios-dialog-title {
+      font-weight: 600;
+      font-size: 17px;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.3px;
+    }
+    .ios-dialog-message {
+      font-size: 13px;
+      color: #bbbbbb;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .ios-dialog-buttons {
+      display: flex;
+      border-top: 0.5px solid rgba(255,255,255,0.15);
+    }
+    .ios-dialog-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #2f8cff;
+      font-size: 17px;
+      padding: 13px;
+      cursor: pointer;
+      font-weight: 400;
+      transition: background 0.15s;
+      outline: none;
+      letter-spacing: -0.4px;
+    }
+    .ios-dialog-btn:active {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .ios-dialog-btn.bold {
+      font-weight: 600;
+    }
+    .ios-dialog-btn.danger {
+      color: #ff453a;
+    }
+    .ios-dialog-btn:not(:last-child) {
+      border-right: 0.5px solid rgba(255,255,255,0.15);
+    }
+
+    /* GAYA HOVER UNTUK LINK KARTU REPOSiTORI */
+    .modern-repo-card-link {
+      text-decoration: none !important;
+      color: inherit !important;
+      display: block;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .modern-repo-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .modern-repo-card-link:hover .modern-repo-card {
+      border-color: rgba(88, 166, 255, 0.45) !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    .modern-repo-card-link:hover .repo-name {
+      color: #58a6ff !important;
+    }
+    .modern-repo-card-link:hover .repo-external-icon {
+      color: #58a6ff !important;
+      transform: translate(1px, -1px);
+    }
+    .repo-external-icon {
+      margin-left: auto;
+      font-size: 14px;
+      color: #8b949e;
+      transition: all 0.2s ease;
+    }
   `;
   document.head.appendChild(style);
+
+  // SISTEM DIALOG MANDIRI iOS UNTUK MENGGANTIKAN WINDOW.ALERT & WINDOW.CONFIRM
+  function showIOSAlert(message, title = 'Notifikasi') {
+    return new Promise((resolve) => {
+      const backdrop = document.createElement('div');
+      backdrop.className = 'ios-dialog-backdrop';
+      backdrop.innerHTML = `
+        <div class="ios-dialog-container">
+          <div class="ios-dialog-body">
+            <div class="ios-dialog-title">${title}</div>
+            <div class="ios-dialog-message">${message}</div>
+          </div>
+          <div class="ios-dialog-buttons">
+            <button class="ios-dialog-btn bold" id="ios-ok-btn">OK</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+      
+      setTimeout(() => backdrop.classList.add('active'), 10);
+
+      backdrop.querySelector('#ios-ok-btn').addEventListener('click', () => {
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          backdrop.remove();
+          resolve();
+        }, 220);
+      });
+    });
+  }
+
+  function showIOSConfirm(message, title = 'Konfirmasi') {
+    return new Promise((resolve) => {
+      const backdrop = document.createElement('div');
+      backdrop.className = 'ios-dialog-backdrop';
+      backdrop.innerHTML = `
+        <div class="ios-dialog-container">
+          <div class="ios-dialog-body">
+            <div class="ios-dialog-title">${title}</div>
+            <div class="ios-dialog-message">${message}</div>
+          </div>
+          <div class="ios-dialog-buttons">
+            <button class="ios-dialog-btn danger" id="ios-cancel-btn">Batal</button>
+            <button class="ios-dialog-btn bold" id="ios-confirm-btn">Ya</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      setTimeout(() => backdrop.classList.add('active'), 10);
+
+      backdrop.querySelector('#ios-cancel-btn').addEventListener('click', () => {
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          backdrop.remove();
+          resolve(false);
+        }, 220);
+      });
+
+      backdrop.querySelector('#ios-confirm-btn').addEventListener('click', () => {
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          backdrop.remove();
+          resolve(true);
+        }, 220);
+      });
+    });
+  }
 
   // FUNGSI UNTUK MENYALIN TEKS (Menggunakan execCommand untuk melewati proteksi iframe)
   function copyToClipboard(text) {
@@ -821,7 +1001,7 @@
     r2UploadZone.addEventListener('click', () => {
       const token = localStorage.getItem('access_token');
       if (!token) {
-        alert('Sesi tidak aktif. Silakan login terlebih dahulu untuk mengunggah file.');
+        showIOSAlert('Sesi tidak aktif. Silakan login terlebih dahulu untuk mengunggah file.', 'Perhatian');
         return;
       }
       r2FileInput.click();
@@ -888,7 +1068,7 @@
       });
       r2FileList.innerHTML = html;
     } catch(err) {
-      r2FileList.innerHTML = `<div style="text-align: center; color: #f85149; font-size: 11px; padding: 20px 0;">Gagal memuat file.</div>`;
+      r2FileList.innerHTML = `<div style="text-align: center; color: #f85149; font-size: 11px; padding: 20px 0;">Gagal memuat file R2.</div>`;
     }
   }
 
@@ -896,7 +1076,7 @@
   async function uploadFileToR2(file) {
     const token = localStorage.getItem('access_token');
     if (!token) {
-      alert('Gagal mengunggah: Silakan login terlebih dahulu.');
+      showIOSAlert('Gagal mengunggah: Silakan login terlebih dahulu.', 'Akses Ditolak');
       return;
     }
     
@@ -915,14 +1095,16 @@
       if (!response.ok) throw new Error('Upload gagal');
       await loadR2Files();
     } catch(err) {
-      alert('Gagal mengunggah file ke cloud: ' + err.message);
+      showIOSAlert('Gagal mengunggah file ke R2: ' + err.message, 'Kesalahan');
       await loadR2Files();
     }
   }
 
-  // API Call: Hapus berkas dari Cloudflare R2
+  // API Call: Hapus berkas dari Cloudflare R2 dengan Konfirmasi iOS Kustom
   window.deleteR2File = async function(filename) {
-    if(!confirm(`Apakah Anda yakin ingin menghapus "${filename}" dari cloud?`)) return;
+    const confirmed = await showIOSConfirm(`Apakah Anda yakin ingin menghapus "${filename}" dari penyimpanan cloud?`, 'Hapus File');
+    if (!confirmed) return;
+    
     const token = localStorage.getItem('access_token');
     try {
       const response = await fetch(`${WORKER_URL}/api/r2`, {
@@ -936,7 +1118,7 @@
       if(!response.ok) throw new Error('Gagal menghapus');
       await loadR2Files();
     } catch(err) {
-      alert('Gagal menghapus file: ' + err.message);
+      showIOSAlert('Gagal menghapus file: ' + err.message, 'Kesalahan');
     }
   }
 
@@ -1164,17 +1346,22 @@
 
   loadUserSessionAndHistory();
 
+  // PENYELARASAN MODEL SELECT BERGAYA IONIC IOS
   if (modelSelect) {
     const storedModel = localStorage.getItem('selectedModel');
     if (storedModel) {
-      const match = Array.from(modelSelect.options).find(option => option.value === storedModel);
-      if (match) modelSelect.value = storedModel;
+      modelSelect.value = storedModel;
     }
     window.selectedModel = modelSelect.value;
-    modelSelect.addEventListener('change', () => {
-      window.selectedModel = modelSelect.value;
-      localStorage.setItem('selectedModel', modelSelect.value);
-    });
+    
+    const handleModelChange = (e) => {
+      const val = e.detail ? e.detail.value : modelSelect.value;
+      window.selectedModel = val;
+      localStorage.setItem('selectedModel', val);
+    };
+
+    modelSelect.addEventListener('ionChange', handleModelChange);
+    modelSelect.addEventListener('change', handleModelChange);
   }
 
   marked.setOptions({ breaks: true, gfm: true });
@@ -1264,6 +1451,7 @@
     }
   }
 
+  // MERENDER KARTU REPOSiTORI DENGAN LINK AKTIF KE GITHUB REPO
   function renderRepoCards(repos) {
     const sorted = repos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
     const topRepos = sorted.slice(0, 10);
@@ -1277,20 +1465,25 @@
     topRepos.forEach(repo => {
       const lang = repo.language || 'Unknown';
       const langDot = getLangClass(repo.language);
+      const repoUrl = repo.html_url || `https://github.com/${GITHUB_OWNER}/${repo.name}`;
+      
       html += `
-        <div class="modern-repo-card">
-          <div class="repo-header">
-            <ion-icon name="book-outline" class="repo-icon"></ion-icon>
-            <span class="repo-name">${repo.name}</span>
-            <span class="repo-badge">${repo.private ? 'Private' : 'Public'}</span>
+        <a href="${repoUrl}" target="_blank" rel="noopener noreferrer" class="modern-repo-card-link" aria-label="Buka repositori ${repo.name} di GitHub">
+          <div class="modern-repo-card">
+            <div class="repo-header">
+              <ion-icon name="book-outline" class="repo-icon"></ion-icon>
+              <span class="repo-name">${repo.name}</span>
+              <span class="repo-badge">${repo.private ? 'Private' : 'Public'}</span>
+              <ion-icon name="open-outline" class="repo-external-icon"></ion-icon>
+            </div>
+            <div class="repo-desc">${repo.description || 'Tidak ada deskripsi yang disediakan.'}</div>
+            <div class="repo-meta-footer">
+              <div class="meta-item"><span class="lang-dot ${langDot}"></span><span>${lang}</span></div>
+              <div class="meta-item"><ion-icon name="star-outline"></ion-icon><span>${repo.stargazers_count || 0}</span></div>
+              <div class="meta-item"><ion-icon name="git-network-outline"></ion-icon><span>${repo.forks_count || 0}</span></div>
+            </div>
           </div>
-          <div class="repo-desc">${repo.description || 'Tidak ada deskripsi yang disediakan.'}</div>
-          <div class="repo-meta-footer">
-            <div class="meta-item"><span class="lang-dot ${langDot}"></span><span>${lang}</span></div>
-            <div class="meta-item"><ion-icon name="star-outline"></ion-icon><span>${repo.stargazers_count || 0}</span></div>
-            <div class="meta-item"><ion-icon name="git-network-outline"></ion-icon><span>${repo.forks_count || 0}</span></div>
-          </div>
-        </div>`;
+        </a>`;
     });
     repoListDiv.innerHTML = html;
   }
