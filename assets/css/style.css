@@ -183,7 +183,7 @@
     }
 
     .sidebar-label {
-      margin: 0 0 6px;
+      margin: 0;
       font-size: 12px;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -191,7 +191,7 @@
     }
 
     .sidebar-header h3 {
-      margin: 0;
+      margin: 0 0 6px;
       font-size: 18px;
       color: var(--text-color);
       line-height: 1.2;
@@ -633,6 +633,11 @@
       }
     }
 
+    .hidden {
+      display: none !important;
+      visibility: hidden;
+    }
+    
     /* Fixed Footer (Input + Bottom Nav) */
     .footer-container {
       max-width: 800px;
