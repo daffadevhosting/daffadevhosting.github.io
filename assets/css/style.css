@@ -240,6 +240,60 @@
       display: none;
     }
 
+    .sidebar-neuron-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.3s ease;
+    }
+    .neuron-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #8b949e;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .neuron-card-header .neuron-icon {
+      font-size: 14px;
+      color: #58a6ff;
+    }
+    .neuron-card-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .neuron-count {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f0f6fc;
+      font-family: 'Fira Code', monospace;
+    }
+    .neuron-percent {
+      font-size: 11px;
+      color: #56d364;
+      font-weight: 600;
+    }
+    .neuron-progress-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .neuron-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #58a6ff 0%, #56d364 100%);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
     /* Tab content containers */
     .tab-content {
       max-width: 800px;
@@ -249,6 +303,12 @@
       /* Ruang untuk top bar & bottom nav */
       height: 100%;
       overflow-y: auto;
+      -ms-overflow-style: none;  /* Untuk Internet Explorer dan Edge */
+      scrollbar-width: none;     /* Untuk Firefox */
+    }
+
+    .tab-content::-webkit-scrollbar {
+      display: none;             /* Untuk Chrome, Safari, dan Opera */
     }
 
     .tab-content.active {
@@ -261,7 +321,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      margin: 20px 0 30px 0;
+      margin: 0;
       animation: fadeIn 0.6s ease;
     }
 
@@ -293,7 +353,7 @@
     .welcome-subtitle {
       font-size: 14px;
       color: var(--text-muted);
-      max-width: 280px;
+      max-width: -webkit-fill-available;
       line-height: 1.4;
       margin: 0;
     }
@@ -729,6 +789,10 @@
       #repoList.repo-list {
         grid-template-columns: 1fr !important;
         gap: 10px !important;
+      }
+
+      .welcome-container {
+        margin-top: 40px !important;
       }
     }
 
