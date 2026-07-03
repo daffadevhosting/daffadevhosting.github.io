@@ -1,23 +1,22 @@
 <div class="top-bar">
     <!-- Tombol R2 Explorer Tambahan di Topbar (Membuka laci kanan secara mandiri) -->
      <ion-buttons>
-      <ion-button id="openR2Btn" aria-label="Buka R2 Cloud Storage" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <ion-button id="openR2Btn" aria-label="Buka Cloud Storage" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
         <ion-icon name="folder-open-outline" slot="icon-only"></ion-icon>
       </ion-button>
      </ion-buttons>
   
-  <!-- Pilihan Model AI yang Terintegrasi di Topbar -->
-  <div class="model-selector-wrap">
-    <select class="model-selector-select" aria-label="Pilih model AI">
-      <!-- Menggunakan model pengembang coder default -->
-      <option value="@cf/qwen/qwen2.5-coder-32b-instruct" selected>Qwen Coder 32B</option>
-      <option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen 3 30B</option>
-      <option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</option>
-    </select>
+  <!-- Pilihan Model AI yang Terintegrasi di Topbar dengan Mode iOS Popover -->
+  <div class="model-selector-wrap" style="min-width: 140px; margin-right: 8px;">
+    <ion-select class="model-selector-select" mode="ios" interface="popover" aria-label="Pilih model AI" style="--padding-start: 12px; --padding-end: 12px; font-size: 13px; font-weight: 500;">
+      <ion-select-option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen Coder 32B</ion-select-option>
+      <ion-select-option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen 3 30B</ion-select-option>
+      <ion-select-option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</ion-select-option>
+    </ion-select>
   </div>
 
   <div class="topbar-profile" id="topbarProfile" style="display: flex; align-items: center; gap: 8px;">
-    <ion-button class="topbar-profile-btn" fill="clear" id="topbarProfileBtn" aria-label="Buka menu pengguna">
+    <ion-button fill="clear" class="topbar-profile-btn" id="topbarProfileBtn" aria-label="Buka menu pengguna">
       <span class="topbar-avatar" id="topbarAvatar" style="display: inline-block; width: 28px; height: 28px; border-radius: 50%; background-color: #30363d;"></span>
       <span class="topbar-username" id="topbarMiniUsername">Tamu</span>
     </ion-button>
@@ -66,7 +65,7 @@
 <!-- SIDEBAR BARU: PANEL FILE EXPLORER CLOUDFLARE R2 (Sisi Kanan) -->
 <div class="r2-sidebar-backdrop" id="r2Backdrop"></div>
 <aside class="r2-sidebar-panel" id="r2Panel" inert>
-  <button type="button" class="sidebar-close" id="r2CloseBtn" aria-label="Tutup File R2">
+  <button type="button" class="sidebar-close" id="r2CloseBtn" aria-label="Tutup File Cloud">
     <ion-icon name="close-outline"></ion-icon>
   </button>
   
@@ -75,7 +74,7 @@
       <ion-icon name="cloud-done-outline"></ion-icon>
     </div>
     <div>
-      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">File Storage</h3>
+      <h3 style="font-size: 16px; margin: 0; font-weight: 600; color: #ffffff;">Cloud File Storage</h3>
       <p style="font-size: 11px; color: #8b949e; margin: 2px 0 0;">Cloudflare Bucket Manager</p>
     </div>
   </div>
@@ -102,7 +101,7 @@
   /* GAYA SPESIFIK DAN INDEPENDEN UNTUK SIDEBAR R2 SISI KANAN */
   .r2-sidebar-panel {
     position: fixed;
-    padding: 18px 8px;
+    padding: 20px 8px;
     top: 0;
     right: 0;
     width: 320px;
