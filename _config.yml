@@ -20,10 +20,10 @@ plugins:
 plugins_dir: _plugins
 
 collections:
-  blog:
+  blogpost:
     output: true
 
-permalink: /blog/:title/
+permalink: /blogpost/:title/
 
 defaults:
   - scope:

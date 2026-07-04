@@ -1,7 +1,7 @@
       <div id="discoverTab" class="tab-content">
         <div class="section-title">Discover</div>
 
-        {% assign posts = site.blog | sort: 'date' | reverse %}
+        {% assign posts = site.blogpost | sort: 'date' | reverse %}
         {% if posts.size > 0 %}
         <div id="blogList">
           {% for post in posts %}
