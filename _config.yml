@@ -17,10 +17,13 @@ plugins:
   - jekyll-sitemap
   - dotenv
 
+plugins_dir: _plugins
+
 collections:
   blog:
     output: true
-    permalink: /blog/:title/
+
+permalink: /blog/:title/
 
 defaults:
   - scope:
