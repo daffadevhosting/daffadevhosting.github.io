@@ -38,40 +38,54 @@
 
 <!-- SIDEBAR PROFIL PENGEMBANG -->
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <aside class="sidebar-panel" id="sidebarPanel" inert>
-  <ion-buttons style="justify-content: flex-end;">
-    <ion-button id="sidebarCloseBtn" aria-label="Tutup menu">
+  <!-- Tombol tutup -->
+  <ion-buttons class="sidebar-close-wrapper">
+    <ion-button id="sidebarCloseBtn" aria-label="Tutup menu" class="sidebar-close-btn">
       <ion-icon name="close-outline" slot="icon-only"></ion-icon>
     </ion-button>
   </ion-buttons>
+
+  <!-- Header profil -->
   <div class="sidebar-header">
-    <div class="sidebar-avatar" id="sidebarAvatar" style="width: 48px; height: 48px; border-radius: 50%; background-color: #30363d; display: block;"></div>
-    <div>
+    <div class="sidebar-avatar" id="sidebarAvatar">
+      <!-- Avatar akan diisi lewat JS, atau bisa pakai img -->
+    </div>
+    <div class="sidebar-user-info">
       <h3 id="sidebarUsername">Tamu</h3>
-      <!-- MENAMPILKAN FOLLOWERS TEPAT DI BAWAH USERNAME -->
-      <p class="sidebar-followers-tag" id="sidebarFollowers" style="font-size: 11px; color: #58a6ff; margin: 2px 0 0; font-weight: 500;">0 Followers</p>
+      <p class="sidebar-followers" id="sidebarFollowers">
+        <ion-icon name="people-outline" class="followers-icon"></ion-icon>
+        <span>0 Followers</span>
+      </p>
     </div>
   </div>
 
-  <!-- GLOBAL DAILY NEURON USAGE WIDGET -->
+  <!-- Kartu Kuota AI Harian -->
   <div class="sidebar-neuron-card" id="sidebarNeuronCard">
     <div class="neuron-card-header">
       <ion-icon name="speedometer-outline" class="neuron-icon"></ion-icon>
       <span class="neuron-title">Kuota AI Harian</span>
     </div>
     <div class="neuron-card-stats">
-      <span id="sidebarNeuronText" class="neuron-count">10,000 NRN</span>
+      <span id="sidebarNeuronText" class="neuron-count">10.000 NRN</span>
       <span class="neuron-percent" id="sidebarNeuronPercent">100%</span>
     </div>
     <div class="neuron-progress-bg">
-      <div class="neuron-progress-bar" id="sidebarNeuronBar" style="width: 100%"></div>
+      <div class="neuron-progress-bar" id="sidebarNeuronBar" style="width: 100%;"></div>
     </div>
   </div>
 
+  <!-- Bagian aksi (status & tombol) -->
   <div class="sidebar-body">
-    <p class="sidebar-status" id="sidebarStatus">Belum login.</p>
-    <a href="#" id="sidebarLoginBtn" class="sidebar-action-btn">Login GitHub</a>
-    <button type="button" id="sidebarLogoutBtn" class="sidebar-action-btn sidebar-logout-btn hidden">Logout</button>
+    <p class="sidebar-status" id="sidebarStatus">
+      <ion-icon name="information-circle-outline" class="status-icon"></ion-icon>
+      Belum login.
+    </p>
+    <div class="sidebar-actions">
+      <a href="#" id="sidebarLoginBtn" class="sidebar-action-btn primary">Login GitHub</a>
+      <button type="button" id="sidebarLogoutBtn" class="sidebar-action-btn secondary hidden">Logout</button>
+    </div>
   </div>
 </aside>
 
@@ -111,6 +125,280 @@
 </aside>
 
 <style>
+/* ---------- VARIABEL (sesuaikan dengan tema Anda) ---------- */
+:root {
+  --sidebar-bg: #0d1117;
+  --sidebar-card-bg: #161b22;
+  --sidebar-border: #30363d;
+  --sidebar-text: #c9d1d9;
+  --sidebar-text-secondary: #8b949e;
+  --sidebar-accent: #58a6ff;
+  --sidebar-progress-bg: #21262d;
+  --sidebar-progress-fill: #58a6ff;
+  --sidebar-radius: 16px;
+  --sidebar-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- BACKDROP ---------- */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- PANEL SIDEBAR ---------- */
+.sidebar-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 85vw);
+  height: 100%;
+  background: var(--sidebar-bg);
+  border-left: 1px solid var(--sidebar-border);
+  box-shadow: var(--sidebar-shadow);
+  z-index: 1000;
+  padding: 20px 18px 24px;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  color: var(--sidebar-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.sidebar-panel.open {
+  transform: translateX(0);
+}
+
+/* ---------- TOMBOL TUTUP ---------- */
+.sidebar-close-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.sidebar-close-btn {
+  --color: var(--sidebar-text-secondary);
+  --padding-start: 0;
+  --padding-end: 0;
+  height: 36px;
+  width: 36px;
+  font-size: 24px;
+}
+
+.sidebar-close-btn:hover {
+  --color: var(--sidebar-text);
+}
+
+/* ---------- HEADER PROFIL ---------- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--sidebar-border);
+  margin-bottom: 16px;
+}
+
+.sidebar-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--sidebar-border);
+  flex-shrink: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2358a6ff"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z"/></svg>');
+  background-size: 55%;
+  background-position: center 55%;
+  background-repeat: no-repeat;
+  background-color: #1f2937;
+  border: 2px solid var(--sidebar-border);
+}
+
+.sidebar-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f0f6fc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-followers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sidebar-accent);
+  margin: 2px 0 0;
+}
+
+.followers-icon {
+  font-size: 14px;
+}
+
+/* ---------- KARTU NEURON ---------- */
+.sidebar-neuron-card {
+  background: var(--sidebar-card-bg);
+  border-radius: var(--sidebar-radius);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 1px solid var(--sidebar-border);
+}
+
+.neuron-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.neuron-icon {
+  font-size: 18px;
+  color: var(--sidebar-accent);
+}
+
+.neuron-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sidebar-text-secondary);
+}
+
+.neuron-card-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.neuron-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f0f6fc;
+}
+
+.neuron-percent {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sidebar-accent);
+}
+
+.neuron-progress-bg {
+  width: 100%;
+  height: 6px;
+  background: var(--sidebar-progress-bg);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.neuron-progress-bar {
+  height: 100%;
+  background: var(--sidebar-progress-fill);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+/* ---------- BODY / AKSI ---------- */
+.sidebar-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--sidebar-text-secondary);
+  margin: 0 0 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: 16px;
+}
+
+.status-icon {
+  font-size: 18px;
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.sidebar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  width: 100%;
+  text-align: center;
+}
+
+.sidebar-action-btn.primary {
+  background: var(--sidebar-accent);
+  color: #0d1117;
+}
+
+.sidebar-action-btn.primary:hover {
+  background: #79c0ff;
+  transform: scale(1.01);
+}
+
+.sidebar-action-btn.secondary {
+  background: transparent;
+  color: #f85149;
+  border: 1px solid #f85149;
+}
+
+.sidebar-action-btn.secondary:hover {
+  background: #f851491a;
+}
+
+.sidebar-action-btn.hidden {
+  display: none;
+}
+
+/* ---------- SCROLLBAR (opsional) ---------- */
+.sidebar-panel::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-panel::-webkit-scrollbar-thumb {
+  background: var(--sidebar-border);
+  border-radius: 4px;
+}
 .model-selector-wrap {
   min-width: 140px;
 }
