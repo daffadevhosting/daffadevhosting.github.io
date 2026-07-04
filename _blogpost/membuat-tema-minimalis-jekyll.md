@@ -1,6 +1,6 @@
 ---
 title: "Membuat Tema Minimalis Jekyll"
-img: "https://placehold.co/600x400?text=Membuat+Tema+Minimalis+Jekyll"
+img: "https://placehold.co/600x400/orange/white.png?text=Membuat+Tema+Minimalis+Jekyll"
 date: 2026-07-02 10:00:00 +0700
 categories: [Blogging]
 tags: [Jekyll, Design]
