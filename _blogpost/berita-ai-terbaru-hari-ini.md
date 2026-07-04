@@ -1,6 +1,6 @@
 ---
 title: "Berita AI Terbaru Hari Ini: Anthropic Masuk Dunia Penemuan Obat, Meta Kejar OpenAI"
-img: "https://placehold.co/600x400?text=Berita+AI+Terbaru+Hari+Ini"
+img: "https://placehold.co/600x400/blue/white.png?text=Berita+AI+Terbaru+Hari+Ini"
 date: 2026-07-04 00:00:00 +0700
 categories: [Artificial Intelligence]
 tags: [AI, News, Anthropic, Meta, OpenAI]
