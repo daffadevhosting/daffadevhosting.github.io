@@ -20,7 +20,7 @@ plugins:
 collections:
   blog:
     output: true
-    permalink: /blog/:name/
+    permalink: /blog/:title/
 
 defaults:
   - scope:
