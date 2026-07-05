@@ -13,7 +13,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('{{ '/sw.js' | relative_url }}')
+      navigator.serviceWorker.register('{{ "/sw.js" | relative_url }}')
         .then(reg => console.log('Service Worker terdaftar!', reg))
         .catch(err => console.log('Registrasi gagal: ', err));
     });
