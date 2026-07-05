@@ -16,10 +16,6 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - dotenv
-  - jekyll-pwa-plugin
-
-pwa:
-  sw_src_filepath: sw.js
 
 plugins_dir: _plugins
 
