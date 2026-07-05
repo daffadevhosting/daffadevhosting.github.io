@@ -8,6 +8,20 @@
     <meta name="license" content="aHR0cHM6Ly9kYWZmYWRldmhvc3RpbmcuZ2l0aHViLmlv">
     <meta name="ads-image" content="https://files.sitestatic.net/promotion_banners/202607011814070000009a730a087d__INTER33__1600x2668.jpg">
     <meta name="ads-link" content="https://mam.inter33lap.com/register?ref=SGGABAG0982">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+
+<!-- Skrip Registrasi Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker terdaftar!', reg))
+        .catch(err => console.log('Registrasi gagal: ', err));
+    });
+  }
+</script>
+
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
