@@ -2145,6 +2145,34 @@ function handleDocumentClick(event) {
 function isElementOrChildClicked(element, target) {
   return element.contains(target);
 }
+
+let deferredPrompt;
+const installContainer = document.getElementById('pwa-install-container');
+const installBtn = document.getElementById('btn-pwa-install');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installContainer.style.display = 'block';
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  
+  deferredPrompt.prompt();
+  
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log(`User memilih untuk: ${outcome}`);
+  
+  deferredPrompt = null;
+  
+  installContainer.style.display = 'none';
+});
+
+window.addEventListener('appinstalled', (embed) => {
+  console.log('PWA berhasil diinstal.');
+  installContainer.style.display = 'none';
+});
 </script>
 <div id="pwa-install-container" style="display: none; padding: 15px; background: #4f46e5; color: white; text-align: center;">
   <p>Baca blog lebih nyaman lewat aplikasi!</p>
