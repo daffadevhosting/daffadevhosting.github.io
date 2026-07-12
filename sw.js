@@ -5,9 +5,9 @@ const BASE_URL = self.registration.scope;
 
 const STATIC_ASSETS = [
   BASE_URL,
-  `${BASE_URL}index.html`,
-  `${BASE_URL}assets/css/style.css`,
-  `${BASE_URL}manifest.json`
+  `${BASE_URL}/index.html`,
+  `${BASE_URL}/assets/css/style.css`,
+  `${BASE_URL}/manifest.json`
 ];
 
 self.addEventListener('install', event => {
