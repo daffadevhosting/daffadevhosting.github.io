@@ -1,6 +1,6 @@
 ---
 title: "Teknologi Hari Ini: AI Semakin Cerdas, Persaingan Chip Memanas"
-img: "https://placehold.co/600x400?text=Teknologi+Hari+Ini"
+img: "https://placehold.co/600x400/black/white.png?text=Teknologi+Hari+Ini"
 date: 2026-07-13 10:00:00 +0700
 categories: [Teknologi]
 tags: [AI, OpenAI, Meta, Chip, Berita]
