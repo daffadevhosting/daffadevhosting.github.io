@@ -1277,6 +1277,7 @@
   const sendBtn = document.getElementById('sendBtn');
   const chatMessagesDiv = document.getElementById('chatMessages');
   const modelSelect = document.querySelector('.model-selector-select');
+  const modelSelector = document.getElementById('modelSelector');
   const repoListDiv = document.getElementById('repoList');
   const refreshLibBtn = document.getElementById('refreshLibraryBtn');
   const chatBoxContainer = document.getElementById('chatBoxContainer');
@@ -1598,7 +1599,7 @@
       if (sidebarLogoutBtn) sidebarLogoutBtn.classList.add('hidden');
       if (sidebarAvatar) sidebarAvatar.style.backgroundImage = '';
 
-      if (topbarMiniUsername) topbarMiniUsername.textContent = 'Tamu';
+      if (topbarMiniUsername) topbarMiniUsername.textContent = 'Anonim';
       if (topbarAvatar) topbarAvatar.style.backgroundImage = '';
     }
 
@@ -1760,9 +1761,13 @@
     if (tabId === 'home') {
       chatBoxContainer.style.display = 'flex';
       setTimeout(() => chatBoxContainer.style.opacity = '1', 10);
+      modelSelector.style.display = 'block';
+      setTimeout(() => modelSelector.style.opacity = '1', 10);
     } else {
       chatBoxContainer.style.opacity = '0';
       setTimeout(() => chatBoxContainer.style.display = 'none', 300);
+      modelSelector.style.opacity = '0';
+      setTimeout(() => modelSelectorr.style.display = 'none', 300);
     }
 
     if (tabId === 'library') {
