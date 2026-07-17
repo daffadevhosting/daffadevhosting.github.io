@@ -1,7 +1,258 @@
-<div id="pwa-install-container" style="display:none;padding:15px;background:#4f46e5;color:#fff;text-align:center;">
-  <p>Baca blog lebih nyaman lewat aplikasi!</p>
+<style>
+  /* Container Banner Premium */
+  #pwa-install-container {
+    display: none; /* Diatur lewat JS */
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4), 0 8px 10px -6px rgba(79, 70, 229, 0.4);
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* Animasi muncul halus */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
-  <button id="btn-pwa-install" style="background:#fff;color:#4f46e5;border:none;padding:8px 16px;border-radius:4px;font-weight:bold;cursor:pointer;">
-    Instal Sekarang
-  </button>
+  #pwa-install-container.show {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (min-width: 640px) {
+    #pwa-install-container.show {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #pwa-install-container {
+      left: auto;
+      right: 24px;
+      width: 450px;
+    }
+  }
+
+  /* Info App (Ikon + Teks) */
+  .pwa-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-grow: 1;
+  }
+
+  .pwa-app-icon {
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .pwa-text-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pwa-main-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.3px;
+  }
+
+  .pwa-sub-title {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 2px 0 0 0;
+    line-height: 1.3;
+  }
+
+  /* Kumpulan Aksi (Tombol Instal + Tombol Tutup) */
+  .pwa-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .pwa-actions-wrapper {
+      width: auto;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Tombol Instalasi Utama */
+  #btn-pwa-install {
+    flex-grow: 1;
+    background-color: #ffffff;
+    color: #4f46e5;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+
+  #btn-pwa-install:hover {
+    background-color: #f8fafc;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  #btn-pwa-install:active {
+    transform: scale(0.97);
+  }
+
+  /* Tombol Tutup Silang (X) */
+  #btn-pwa-close-banner {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  #btn-pwa-close-banner:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+</style>
+
+<!-- Banner Markup -->
+<div id="pwa-install-container">
+  <!-- Sisi Kiri: Ikon Aplikasi & Informasi Singkat -->
+  <div class="pwa-content-wrapper">
+    <div class="pwa-app-icon">
+      <i class="fa-solid fa-mobile-screen"></i>
+    </div>
+    <div class="pwa-text-group">
+      <h4 class="pwa-main-title">Baca Blog Lebih Nyaman!</h4>
+      <p class="pwa-sub-title">Instal aplikasi sekarang untuk akses lebih cepat.</p>
+    </div>
+  </div>
+
+  <!-- Sisi Kanan: Tombol Aksi -->
+  <div class="pwa-actions-wrapper">
+    <button id="btn-pwa-install">
+      <i class="fa-solid fa-cloud-arrow-down"></i> Instal Sekarang
+    </button>
+    <button id="btn-pwa-close-banner" aria-label="Tutup Banner">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
 </div>
+
+<script>
+  (function () {
+    let deferredPrompt = null;
+    const STORAGE_KEY = "pwa_inline_dismissed_time";
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Pembatasan Waktu (24 jam)
+
+    const bannerContainer = document.getElementById("pwa-install-container");
+    const installBtn = document.getElementById("btn-pwa-install");
+    const closeBtn = document.getElementById("btn-pwa-close-banner");
+
+    // Fungsi Validasi Waktu Tampil
+    function shouldShowBanner() {
+      // Jangan tampilkan jika sudah diinstal / mode standalone
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+        return false;
+      }
+      // Cek apakah sudah pernah di-close dalam 24 jam terakhir
+      const lastDismissed = localStorage.getItem(STORAGE_KEY);
+      if (lastDismissed) {
+        const timePassed = Date.now() - parseInt(lastDismissed, 10);
+        if (timePassed < ONE_DAY_MS) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Tampilkan Banner dengan Transisi
+    function displayBanner() {
+      if (!shouldShowBanner()) return;
+
+      bannerContainer.classList.add("show");
+    }
+
+    // Tangkap Event Instalasi dari Browser
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      displayBanner();
+    });
+
+    // Pemicu Cadangan (Misal PWA sudah siap di-cache)
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        // Tampilkan banner meskipun beforeinstallprompt belum terpanggil (bisa disesuaikan untuk testing)
+        // Jika browser tidak mendukung native, tombol install akan memicu prompt default browser bila didukung
+        if (shouldShowBanner()) {
+          displayBanner();
+        }
+      }, 2000);
+    });
+
+    // Event Klik Tombol Instal
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) {
+        // Jika browser tidak mendukung direct prompt, tampilkan alert/modal instruksi sederhana
+        // atau biarkan browser menangani secara default.
+        console.log("Instalasi native tidak didukung oleh browser saat ini.");
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`Pengguna memilih untuk: ${outcome}`);
+      deferredPrompt = null;
+      bannerContainer.classList.remove("show");
+    });
+
+    // Event Klik Tombol Close (Simpan Waktu Tutup ke LocalStorage)
+    closeBtn.addEventListener("click", () => {
+      bannerContainer.classList.remove("show");
+      localStorage.setItem(STORAGE_KEY, Date.now().toString());
+    });
+
+    // Deteksi Jika Berhasil Diinstal
+    window.addEventListener("appinstalled", () => {
+      console.log("PWA berhasil terpasang di perangkat.");
+      deferredPrompt = null;
+      bannerContainer.classList.remove("show");
+    });
+  })();
+</script>
