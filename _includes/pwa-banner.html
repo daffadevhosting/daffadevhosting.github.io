@@ -1,0 +1,376 @@
+<style>
+  /* Animasi masuk dari bawah */
+  @keyframes pwaSlideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .pwa-animate-slide-up {
+    animation: pwaSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  /* Menggunakan CSS murni untuk layout agar tidak bentrok dengan CSS tema Jekyll Anda */
+  #pwa-install-container {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (min-width: 768px) {
+    #pwa-install-container {
+      left: auto;
+      right: 16px;
+      width: 380px;
+    }
+  }
+  .pwa-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    color: #f8fafc;
+    overflow: hidden;
+  }
+  .pwa-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .pwa-icon-box {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+  }
+  .pwa-icon-box i {
+    color: #ffffff;
+    font-size: 20px;
+  }
+  .pwa-info {
+    flex-grow: 1;
+    min-width: 0;
+  }
+  .pwa-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pwa-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+  }
+  .pwa-close-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .pwa-close-btn:hover {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+  .pwa-body {
+    padding: 16px;
+    background-color: rgba(15, 23, 42, 0.6);
+  }
+  .pwa-btn-install {
+    width: 100%;
+    background-color: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+  .pwa-btn-install:hover {
+    background-color: #4338ca;
+  }
+  .pwa-btn-install:active {
+    transform: scale(0.98);
+  }
+  .pwa-instructions {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .pwa-instructions p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .pwa-instructions strong {
+    color: #818cf8;
+  }
+  .pwa-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #64748b;
+  }
+  .pwa-step-badge {
+    background-color: #0f172a;
+    color: #94a3b8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #334155;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .pwa-hidden {
+    display: none !important;
+  }
+</style>
+
+<div id="pwa-install-container" class="pwa-hidden pwa-animate-slide-up">
+  <div class="pwa-card">
+    
+    <!-- Header Banner -->
+    <div class="pwa-header">
+      <div class="pwa-icon-box">
+        <!-- Menggunakan variabel site.title Jekyll sebagai fallback jika site.pwa_icon tidak diset -->
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div class="pwa-info">
+        <h3 class="pwa-title">{{ site.title | default: "Aplikasi Web Kami" }}</h3>
+        <p class="pwa-desc">Instal aplikasi untuk performa membaca yang lebih lancar, cepat, dan hemat kuota.</p>
+      </div>
+      <button id="pwa-btn-close" class="pwa-close-btn" aria-label="Tutup">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Body Banner -->
+    <div class="pwa-body">
+      <!-- Tombol Instal Otomatis (Jika didukung Browser) -->
+      <div id="pwa-native-area" class="pwa-hidden">
+        <button id="pwa-btn-install" class="pwa-btn-install">
+          <i class="fa-solid fa-download"></i> Pasang Aplikasi
+        </button>
+      </div>
+
+      <!-- Panduan Manual (Jika Browser tidak mendukung Instalasi Langsung) -->
+      <div id="pwa-manual-area" class="pwa-hidden">
+        <div class="pwa-instructions">
+          <p id="pwa-text-guide"></p>
+          <div id="pwa-steps-visual" class="pwa-steps"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    let deferredPrompt = null;
+    const STORAGE_KEY = "pwa_dismissed_time";
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Selisih waktu 24 jam dalam milidetik
+
+    const banner = document.getElementById("pwa-install-container");
+    const closeBtn = document.getElementById("pwa-btn-close");
+    const nativeArea = document.getElementById("pwa-native-area");
+    const manualArea = document.getElementById("pwa-manual-area");
+    const installBtn = document.getElementById("pwa-btn-install");
+    const textGuide = document.getElementById("pwa-text-guide");
+    const stepsVisual = document.getElementById("pwa-steps-visual");
+
+    // ==========================================
+    // Cek Selisih Waktu 24 Jam
+    // ==========================================
+    function shouldShowBanner() {
+      // 1. Cek jika sudah berjalan dalam mode PWA (standalone)
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+        return false;
+      }
+
+      // 2. Cek histori penyimpanan local pengguna
+      const lastDismissed = localStorage.getItem(STORAGE_KEY);
+      if (lastDismissed) {
+        const timePassed = Date.now() - parseInt(lastDismissed, 10);
+        if (timePassed < ONE_DAY_MS) {
+          console.log("PWA Banner disembunyikan: Belum lewat 24 jam sejak penutupan terakhir.");
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // ==========================================
+    // Deteksi Browser & Platform OS
+    // ==========================================
+    function getBrowserInfo() {
+      const ua = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isAndroid = /Android/.test(ua);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+      const isSamsung = /SamsungBrowser/.test(ua);
+      const isFirefox = /Firefox/.test(ua);
+      const isEdge = /Edg/.test(ua);
+      const isChrome = /Chrome/.test(ua) && !isEdge && !isSamsung;
+
+      return { isIOS, isAndroid, isSafari, isSamsung, isFirefox, isEdge, isChrome };
+    }
+
+    // ==========================================
+    // Racik Teks Instruksi Berdasarkan Browser
+    // ==========================================
+    function applyBrowserInstructions() {
+      const info = getBrowserInfo();
+
+      if (info.isIOS && info.isSafari) {
+        textGuide.innerHTML = `Ketuk tombol <strong>Bagikan (Share)</strong> di bagian bawah layar Safari Anda, lalu pilih <strong>Tambahkan ke Layar Utama (Add to Home Screen)</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Safari</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-arrow-up-from-bracket"></i> Share</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-regular fa-square-plus"></i> Add to Home Screen</span>
+        `;
+      } else if (info.isAndroid && info.isSamsung) {
+        textGuide.innerHTML = `Ketuk tombol <strong>Menu (☰)</strong> di kanan bawah, pilih <strong>+ Tambah halaman ke</strong>, lalu pilih <strong>Layar Depan</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Samsung</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-bars"></i> Menu</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge">+ Layar Depan</span>
+        `;
+      } else if (info.isChrome && info.isAndroid) {
+        textGuide.innerHTML = `Ketuk menu <strong>Titik Tiga (⋮)</strong> di kanan atas browser, lalu pilih opsi <strong>Instal Aplikasi</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Chrome</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge">Instal Aplikasi</span>
+        `;
+      } else if (info.isFirefox) {
+        textGuide.innerHTML = `Ketuk menu <strong>Titik Tiga (⋮)</strong> di samping URL bar, lalu pilih opsi <strong>Pasang (Install)</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Firefox</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-house-chimney-medical"></i> Pasang</span>
+        `;
+      } else if (info.isEdge) {
+        textGuide.innerHTML = `Ketuk menu <strong>Tiga Titik (...)</strong> di bawah layar, lalu klik <strong>Tambahkan ke Layar Utama</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Edge</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-ellipsis"></i></span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-plus"></i> Tambah</span>
+        `;
+      } else {
+        // Fallback Umum
+        textGuide.innerHTML = `Buka menu pengaturan browser Anda dan klik <strong>Instal Aplikasi</strong> atau <strong>Tambahkan ke Layar Utama</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Menu</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge">Instal / Tambahkan</span>
+        `;
+      }
+    }
+
+    // ==========================================
+    // Logika Alur Tampilan
+    // ==========================================
+    function renderBanner() {
+      if (!shouldShowBanner()) return;
+
+      if (deferredPrompt) {
+        // Browser mendukung automatic prompt
+        nativeArea.classList.remove("pwa-hidden");
+        manualArea.classList.add("pwa-hidden");
+      } else {
+        // Harus menggunakan instruksi manual
+        nativeArea.classList.add("pwa-hidden");
+        manualArea.classList.remove("pwa-hidden");
+        applyBrowserInstructions();
+      }
+
+      // Tampilkan kontainer utama
+      banner.classList.remove("pwa-hidden");
+    }
+
+    // ==========================================
+    // Event Listeners
+    // ==========================================
+
+    // Tangkap event automatic installation prompt
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      renderBanner();
+    });
+
+    // Jalankan pengecekan setelah halaman termuat
+    window.addEventListener("load", () => {
+      // Tunggu 2 detik agar halaman termuat lancar tanpa mengganggu interaksi awal
+      setTimeout(() => {
+        // Jika beforeinstallprompt tidak terpicu (misal di Safari/Firefox), tetap tampilkan cara manual
+        if (!deferredPrompt) {
+          renderBanner();
+        }
+      }, 2000);
+    });
+
+    // Aksi tombol instalasi otomatis (Native)
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User memilih: ${outcome}`);
+      deferredPrompt = null;
+      banner.classList.add("pwa-hidden");
+    });
+
+    // Tombol Tutup (Sembunyikan dan simpan timestamp 24 jam)
+    closeBtn.addEventListener("click", () => {
+      banner.classList.add("pwa-hidden");
+      localStorage.setItem(STORAGE_KEY, Date.now().toString());
+    });
+
+    // Deteksi jika instalasi berhasil dijalankan oleh user
+    window.addEventListener("appinstalled", () => {
+      console.log("PWA Berhasil diinstal.");
+      deferredPrompt = null;
+      banner.classList.add("pwa-hidden");
+    });
+
+  })();
+</script>
