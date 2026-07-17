@@ -1,7 +1,7 @@
 <style>
   /* Container Banner Premium */
   #pwa-install-container {
-    display: none; /* Diatur lewat JS */
+    display: none; /* Dikontrol penuh lewat JS */
     position: fixed;
     bottom: 20px;
     left: 20px;
@@ -15,7 +15,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     border: 1px solid rgba(255, 255, 255, 0.1);
     
-    /* Animasi muncul halus */
+    /* Animasi masuk halus */
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -48,11 +48,11 @@
 
   /* Info App (Ikon + Teks) */
   .pwa-content-wrapper {
-   margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 14px;
     flex-grow: 1;
+    margin-bottom: 20px;
   }
 
   .pwa-app-icon {
@@ -180,65 +180,129 @@
   (function () {
     let deferredPrompt = null;
     const STORAGE_KEY = "pwa_inline_dismissed_time";
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Pembatasan Waktu (24 jam)
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 Jam dalam milidetik
 
     const bannerContainer = document.getElementById("pwa-install-container");
     const installBtn = document.getElementById("btn-pwa-install");
     const closeBtn = document.getElementById("btn-pwa-close-banner");
 
-    // Fungsi Validasi Waktu Tampil
-    function shouldShowBanner() {
-      // Jangan tampilkan jika sudah diinstal / mode standalone
-      if (window.matchMedia("(display-mode: standalone)").matches) {
-        return false;
+    // ========================================================
+    // 1. DETEKSI APAKAH APLIKASI SUDAH TERINSTAL (SANGAT AKURAT)
+    // ========================================================
+    async function isAppAlreadyInstalled() {
+      // Deteksi jika berjalan dalam mode standalone (Aplikasi dibuka langsung)
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                            || window.navigator.standalone 
+                            || document.referrer.includes('android-app://');
+      
+      if (isStandalone) return true;
+
+      // Gunakan API modern untuk memeriksa status instalasi (didukung Chrome/Android/Edge)
+      if ('getInstalledRelatedApps' in navigator) {
+        try {
+          const relatedApps = await navigator.getInstalledRelatedApps();
+          if (relatedApps.length > 0) {
+            return true; // Aplikasi terdeteksi sudah terinstal di sistem operasi
+          }
+        } catch (err) {
+          console.warn("Gagal mendeteksi status instalasi via API:", err);
+        }
       }
-      // Cek apakah sudah pernah di-close dalam 24 jam terakhir
+
+      return false;
+    }
+
+    // Fungsi Validasi Waktu Tampil & Keadaan Sesi
+    function isAllowedByLocalStorage() {
       const lastDismissed = localStorage.getItem(STORAGE_KEY);
       if (lastDismissed) {
         const timePassed = Date.now() - parseInt(lastDismissed, 10);
         if (timePassed < ONE_DAY_MS) {
-          return false;
+          return false; // Belum lewat 24 jam semenjak di-close
         }
       }
       return true;
     }
 
-    // Tampilkan Banner dengan Transisi
+    // Tampilkan Banner dengan Transisi Halus
     function displayBanner() {
-      if (!shouldShowBanner()) return;
-
       bannerContainer.classList.add("show");
+    }
+
+    // Deteksi Platform Browser
+    function getBrowserInfo() {
+      const ua = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isAndroid = /Android/.test(ua);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+      const isSamsung = /SamsungBrowser/.test(ua);
+      const isFirefox = /Firefox/.test(ua);
+      const isEdge = /Edg/.test(ua);
+      const isChrome = /Chrome/.test(ua) && !isEdge && !isSamsung;
+
+      return { isIOS, isAndroid, isSafari, isSamsung, isFirefox, isEdge, isChrome };
+    }
+
+    // ========================================================
+    // 2. ALUR DETEKSI SEBELUM MENAMPILKAN BANNER
+    // ========================================================
+    async function evaluateAndShowBanner() {
+      // Langkah A: Cek apakah aplikasi sudah terinstal di perangkat
+      const installed = await isAppAlreadyInstalled();
+      if (installed) {
+        console.log("ℹ️ PWA terdeteksi sudah terinstal. Banner tetap disembunyikan.");
+        bannerContainer.classList.remove("show");
+        return;
+      }
+
+      // Langkah B: Cek aturan jeda 24 jam
+      if (!isAllowedByLocalStorage()) {
+        return;
+      }
+
+      const info = getBrowserInfo();
+      // Periksa apakah browser saat ini mendukung 'beforeinstallprompt' secara teoritis
+      const supportsNativePrompt = ('onbeforeinstallprompt' in window) || info.isChrome || info.isAndroid || info.isSamsung || info.isEdge;
+
+      if (supportsNativePrompt) {
+        // Pada browser yang mendukung native prompt, kita HANYA menampilkan banner 
+        // apabila event 'beforeinstallprompt' berhasil ditangkap (deferredPrompt tidak null).
+        // Jika aplikasi sudah diinstal, browser otomatis TIDAK AKAN menembakkan event tersebut.
+        if (deferredPrompt) {
+          displayBanner();
+        }
+      } else {
+        // Untuk browser yang tidak mendukung event native (seperti iOS Safari),
+        // kita tampilkan panduan secara langsung (asalkan lolos pengecekan di Langkah A & B)
+        displayBanner();
+      }
     }
 
     // Tangkap Event Instalasi dari Browser
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      displayBanner();
+      // Langsung evaluasi ulang begitu prompt siap
+      evaluateAndShowBanner();
     });
 
-    // Pemicu Cadangan (Misal PWA sudah siap di-cache)
+    // Pemicu evaluasi cadangan saat halaman selesai dimuat
     window.addEventListener("load", () => {
       setTimeout(() => {
-        // Tampilkan banner meskipun beforeinstallprompt belum terpanggil (bisa disesuaikan untuk testing)
-        // Jika browser tidak mendukung native, tombol install akan memicu prompt default browser bila didukung
-        if (shouldShowBanner()) {
-          displayBanner();
-        }
-      }, 2000);
+        evaluateAndShowBanner();
+      }, 2000); // Delay 2 detik demi kenyamanan memuat halaman
     });
 
     // Event Klik Tombol Instal
     installBtn.addEventListener("click", async () => {
       if (!deferredPrompt) {
-        // Jika browser tidak mendukung direct prompt, tampilkan alert/modal instruksi sederhana
-        // atau biarkan browser menangani secara default.
-        console.log("Instalasi native tidak didukung oleh browser saat ini.");
+        // Fallback jika diklik di browser non-compatible / iOS Safari
+        console.log("Instalasi otomatis tidak didukung, silakan tambahkan secara manual melalui menu browser.");
         return;
       }
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log(`Pengguna memilih untuk: ${outcome}`);
+      console.log(`Pilihan user: ${outcome}`);
       deferredPrompt = null;
       bannerContainer.classList.remove("show");
     });
@@ -249,9 +313,9 @@
       localStorage.setItem(STORAGE_KEY, Date.now().toString());
     });
 
-    // Deteksi Jika Berhasil Diinstal
+    // Deteksi Jika Berhasil Diinstal saat banner sedang terbuka
     window.addEventListener("appinstalled", () => {
-      console.log("PWA berhasil terpasang di perangkat.");
+      console.log("🎉 PWA berhasil terpasang.");
       deferredPrompt = null;
       bannerContainer.classList.remove("show");
     });
