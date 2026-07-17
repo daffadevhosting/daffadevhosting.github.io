@@ -10,12 +10,14 @@
     
 {{ content }}
 
+{% include pwa-button.html %}
   </ion-content>
 </ion-app>
 
 {% include module.html %}
 {% include applet.html %}
-{% include pwa-button.html %}
+{% include pwa-banner.html %}
+
 <!-- Skrip Registrasi Service Worker -->
 <script>
   if ('serviceWorker' in navigator) {
