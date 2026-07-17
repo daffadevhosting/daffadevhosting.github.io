@@ -2164,18 +2164,24 @@
   document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt;
 
-    // Handler untuk menutup keyboard/blur chatInput saat klik di luar
-    document.addEventListener('click', (event) => {
-      const chatInput = document.getElementById('chatInput');
-      const sendBtn = document.getElementById('sendBtn');
+    // Handler untuk menutup keyboard/blur chatInput saat klik.
+document.addEventListener("click", (event) => {
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
 
-      if (chatInput && sendBtn) {
-        const isClickInside = chatInput.contains(event.target) || sendBtn.contains(event.target);
-        if (!isClickInside) {
-          chatInput.blur();
-        }
-      }
-    });
+  if (!chatInput) return;
+
+  if (chatInput.contains(event.target)) {
+    return;
+  }
+
+  if (sendBtn && sendBtn.contains(event.target)) {
+    chatInput.blur();
+    return;
+  }
+
+  chatInput.blur();
+});
 
     // Menangkap event install PWA dari browser
     window.addEventListener('beforeinstallprompt', (e) => {
