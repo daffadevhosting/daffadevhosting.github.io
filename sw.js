@@ -1,67 +1,85 @@
 ---
 permalink: /sw.js
 ---
-const VERSION = 'v2';
-const CACHE_NAME = `jekyll-pwa-${VERSION}`;
 
-const BASE_URL = self.registration.scope;
+const CACHE_NAME = "blog-cache-v1";
 
-const STATIC_ASSETS = [
-  BASE_URL,
-  `${BASE_URL}/index.html`,
-  `${BASE_URL}/assets/css/style.css`,
-  `${BASE_URL}/manifest.json`
+const FILES = [
+  "{{ '/' | relative_url }}",
+  "{{ '/manifest.json' | relative_url }}",
+  "{{ '/assets/css/style.css' | relative_url }}"
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return Promise.all(
-        STATIC_ASSETS.map(url => {
-          // Append a cache-busting timestamp to bypass GitHub Pages server cache
-          const requestUrl = new URL(url, location.href);
-          requestUrl.searchParams.set('v', Date.now());
-          
-          return fetch(requestUrl).then(response => {
-            if (!response.ok) throw new TypeError(`Pipeline failed for: ${url}`);
-            return cache.put(url, response);
-          });
-        })
-      );
-    }).then(() => self.skipWaiting())
-  );
+self.addEventListener("install",(event)=>{
+
+    event.waitUntil(
+
+        caches.open(CACHE_NAME)
+
+        .then(cache=>cache.addAll(FILES))
+
+        .then(()=>self.skipWaiting())
+
+    );
+
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+self.addEventListener("activate",(event)=>{
+
+    event.waitUntil(
+
+        caches.keys().then(keys=>{
+
+            return Promise.all(
+
+                keys.map(key=>{
+
+                    if(key!==CACHE_NAME){
+
+                        return caches.delete(key);
+
+                    }
+
+                })
+
+            );
+
+        }).then(()=>self.clients.claim())
+
+    );
+
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+self.addEventListener("fetch",(event)=>{
 
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return networkResponse;
-      }).catch(() => cachedResponse);
+    if(event.request.method!=="GET") return;
 
-      return cachedResponse || fetchPromise;
-    })
-  );
+    event.respondWith(
+
+        caches.match(event.request)
+
+        .then(cache=>{
+
+            return cache ||
+
+            fetch(event.request)
+
+            .then(res=>{
+
+                const copy=res.clone();
+
+                caches.open(CACHE_NAME)
+
+                .then(c=>c.put(event.request,copy));
+
+                return res;
+
+            })
+
+            .catch(()=>cache);
+
+        })
+
+    );
+
 });
