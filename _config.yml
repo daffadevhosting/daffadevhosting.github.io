@@ -8,8 +8,8 @@ lang: "id-ID"
 author: "DaffaDev"
 
 license_key: "<%= ENV['license_key'] %>"
-ads_image: "https://files.sitestatic.net/promotion_banners/202607011814070000009a730a087d__INTER33__1600x2668.jpg"
-ads_link: "https://mam.inter33lap.com/register?ref=SGGABAG0982"
+ads_image: "https://s3.cdnppp889.com/uploads/20056/827051ace0a69aba81499565318fcfe1.png"
+ads_link: "https://rkgg7pt.com/s/0328C386078"
 
 plugins:
   - jekyll-feed
