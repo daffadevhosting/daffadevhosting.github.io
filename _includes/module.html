@@ -171,7 +171,7 @@
         </div>
       `;
       document.body.appendChild(backdrop);
-      
+
       setTimeout(() => backdrop.classList.add('active'), 10);
 
       backdrop.querySelector('#ios-ok-btn').addEventListener('click', () => {
@@ -256,13 +256,13 @@
       btn.addEventListener('click', () => {
         const codeElement = pre.querySelector('code');
         const textToCopy = codeElement ? codeElement.innerText : pre.innerText;
-        
+
         copyToClipboard(textToCopy);
 
         // Umpan balik visual sukses
         btn.innerHTML = '<ion-icon name="checkmark-outline" style="color: #3fb950;"></ion-icon>';
         btn.style.borderColor = '#2ea043';
-        
+
         setTimeout(() => {
           btn.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
           btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
@@ -297,14 +297,15 @@
   const modelSelect = document.querySelector('.model-selector-select');
   const modelSelector = document.getElementById('modelSelector');
   const repoListDiv = document.getElementById('repoList');
-  const refreshLibBtn = document.getElementById('refreshLibraryBtn');
+  const refreshLibBtn = const sideActionBtn = document.getElementById('sideActionBtn');
+const sideActionIcon = document.getElementById('sideActionIcon');
   const chatBoxContainer = document.getElementById('chatBoxContainer');
   const welcomeScreen = document.getElementById('welcomeScreen');
   const menuBtn = document.querySelector('.menu-btn');
   const topbarProfileBtn = document.getElementById('topbarProfileBtn');
   const topbarAvatar = document.getElementById('topbarAvatar');
   const topbarMiniUsername = document.getElementById('topbarMiniUsername');
-  
+
   // Element-element panel profil (Kiri)
   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
   const sidebarPanel = document.getElementById('sidebarPanel');
@@ -315,7 +316,7 @@
   const sidebarStatus = document.getElementById('sidebarStatus');
   const sidebarLoginBtn = document.getElementById('sidebarLoginBtn');
   const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
-  
+
   // Element-element panel R2 (Kanan)
   const openR2Btn = document.getElementById('openR2Btn');
   const r2Backdrop = document.getElementById('r2Backdrop');
@@ -334,6 +335,106 @@
 
   // Variabel Memori Lampiran File Chat
   let currentAttachedFile = null;
+
+/* =========================================================
+   DYNAMIC SIDE ACTION BUTTON
+   Chat      → New Chat
+   Discover  → Reload Blog
+   Library   → Refresh Library
+   ========================================================= */
+
+const SIDE_ACTIONS = {
+  home: {
+    icon: 'add-outline',
+    label: 'New Chat',
+    title: 'New Chat'
+  },
+
+  discover: {
+    icon: 'sync-outline',
+    label: 'Reload Blog',
+    title: 'Reload Blog'
+  },
+
+  library: {
+    icon: 'sync-outline',
+    label: 'Refresh Library',
+    title: 'Refresh Library'
+  }
+};
+
+function startNewChat() {
+  if (!chatMessagesDiv) return;
+
+  // Bersihkan percakapan
+  chatMessagesDiv.innerHTML = '';
+
+  // Kembalikan welcome screen
+  if (welcomeScreen) {
+    welcomeScreen.style.display = 'flex';
+    welcomeScreen.style.opacity = '0';
+
+    requestAnimationFrame(() => {
+      welcomeScreen.style.opacity = '1';
+    });
+  }
+
+  // Reset input
+  if (chatInput) {
+    chatInput.value = '';
+    chatInput.rows = 1;
+  }
+
+  // Reset attachment
+  currentAttachedFile = null;
+
+  if (chatScriptFileInput) {
+    chatScriptFileInput.value = '';
+  }
+
+  if (fileAttachedIndicator) {
+    fileAttachedIndicator.classList.add('hidden');
+  }
+
+  // Lipat chat box
+  if (chatBoxContainer) {
+    chatBoxContainer.classList.add('folded');
+  }
+
+  // Fokus ke input
+  setTimeout(() => {
+    chatInput?.focus();
+  }, 100);
+
+  console.log('New chat dimulai');
+}
+
+function updateSideAction(tabId) {
+  if (!sideActionBtn || !sideActionIcon) return;
+
+  const config = SIDE_ACTIONS[tabId];
+
+  if (!config) return;
+
+  sideActionIcon.setAttribute('name', config.icon);
+
+  sideActionBtn.setAttribute(
+    'aria-label',
+    config.label
+  );
+
+  sideActionBtn.setAttribute(
+    'title',
+    config.title
+  );
+
+  // Animasi pergantian icon
+  sideActionBtn.classList.remove('side-action-changing');
+
+  requestAnimationFrame(() => {
+    sideActionBtn.classList.add('side-action-changing');
+  });
+}
 
   // Elemen-elemen Widget Sisa Kuota AI
   const sidebarNeuronText = document.getElementById('sidebarNeuronText');
@@ -401,9 +502,9 @@
   // API Call: Mengambil daftar file dari Cloudflare R2 dengan Integrasi Login Terbuka
   async function loadR2Files() {
     if (!r2FileList) return;
-    
+
     const token = localStorage.getItem('access_token');
-    
+
     // TAMPILAN JIKA BELUM LOGIN: Memberikan Tombol Hubungkan Akun di dalam Sidebar R2
     if (!token) {
       r2FileList.innerHTML = `
@@ -420,14 +521,14 @@
     }
 
     r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;"><ion-icon name="sync-outline" style="animation: spin 1.5s linear infinite; font-size: 18px; margin-bottom: 4px;"></ion-icon><br>Memproses database cloud...</div>`;
-    
+
     try {
       const response = await fetch(`${WORKER_URL}/api/r2`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('R2 Error');
       const data = await response.json();
-      
+
       if (!data.files || data.files.length === 0) {
         r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;">Penyimpanan kosong.<br>Unggah file pertama Anda di atas.</div>`;
         return;
@@ -464,7 +565,7 @@
       showIOSAlert('Gagal mengunggah: Silakan login terlebih dahulu.', 'Akses Ditolak');
       return;
     }
-    
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('filename', file.name);
@@ -489,7 +590,7 @@
   window.deleteR2File = async function(filename) {
     const confirmed = await showIOSConfirm(`Apakah Anda yakin ingin menghapus "${filename}" dari penyimpanan cloud?`, 'Hapus File');
     if (!confirmed) return;
-    
+
     const token = localStorage.getItem('access_token');
     try {
       const response = await fetch(`${WORKER_URL}/api/r2`, {
@@ -523,7 +624,7 @@
         // Perbarui UI Indikator Lampiran
         if (attachedFileName) attachedFileName.textContent = file.name;
         if (fileAttachedIndicator) fileAttachedIndicator.classList.remove('hidden');
-        
+
         // Membuka lipatan saat ada file yang diunggah
         chatBoxContainer.classList.remove('folded');
       };
@@ -536,7 +637,7 @@
       currentAttachedFile = null;
       if (chatScriptFileInput) chatScriptFileInput.value = '';
       if (fileAttachedIndicator) fileAttachedIndicator.classList.add('hidden');
-      
+
       // Kembalikan lipatan jika input kosong
       if (!chatInput.value.trim()) {
         chatBoxContainer.classList.add('folded');
@@ -558,7 +659,7 @@
     // Deteksi interaksi global untuk buka/tutup lipatan yang halus
     document.addEventListener('click', (e) => {
       const insideChatBox = chatBoxContainer.contains(e.target);
-      
+
       if (insideChatBox) {
         // Rentangkan box dan perbesar baris textarea jika kosong
         chatBoxContainer.classList.remove('folded');
@@ -651,7 +752,7 @@
       localStorage.removeItem('github_avatar');
       localStorage.removeItem('github_followers');
       localStorage.removeItem('neurons_used');
-      
+
       if (chatMessagesDiv) chatMessagesDiv.innerHTML = '';
       if (welcomeScreen) {
         welcomeScreen.style.opacity = '1';
@@ -738,7 +839,7 @@
       modelSelect.value = storedModel;
     }
     window.selectedModel = modelSelect.value;
-    
+
     const handleModelChange = (e) => {
       const val = e.detail ? e.detail.value : modelSelect.value;
       window.selectedModel = val;
@@ -756,49 +857,139 @@
     sendMessage();
   }
 
-  function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(`${tabId}Tab`).classList.add('active');
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
 
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.classList.remove('active');
-      const icon = item.querySelector('ion-icon');
-      if (item.getAttribute('data-tab') === 'home') icon.setAttribute('name', 'chatbubbles-outline');
-      if (item.getAttribute('data-tab') === 'discover') icon.setAttribute('name', 'compass-outline');
-      if (item.getAttribute('data-tab') === 'library') icon.setAttribute('name', 'folder-outline');
-    });
-
-    const activeItem = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
-    activeItem.classList.add('active');
-
-    const activeIcon = activeItem.querySelector('ion-icon');
-    if (tabId === 'home') activeIcon.setAttribute('name', 'chatbubbles');
-    if (tabId === 'discover') activeIcon.setAttribute('name', 'compass');
-    if (tabId === 'library') activeIcon.setAttribute('name', 'folder');
-
-    if (tabId === 'home') {
-      chatBoxContainer.style.display = 'flex';
-      setTimeout(() => chatBoxContainer.style.opacity = '1', 10);
-      modelSelector.style.display = 'block';
-      setTimeout(() => modelSelector.style.opacity = '1', 10);
-    } else {
-      chatBoxContainer.style.opacity = '0';
-      setTimeout(() => chatBoxContainer.style.display = 'none', 300);
-      modelSelector.style.opacity = '0';
-      setTimeout(() => modelSelectorr.style.display = 'none', 300);
-    }
-
-    if (tabId === 'library') {
-      loadRepositories();
-    }
-  }
+  document.getElementById(`${tabId}Tab`).classList.add('active');
 
   document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const tab = item.getAttribute('data-tab');
-      if (tab) switchTab(tab);
-    });
+    item.classList.remove('active');
+
+    const icon = item.querySelector('ion-icon');
+
+    if (item.getAttribute('data-tab') === 'home') {
+      icon.setAttribute('name', 'chatbubbles-outline');
+    }
+
+    if (item.getAttribute('data-tab') === 'discover') {
+      icon.setAttribute('name', 'compass-outline');
+    }
+
+    if (item.getAttribute('data-tab') === 'library') {
+      icon.setAttribute('name', 'folder-outline');
+    }
   });
+
+  const activeItem = document.querySelector(
+    `.nav-item[data-tab="${tabId}"]`
+  );
+
+  activeItem.classList.add('active');
+
+  // 🔥 UPDATE SAB DI SINI
+  updateSideAction(tabId);
+
+  const activeIcon = activeItem.querySelector('ion-icon');
+
+  if (tabId === 'home') {
+    activeIcon.setAttribute('name', 'chatbubbles');
+  }
+
+  if (tabId === 'discover') {
+    activeIcon.setAttribute('name', 'compass');
+  }
+
+  if (tabId === 'library') {
+    activeIcon.setAttribute('name', 'folder');
+  }
+
+  if (tabId === 'home') {
+    chatBoxContainer.style.display = 'flex';
+
+    setTimeout(() => {
+      chatBoxContainer.style.opacity = '1';
+    }, 10);
+
+    modelSelector.style.display = 'block';
+
+    setTimeout(() => {
+      modelSelector.style.opacity = '1';
+    }, 10);
+
+  } else {
+
+    chatBoxContainer.style.opacity = '0';
+
+    setTimeout(() => {
+      chatBoxContainer.style.display = 'none';
+    }, 300);
+
+    modelSelector.style.opacity = '0';
+
+    // ⚠️ perbaikan typo modelSelectorr
+    setTimeout(() => {
+      modelSelector.style.display = 'none';
+    }, 300);
+  }
+
+  if (tabId === 'library') {
+    loadRepositories();
+  }
+}
+
+
+// NAVIGATION TAB
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const tab = item.getAttribute('data-tab');
+
+    if (tab) {
+      switchTab(tab);
+    }
+  });
+});
+
+
+// Set SAB sesuai tab awal
+const initialActiveTab =
+  document.querySelector('.nav-item.active[data-tab]')
+    ?.getAttribute('data-tab') || 'home';
+
+updateSideAction(initialActiveTab);
+
+
+// SIDE ACTION BUTTON
+if (sideActionBtn) {
+  sideActionBtn.addEventListener('click', async () => {
+
+    const activeItem = document.querySelector(
+      '.nav-item.active[data-tab]'
+    );
+
+    const activeTab =
+      activeItem?.getAttribute('data-tab') || 'home';
+
+    switch (activeTab) {
+
+      case 'home':
+        startNewChat();
+        break;
+
+      case 'discover':
+        await reloadDiscover();
+        break;
+
+      case 'library':
+        await refreshLibrary();
+        break;
+
+      default:
+        console.warn('Unknown tab:', activeTab);
+    }
+  });
+}
 
   function getLangClass(lang) {
     if (!lang) return 'dot-default';
@@ -840,6 +1031,61 @@
     }
   }
 
+  async function reloadDiscover() {
+    if (!sideActionBtn || !sideActionIcon) return;
+  
+    sideActionBtn.disabled = true;
+  
+    const originalIcon = sideActionIcon.getAttribute('name');
+  
+    sideActionIcon.setAttribute('name', 'sync-outline');
+    sideActionIcon.style.animation = 'spin 1s linear infinite';
+  
+    try {
+  
+      /*
+       * Jika nanti kamu punya fungsi khusus blog:
+       *
+       * await loadBlogPosts();
+       *
+       * Untuk sekarang kita reload data Discover
+       * dengan event custom.
+       */
+  
+      if (typeof window.loadBlogPosts === 'function') {
+        await window.loadBlogPosts();
+      } else {
+        document.dispatchEvent(
+          new CustomEvent('discover:reload')
+        );
+      }
+  
+      console.log('Discover berhasil direload');
+  
+    } catch (error) {
+      console.error(
+        'Gagal reload Discover:',
+        error
+      );
+  
+      showIOSAlert(
+        'Gagal memuat ulang konten Discover.',
+        'Kesalahan'
+      );
+  
+    } finally {
+  
+      sideActionBtn.disabled = false;
+  
+      sideActionIcon.style.animation = '';
+  
+      sideActionIcon.setAttribute(
+        'name',
+        originalIcon || 'sync-outline'
+      );
+    }
+  }
+
   // MERENDER KARTU REPOSiTORI DENGAN LINK AKTIF KE GITHUB REPO
   function renderRepoCards(repos) {
     const sorted = repos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
@@ -855,7 +1101,7 @@
       const lang = repo.language || 'Unknown';
       const langDot = getLangClass(repo.language);
       const repoUrl = repo.html_url || `https://github.com/${GITHUB_OWNER}/${repo.name}`;
-      
+
       html += `
         <a href="${repoUrl}" target="_blank" rel="noopener noreferrer" class="modern-repo-card-link" aria-label="Buka repositori ${repo.name} di GitHub">
           <div class="modern-repo-card">
@@ -935,16 +1181,16 @@
       if (data.authenticated === false) {
         const answer = data.answer || 'Kamu belum login, silahkan login terlebih dahulu yah.';
         let loginUrl = data.action?.url || `${WORKER_URL}/api/auth/github`;
-        
+
         if (loginUrl.startsWith('/')) {
           loginUrl = `${WORKER_URL}${loginUrl}`;
         }
-        
+
         appendAIMessageWithLogin(answer, loginUrl);
       } else {
         const answer = data.answer || data.message || 'Maaf, saya tidak bisa merespon saat ini.';
         appendAIMessage(answer);
-        
+
         if (data.neurons_used !== undefined) {
           updateUserProfileUI(data);
         }
@@ -1038,12 +1284,12 @@
 
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    
+
     // Support basic formatting for script attachment tag inside User Bubble
     const rawHtml = marked.parse(text);
     const cleanHtml = DOMPurify.sanitize(rawHtml);
     bubble.innerHTML = cleanHtml;
-    
+
     // MENAMPILKAN TOMBOL SALIN KODE PADA BLOK KODE
     addCopyButtonsToPre(bubble);
 
@@ -1076,7 +1322,7 @@
     const rawHtml = marked.parse(text);
     const cleanHtml = DOMPurify.sanitize(rawHtml);
     bubble.innerHTML = cleanHtml;
-    
+
     // MENAMPILKAN TOMBOL SALIN KODE PADA BLOK KODE
     addCopyButtonsToPre(bubble);
 
@@ -1143,14 +1389,26 @@
     this.rows = Math.min(Math.max(lineCount, 2), 4);
   });
 
-  refreshLibBtn.addEventListener('click', () => {
-    const icon = refreshLibBtn.querySelector('ion-icon');
-    icon.style.animation = 'spin 1s linear';
-    setTimeout(() => icon.style.animation = '', 1000);
-    if (document.querySelector('#libraryTab').classList.contains('active')) {
-      loadRepositories();
-    }
-  });
+  async function refreshLibrary() {
+  if (!sideActionBtn || !sideActionIcon) return;
+
+  sideActionBtn.disabled = true;
+
+  sideActionIcon.style.animation =
+    'spin 1s linear infinite';
+
+  try {
+    await loadRepositories();
+  } catch (error) {
+    console.error(
+      'Gagal refresh library:',
+      error
+    );
+  } finally {
+    sideActionIcon.style.animation = '';
+    sideActionBtn.disabled = false;
+  }
+}
 
   async function checkWorkerHealth() {
     try {
