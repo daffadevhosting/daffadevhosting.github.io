@@ -64,6 +64,49 @@
 
 <!-- Gaya CSS Kustom (Putih / Light Mode) -->
 <style>
+.side-action-btn {
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+}
+
+.side-action-btn.side-action-changing {
+  animation: sideActionChange 0.28s
+    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.side-action-btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.side-action-btn ion-icon {
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}
+
+@keyframes sideActionChange {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-20deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
   .chat-box {
     display: flex;
     flex-direction: column;
