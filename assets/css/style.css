@@ -757,7 +757,7 @@
     }
 
     .side-action-btn {
-      --background: rgba(255, 255, 255, 0.8);
+      --background: rgb(255 255 255 / 82%)
       --color: var(--text-color);
       --border-radius: 50%;
       --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -765,7 +765,6 @@
       height: 52px;
       margin: 0;
       border: 1px solid var(--border-color);
-      backdrop-filter: blur(10px);
     }
 
     /* Headers */
