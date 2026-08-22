@@ -33,7 +33,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GHP_GITHUB_TOKEN }}
           publish_dir: ./_site
           enable_jekyll_build_cache: true
           exclude_assets: '.git,node_modules'
