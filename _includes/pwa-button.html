@@ -29,6 +29,14 @@
     transform: translateY(0);
   }
 
+  #pwa-install-container.hide {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    transform: translateY(20px) !important;
+    bottom: -1000px !important;
+  }
+
   @media (min-width: 640px) {
     #pwa-install-container.show {
       flex-direction: row;
@@ -252,6 +260,7 @@
       if (installed) {
         console.log("ℹ️ PWA terdeteksi sudah terinstal. Banner tetap disembunyikan.");
         bannerContainer.classList.remove("show");
+        bannerContainer.classList.add("hide");
         return;
       }
 
@@ -305,11 +314,13 @@
       console.log(`Pilihan user: ${outcome}`);
       deferredPrompt = null;
       bannerContainer.classList.remove("show");
+        bannerContainer.classList.add("hide");
     });
 
     // Event Klik Tombol Close (Simpan Waktu Tutup ke LocalStorage)
     closeBtn.addEventListener("click", () => {
       bannerContainer.classList.remove("show");
+        bannerContainer.classList.add("hide");
       localStorage.setItem(STORAGE_KEY, Date.now().toString());
     });
 
@@ -318,6 +329,7 @@
       console.log("🎉 PWA berhasil terpasang.");
       deferredPrompt = null;
       bannerContainer.classList.remove("show");
+        bannerContainer.classList.add("hide");
     });
   })();
 </script>
