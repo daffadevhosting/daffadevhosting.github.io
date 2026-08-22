@@ -1,0 +1,114 @@
+---
+layout: default
+title: Mode Offline
+---
+
+<div class="offline-container" style="
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 40px 20px;
+  animation: fadeIn 0.6s ease;
+">
+  <div style="
+    width: 80px;
+    height: 80px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    opacity: 0.2;
+  ">
+    <ion-icon name="wifi-outline" style="font-size: 40px; color: white;"></ion-icon>
+  </div>
+  
+  <h1 style="
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 16px 0;
+  ">
+    Anda Sedang Offline
+  </h1>
+  
+  <p style="
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 400px;
+    line-height: 1.6;
+    margin: 0 0 32px 0;
+  ">
+    Konten yang Anda cari tidak dapat dimuat tanpa koneksi internet. 
+    Beberapa halaman mungkin tetap dapat diakses dari cache.
+  </p>
+  
+  <div style="
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  ">
+    <button onclick="window.location.reload()" style="
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--text-color);
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <ion-icon name="sync-outline"></ion-icon>
+      Muat Ulang
+    </button>
+    
+    <a href="/" style="
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <ion-icon name="home-outline"></ion-icon>
+      Kembali ke Beranda
+    </a>
+  </div>
+  
+  <div style="
+    margin-top: 40px;
+    color: var(--text-muted);
+    font-size: 13px;
+  ">
+    Tips: Pastikan koneksi internet Anda aktif untuk mengakses konten terbaru.
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

@@ -7,31 +7,37 @@ url: "https://daffadevhosting.github.io"
 lang: "id-ID"
 author: "DaffaDev"
 
-license_key: "<%= ENV['license_key'] %>"
-ads_image: "https://s3.cdnppp889.com/uploads/20056/827051ace0a69aba81499565318fcfe1.png"
-ads_link: "https://rkgg7pt.com/s/0328C386078"
-
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-  - dotenv
-
-plugins_dir: _plugins
 
 collections:
   blogpost:
     output: true
 
-permalink: /blogpost/:title/
+permalink: /blog/:title/
+
+compress_html:
+  clippings: all
+  ignore:
+    envs: all
 
 defaults:
   - scope:
       path: ""
-      type: "blog"
+      type: "posts"
     values:
       layout: "post"
-      writer: "Daffa"
+      author: "DaffaDev"
+      lang: "id-ID"
+  - scope:
+      path: ""
+      type: "blogpost"
+    values:
+      layout: "post"
+      author: "DaffaDev"
+      lang: "id-ID"
 
 markdown: kramdown
 
@@ -39,3 +45,6 @@ exclude:
   - Gemfile.lock
   - node_modules/
   - vendor/
+  - .git/
+  - README.md
+  - LICENSE

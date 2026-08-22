@@ -1,38 +1,124 @@
 <head>
-<script>
-window.addEventListener("beforeinstallprompt", (e) => {
-    console.log("🔥 beforeinstallprompt fired");
-    console.log(e);
-
-    e.preventDefault();
-    window.__deferredPrompt = e;
-});
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- Primary Meta Tags -->
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
     <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-    <meta name="license" content="{{ site.license_key }}">
-    <meta name="ads-image" content="{{ site.ads_image }}">
-    <meta name="ads-link" content="{{ site.ads_link }}">
+    <meta name="author" content="{{ site.author }}">
+    <meta name="language" content="{{ site.lang }}">
+    
+    <!-- OpenGraph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ site.url }}{{ page.url | remove: 'index.html' }}">
+    <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+    <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+    <meta property="og:image" content="{{ site.url }}/assets/favicon/android-chrome-512x512.png">
+    <meta property="og:site_name" content="{{ site.title }}">
+    <meta property="og:locale" content="{{ site.lang }}">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+    <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+    <meta name="twitter:image" content="{{ site.url }}/assets/favicon/android-chrome-512x512.png">
+    <meta name="twitter:site" content="@DaffaDev">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ site.url }}{{ page.url | remove: 'index.html' }}">
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
     <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ '/assets/favicon/favicon.ico' | relative_url }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/favicon/apple-touch-icon.png' | relative_url }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/favicon/favicon-32x32.png' | relative_url }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/favicon/favicon-16x16.png' | relative_url }}">
-    <link rel="manifest" href="{{ '/assets/favicon/site.webmanifest' | relative_url }}">
-    {% seo %}
-    <!-- Ionic Core v8 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core@8/css/ionic.bundle.css" />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.esm.js"></script>
-    <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.js"></script>
     
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Marked.js (Markdown Parser) & DOMPurify (HTML Sanitizer) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
+    <link rel="preload" href="{{ '/assets/js/app.js' | relative_url }}" as="script">
+    
+    <!-- Ionic Core v8 -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@ionic/core@8/css/ionic.bundle.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core@8/css/ionic.bundle.css"></noscript>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.esm.js" defer></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.js" defer></script>
+    
+    <!-- Font Awesome -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <!-- Marked.js & DOMPurify -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js" defer></script>
+    
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <style>
+      /* Critical CSS - Inlined for faster rendering */
+      :root {
+        --bg-color: #f7f3f0;
+        --text-color: #2e2c2b;
+        --text-muted: #5e5a57;
+        --card-bg: #ffffff;
+        --tab-active-bg: #ede7e3;
+        --user-bubble: #f0ece9;
+        --ai-bubble: transparent;
+        --border-color: #e8e4e1;
+        --github-blue: #0969da;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      
+      ion-content {
+        --background: radial-gradient(circle at top, #fdfbf9 0%, #f7f3f0 100%);
+        font-family: inherit;
+      }
+      
+      /* Hide content until CSS loads */
+      .tab-content:not(.active) {
+        display: none;
+      }
+      
+      /* Loading states */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        color: var(--text-muted);
+      }
+      
+      .loading ion-icon {
+        animation: spin 2s linear infinite;
+        font-size: 24px;
+        margin-right: 8px;
+      }
+      
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <!-- Full CSS (loaded asynchronously) -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}" media="print" onload="this.media='all'">
+    
+    <!-- SEO -->
+    {% seo %}
   </head>
