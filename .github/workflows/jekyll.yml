@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    env:
+      license_key: ${{ secrets.license_key }}
 
     steps:
       - name: Checkout repository
