@@ -21,19 +21,6 @@ description: "{{ page.excerpt | default: page.description | default: site.descri
     </span>
   </nav>
 
-  <!-- Featured Image -->
-  {% if page.img %}
-  <figure class="mb-8 overflow-hidden rounded-3xl shadow-xl">
-    <img
-      src="{{ page.img }}"
-      alt="{{ page.title }}"
-      class="w-full aspect-[16/9] object-cover"
-      loading="eager"
-      decoding="async"
-      fetchpriority="high">
-  </figure>
-  {% endif %}
-
   <!-- Header -->
   <header class="mb-8">
 

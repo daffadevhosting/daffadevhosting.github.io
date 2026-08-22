@@ -7,7 +7,6 @@ const ASSETS_TO_CACHE = [
   "/",
   "/manifest.json",
   "/assets/css/style.css",
-  "/assets/js/app.js",
   "/assets/favicon/android-chrome-192x192.png",
   "/assets/favicon/android-chrome-512x512.png",
   "/assets/favicon/apple-touch-icon.png",

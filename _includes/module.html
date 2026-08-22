@@ -648,13 +648,34 @@ function updateSideAction(tabId) {
 
   // Interaktivitas Lipat Premium Gaya Gemini untuk Input Chat (Anti-bouncing Fix)
   if (chatInput && chatBoxContainer) {
+    // Nonaktifkan pointer-events pada chatInput secara default
+    chatInput.style.pointerEvents = 'none';
+
     // Klik di mana saja dalam chatBoxContainer akan memicu fokus ke textarea utama
     chatBoxContainer.addEventListener('click', (e) => {
       // Abaikan jika klik terjadi pada tombol aksi, input berkas, atau badge
       if (e.target.closest('button') || e.target.closest('input[type="file"]') || e.target.closest('.attached-file-badge')) {
         return;
       }
+      // Aktifkan pointer-events pada chatInput agar bisa menerima fokus
+      chatInput.style.pointerEvents = 'auto';
+      // Fokuskan chatInput dan pastikan cursor muncul
       chatInput.focus();
+      // Pastikan textarea mendapatkan fokus penuh (untuk mobile)
+      setTimeout(() => {
+        if (document.activeElement !== chatInput) {
+          chatInput.focus();
+        }
+      }, 50);
+    });
+
+    // Saat chatInput kehilangan fokus, nonaktifkan pointer-events lagi
+    chatInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement !== chatInput) {
+          chatInput.style.pointerEvents = 'none';
+        }
+      }, 100);
     });
 
     // Deteksi interaksi global untuk buka/tutup lipatan yang halus

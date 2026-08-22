@@ -38,7 +38,7 @@
   </div>
 
   <!-- Bottom Navigation -->
-  <div class="bottom-nav-row">
+  <div class="bottom-nav-row" id="bottomNavRow">
     <div class="nav-pill-box">
       <div class="nav-item active" data-tab="home">
         <ion-icon name="chatbubbles"></ion-icon>
@@ -71,6 +71,60 @@
 
   <!-- Wadah Notifikasi Kustom -->
   <div id="customToastContainer" class="toast-container"></div>
+
+  <script>
+    // Kontrol r2UploadZone berdasarkan status login
+    function updateR2UploadZoneVisibility() {
+      const r2UploadZone = document.getElementById('r2UploadZone');
+      const sidebarStatus = document.getElementById('sidebarStatus');
+      
+      if (r2UploadZone && sidebarStatus) {
+        const isLoggedIn = !sidebarStatus.textContent.includes('Belum login');
+        r2UploadZone.style.display = isLoggedIn ? 'block' : 'none';
+      }
+    }
+
+    // Kontrol bottom-nav-row saat chatBoxContainer diklik (karena chatInput tidak menerima klik langsung)
+    function setupBottomNavVisibility() {
+      const bottomNavRow = document.getElementById('bottomNavRow');
+      const chatInput = document.getElementById('chatInput');
+      const chatBoxContainer = document.getElementById('chatBoxContainer');
+      
+      if (!bottomNavRow || !chatInput || !chatBoxContainer) return;
+
+      // Gunakan event focus/blur dari chatInput (sudah diatur di module.html)
+      chatInput.addEventListener('focus', () => {
+        bottomNavRow.classList.add('hidden');
+      });
+
+      chatInput.addEventListener('blur', () => {
+        // Beri delay untuk memastikan blur benar-benar selesai
+        setTimeout(() => {
+          if (document.activeElement !== chatInput) {
+            bottomNavRow.classList.remove('hidden');
+          }
+        }, 100);
+      });
+
+      // Tambahan: Saat chatBoxContainer diklik, bottom-nav-row juga hilang
+      chatBoxContainer.addEventListener('click', (e) => {
+        // Abaikan jika klik pada tombol atau input file
+        if (e.target.closest('button') || e.target.closest('input[type="file"]') || e.target.closest('.attached-file-badge')) {
+          return;
+        }
+        bottomNavRow.classList.add('hidden');
+      });
+    }
+
+    // Panggil saat DOM siap
+    document.addEventListener('DOMContentLoaded', () => {
+      updateR2UploadZoneVisibility();
+      setupBottomNavVisibility();
+    });
+
+    // Jika ada sistem login yang memicu event, listen disini
+    document.addEventListener('loginStatusChanged', updateR2UploadZoneVisibility);
+  </script>
 </footer>
 
 <!-- Gaya CSS Kustom (Putih / Light Mode) -->
@@ -175,6 +229,8 @@
     padding: 4px 0 8px 0 !important;
     transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease !important;
     box-sizing: border-box !important;
+    user-select: text !important; /* Pastikan teks bisa dipilih */
+    -webkit-user-select: text !important;
   }
 
   .chat-textarea::placeholder {
@@ -286,6 +342,19 @@
     cursor: pointer !important;
     display: flex !important;
     align-items: center;
+  }
+
+  /* Bottom Navigation Hide on Focus */
+  .bottom-nav-row {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .bottom-nav-row.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* Notifikasi Toast kustom */
