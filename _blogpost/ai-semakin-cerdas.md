@@ -39,4 +39,3 @@ Di Australia, teknologi berbasis kamera dan AI kini mampu memilih buah nanas yan
 Perkembangan teknologi pada hari ini memperlihatkan bahwa persaingan AI memasuki babak baru. Fokus industri tidak lagi sekadar menghadirkan model yang lebih besar, tetapi juga membangun ekosistem yang lebih efisien melalui inovasi chip, perangkat keras, dan penerapan AI di berbagai sektor.
 
 Bagi pengembang maupun pelaku bisnis, ini menjadi momentum yang tepat untuk mulai mengeksplorasi pemanfaatan AI dalam meningkatkan produktivitas dan menciptakan layanan yang lebih cerdas.
-````

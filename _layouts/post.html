@@ -6,21 +6,6 @@ description: "{{ page.excerpt | default: page.description | default: site.descri
 
 <article class="max-w-5xl mx-auto px-4 py-8">
 
-  <!-- Breadcrumb -->
-  <nav aria-label="Breadcrumb" class="text-sm text-gray-500 mb-6">
-    <a href="{{ '/' | relative_url }}" class="hover:text-blue-600">
-      Home
-    </a>
-    <span class="mx-2">/</span>
-    <a href="{{ '/blogpost/' | relative_url }}" class="hover:text-blue-600">
-      Blog
-    </a>
-    <span class="mx-2">/</span>
-    <span class="text-gray-700 dark:text-gray-300">
-      {{ page.title }}
-    </span>
-  </nav>
-
   <!-- Header -->
   <header class="mb-8">
 
