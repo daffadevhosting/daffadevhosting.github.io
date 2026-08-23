@@ -3,7 +3,7 @@ title: "AI Vibe Coding: Ketika Membuat Software Berubah Menjadi Percakapan denga
 img: "https://placehold.co/600x400/18181b/ffffff/png?text=AI+Vibe+Coding"
 date: 2026-08-23 10:00:00 +0700
 categories: [Teknologi]
-tags: [AI, Vibe Coding, Programming, Software Development]
+tags: [AI, Vibe Coding, Programming]
 read_time: "6 min read"
 excerpt: "AI Vibe Coding mengubah cara kita membangun software. Tidak lagi selalu dimulai dari menulis kode baris demi baris, tetapi dari ide, instruksi, eksperimen, dan kolaborasi dengan AI."
 ---
