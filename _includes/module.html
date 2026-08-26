@@ -1,6 +1,56 @@
+<!-- LICENSE CORE (wajib, load dulu) -->
+<script src="https://app-core.harisudahmalam.workers.dev/assets/core.min.js"></script>
+
 <script type="module">
   const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev';
   const GITHUB_OWNER = 'daffadevhosting';
+
+  /* ===== LICENSE HARD GATE (app-core) =====
+     core.min.js harus dimuat SEBELUM module ini.
+     Jika dihapus → requireLicense() throw → app tidak jalan.
+  */
+  function requireLicense() {
+    if (typeof window.__licGate !== 'function') {
+      throw new Error('License module missing. Template locked.');
+    }
+    window.__licGate();
+    return true;
+  }
+  function requireLicenseReady() {
+    requireLicense();
+    if (typeof window.__licReady === 'function') {
+      return window.__licReady();
+    }
+    if (window.__VOK !== 1) {
+      throw new Error('License not ready');
+    }
+    return true;
+  }
+  /** Tunggu validasi license selesai (max ~6s) */
+  function waitForLicense(timeoutMs = 6000) {
+    return new Promise((resolve, reject) => {
+      if (typeof window.__licGate !== 'function') {
+        reject(new Error('License module missing'));
+        return;
+      }
+      if (window.__VOK === 1) {
+        resolve(true);
+        return;
+      }
+      const start = Date.now();
+      const iv = setInterval(() => {
+        if (window.__VOK === 1) {
+          clearInterval(iv);
+          resolve(true);
+        } else if (Date.now() - start > timeoutMs) {
+          clearInterval(iv);
+          reject(new Error('License validation timeout'));
+        }
+      }, 120);
+    });
+  }
+
+
 
   // MENYISIPKAN GAYA CSS DINAMIS UNTUK TOMBOL SALIN KODE, DIALOG KUSTOM iOS, & HOVER KARTU REPO
   const style = document.createElement('style');
@@ -801,6 +851,7 @@ function updateSideAction(tabId) {
   }
 
   async function loadUserSessionAndHistory() {
+    requireLicenseReady();
     updateUserProfileUI();
     const token = localStorage.getItem('access_token');
 
@@ -852,7 +903,14 @@ function updateSideAction(tabId) {
     }
   }
 
-  loadUserSessionAndHistory();
+  // Boot setelah license valid
+  waitForLicense()
+    .then(() => loadUserSessionAndHistory())
+    .catch((err) => {
+      console.error(err);
+      document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;color:#fff;font-family:sans-serif;text-align:center;padding:40px"><div><h2 style="margin:0 0 12px">🔒 Locked</h2><p style="color:#888;margin:0">License module missing or invalid.<br>Restore core.min.js &amp; credit.</p></div></div>';
+    });
+
 
   // PENYELARASAN MODEL SELECT BERGAYA IONIC IOS
   if (modelSelect) {
@@ -1024,6 +1082,7 @@ if (sideActionBtn) {
   }
 
   async function loadRepositories() {
+    requireLicenseReady();
     repoListDiv.innerHTML = `<div class="loading"><ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>Memuat repositori publik ${GITHUB_OWNER}...</div>`;
     try {
       const response = await fetch(`${WORKER_URL}/api/github/users/${GITHUB_OWNER}/repos?sort=updated&per_page=20`, {
@@ -1055,16 +1114,16 @@ if (sideActionBtn) {
 
   async function reloadDiscover() {
     if (!sideActionBtn || !sideActionIcon) return;
-  
+
     sideActionBtn.disabled = true;
-  
+
     const originalIcon = sideActionIcon.getAttribute('name');
-  
+
     sideActionIcon.setAttribute('name', 'sync-outline');
     sideActionIcon.style.animation = 'spin 1s linear infinite';
-  
+
     try {
-  
+
       /*
        * Jika nanti kamu punya fungsi khusus blog:
        *
@@ -1073,7 +1132,7 @@ if (sideActionBtn) {
        * Untuk sekarang kita reload data Discover
        * dengan event custom.
        */
-  
+
       if (typeof window.loadBlogPosts === 'function') {
         await window.loadBlogPosts();
       } else {
@@ -1081,26 +1140,26 @@ if (sideActionBtn) {
           new CustomEvent('discover:reload')
         );
       }
-  
+
       console.log('Discover berhasil direload');
-  
+
     } catch (error) {
       console.error(
         'Gagal reload Discover:',
         error
       );
-  
+
       showIOSAlert(
         'Gagal memuat ulang konten Discover.',
         'Kesalahan'
       );
-  
+
     } finally {
-  
+
       sideActionBtn.disabled = false;
-  
+
       sideActionIcon.style.animation = '';
-  
+
       sideActionIcon.setAttribute(
         'name',
         originalIcon || 'sync-outline'
@@ -1150,6 +1209,7 @@ if (sideActionBtn) {
   }
 
   async function sendMessage() {
+    requireLicenseReady();
     const query = chatInput.value.trim();
     if (!query && !currentAttachedFile) return;
 
@@ -1443,7 +1503,9 @@ if (sideActionBtn) {
   checkWorkerHealth();
 </script>
 
+<!-- LICENSE CORE: harus load SEBELUM logic berat; jangan dihapus -->
+
+
 <!-- Ionicons -->
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script type="javascript" src="https://app-core.harisudahmalam.workers.dev/assets/core.min.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
