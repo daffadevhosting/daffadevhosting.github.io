@@ -1495,7 +1495,7 @@ if (sideActionBtn) {
   async function checkWorkerHealth() {
     try {
       const res = await fetch(`${WORKER_URL}/health`);
-      if (!res.ok) appendAIMessage('⚠️ Worker merespon dengan error, periksa konfigurasi Worker Anda.');
+      if (!res.ok) appendAIMessage('⚠️ AI dapat melakukan kesalahan, periksa kembali respon.');
     } catch (e) {
       console.warn('Cek koneksi worker gagal di background.');
     }
