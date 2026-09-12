@@ -103,9 +103,9 @@ Cloudflare menyediakan beberapa cara untuk memulai project Workers AI, termasuk 
 1. Buat Project Worker
 
 Salah satu cara yang direkomendasikan adalah menggunakan Cloudflare CLI:
-
+```bash
 npm create cloudflare@latest -- my-ai-worker
-
+```
 Kemudian masuk ke directory project:
 ```bash
 cd my-ai-worker
