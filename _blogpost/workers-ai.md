@@ -89,7 +89,7 @@ Tidak Perlu API Key Model di Frontend
 Salah satu keuntungan penting dari arsitektur ini adalah frontend tidak perlu berkomunikasi langsung dengan provider AI.
 
 Client cukup memanggil endpoint Worker:
-```
+```text
 Browser → Worker → Workers AI
 ```
 Secret dan logic AI tetap berada di sisi server.
@@ -107,9 +107,9 @@ Salah satu cara yang direkomendasikan adalah menggunakan Cloudflare CLI:
 npm create cloudflare@latest -- my-ai-worker
 
 Kemudian masuk ke directory project:
-
+```bash
 cd my-ai-worker
-
+```
 Cloudflare saat ini menggunakan "create-cloudflare" atau C3 untuk membantu membuat project Worker baru.
 
 2. Tambahkan Workers AI Binding
