@@ -75,7 +75,7 @@ Terintegrasi dengan Cloudflare Workers
 Workers AI dapat digunakan langsung melalui binding.
 
 Setelah binding dikonfigurasi, kode Worker dapat mengaksesnya melalui:
-``bash
+```bash
 env.AI
 ```
 Kemudian model dijalankan menggunakan:
