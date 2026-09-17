@@ -41,11 +41,14 @@
       --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
-    label #select-label.select-wrapper {
+    .select-wrapper {
       align-items: center !important;
       justify-content: center !important;
     }
-
+    :host(.select-label-placement-start) .select-wrapper {
+          justify-content: center !important;
+    }
+    
     .model-selector-wrap {
       background: #ffffff;
       border: 1px solid var(--border-color);
