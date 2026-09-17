@@ -508,9 +508,17 @@ function updateSideAction(tabId) {
     }
   }
 
+  function updateR2UploadZoneVisibility() {
+    if (!r2UploadZone) return;
+
+    const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+    r2UploadZone.style.display = isLoggedIn ? 'block' : 'none';
+  }
+
   // Pengendali File Explorer R2 (Kanan) - SEKARANG MANDIRI & BEBAS RE-DIREKTOR
   function openR2Panel() {
     if (r2Backdrop && r2Panel) {
+      updateR2UploadZoneVisibility();
       r2Backdrop.classList.add('active');
       r2Panel.classList.add('active');
       r2Panel.removeAttribute('inert');
@@ -754,6 +762,8 @@ function updateSideAction(tabId) {
     const token = localStorage.getItem('access_token');
     const followers = data?.followers !== undefined ? data.followers : (localStorage.getItem('github_followers') || 0);
 
+    updateR2UploadZoneVisibility();
+
     if (data) {
       if (data.username) localStorage.setItem('github_username', data.username);
       if (data.avatar) localStorage.setItem('github_avatar', data.avatar);
@@ -824,6 +834,8 @@ function updateSideAction(tabId) {
       localStorage.removeItem('github_avatar');
       localStorage.removeItem('github_followers');
       localStorage.removeItem('neurons_used');
+
+      updateR2UploadZoneVisibility();
 
       if (chatMessagesDiv) chatMessagesDiv.innerHTML = '';
       if (welcomeScreen) {
