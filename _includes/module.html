@@ -862,6 +862,28 @@ function updateSideAction(tabId) {
     return headers;
   }
 
+  function getBlogListContext(query) {
+    const blogList = document.getElementById('blogList');
+    if (!blogList || !/\b(blog|artikel|post|posting|tulisan|bacaan|konten)\b/i.test(query)) {
+      return '';
+    }
+
+    return Array.from(blogList.querySelectorAll('.blog-post-link'))
+      .slice(0, 30)
+      .map((post, index) => {
+        const title = post.querySelector('.jekyll-title')?.textContent?.trim() || '';
+        const excerpt = post.querySelector('.jekyll-excerpt')?.textContent?.trim() || '';
+        const tags = Array.from(post.querySelectorAll('.tag'))
+          .map(tag => tag.textContent.trim())
+          .filter(Boolean)
+          .join(', ');
+        const url = post.getAttribute('href') || post.dataset.postUrl || '';
+        return `${index + 1}. ${title}\n   Ringkasan: ${excerpt}\n   Tag: ${tags || '-'}\n   URL: ${new URL(url, window.location.href).href}`;
+      })
+      .join('\n\n')
+      .slice(0, 12000);
+  }
+
   async function loadUserSessionAndHistory() {
     requireLicenseReady();
     updateUserProfileUI();
@@ -1244,7 +1266,8 @@ if (sideActionBtn) {
 
     const requestPayload = { 
       query: query,
-      model: modelSelect ? modelSelect.value : '@cf/qwen/qwen2.5-coder-32b-instruct'
+      model: modelSelect ? modelSelect.value : '@cf/qwen/qwen2.5-coder-32b-instruct',
+      frontendContext: getBlogListContext(query)
     };
 
     if (currentAttachedFile) {
