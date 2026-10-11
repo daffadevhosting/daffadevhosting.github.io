@@ -1,0 +1,1534 @@
+const WORKER_URL = 'https://github-api-ai.warpzone.workers.dev';
+  const GITHUB_OWNER = 'daffadevhosting';
+
+  /* ===== LICENSE HARD GATE (app-core) =====
+     core.min.js harus dimuat SEBELUM module ini.
+     Jika dihapus → requireLicense() throw → app tidak jalan.
+  */
+  function requireLicense() {
+    if (typeof window.__licGate !== 'function') {
+      throw new Error('License module missing. Template locked.');
+    }
+    window.__licGate();
+    return true;
+  }
+  function requireLicenseReady() {
+    requireLicense();
+    if (typeof window.__licReady === 'function') {
+      return window.__licReady();
+    }
+    if (window.__VOK !== 1) {
+      throw new Error('License not ready');
+    }
+    return true;
+  }
+  /** Tunggu validasi license selesai (max ~6s) */
+  function waitForLicense(timeoutMs = 6000) {
+    return new Promise((resolve, reject) => {
+      if (typeof window.__licGate !== 'function') {
+        reject(new Error('License module missing'));
+        return;
+      }
+      if (window.__VOK === 1) {
+        resolve(true);
+        return;
+      }
+      const start = Date.now();
+      const iv = setInterval(() => {
+        if (window.__VOK === 1) {
+          clearInterval(iv);
+          resolve(true);
+        } else if (Date.now() - start > timeoutMs) {
+          clearInterval(iv);
+          reject(new Error('License validation timeout'));
+        }
+      }, 120);
+    });
+  }
+
+
+
+  // MENYISIPKAN GAYA CSS DINAMIS UNTUK TOMBOL SALIN KODE, DIALOG KUSTOM iOS, & HOVER KARTU REPO
+  const style = document.createElement('style');
+  style.textContent = `
+    pre {
+      position: relative;
+      padding-right: 44px !important;
+    }
+    .copy-code-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(22, 27, 34, 0.8);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #8b949e;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 8;
+      padding: 0;
+    }
+    .copy-code-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .copy-code-btn ion-icon {
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    /* GAYA DIALOG KUSTOM iOS */
+    .ios-dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20000000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .ios-dialog-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ios-dialog-container {
+      background: rgba(30, 30, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      width: 280px;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+      transform: scale(1.1);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s;
+      opacity: 0;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-align: center;
+    }
+    .ios-dialog-backdrop.active .ios-dialog-container {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .ios-dialog-body {
+      padding: 22px 16px;
+    }
+    .ios-dialog-title {
+      font-weight: 600;
+      font-size: 17px;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.3px;
+    }
+    .ios-dialog-message {
+      font-size: 13px;
+      color: #bbbbbb;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .ios-dialog-buttons {
+      display: flex;
+      border-top: 0.5px solid rgba(255,255,255,0.15);
+    }
+    .ios-dialog-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #2f8cff;
+      font-size: 17px;
+      padding: 13px;
+      cursor: pointer;
+      font-weight: 400;
+      transition: background 0.15s;
+      outline: none;
+      letter-spacing: -0.4px;
+    }
+    .ios-dialog-btn:active {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .ios-dialog-btn.bold {
+      font-weight: 600;
+    }
+    .ios-dialog-btn.danger {
+      color: #ff453a;
+    }
+    .ios-dialog-btn:not(:last-child) {
+      border-right: 0.5px solid rgba(255,255,255,0.15);
+    }
+
+    /* GAYA HOVER UNTUK LINK KARTU REPOSiTORI */
+    .modern-repo-card-link {
+      text-decoration: none !important;
+      color: inherit !important;
+      display: block;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .modern-repo-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .modern-repo-card-link:hover .modern-repo-card {
+      border-color: rgba(88, 166, 255, 0.45) !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    .modern-repo-card-link:hover .repo-name {
+      color: #58a6ff !important;
+    }
+    .modern-repo-card-link:hover .repo-external-icon {
+      color: #58a6ff !important;
+      transform: translate(1px, -1px);
+    }
+    .repo-external-icon {
+      margin-left: auto;
+      font-size: 14px;
+      color: #8b949e;
+      transition: all 0.2s ease;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // SISTEM DIALOG MANDIRI iOS UNTUK MENGGANTIKAN WINDOW.ALERT & WINDOW.CONFIRM
+  function showIOSAlert(message, title = 'Notifikasi') {
+    return new Promise((resolve) => {
+      const backdrop = document.createElement('div');
+      backdrop.className = 'ios-dialog-backdrop';
+      backdrop.innerHTML = `
+        <div class="ios-dialog-container">
+          <div class="ios-dialog-body">
+            <div class="ios-dialog-title">${title}</div>
+            <div class="ios-dialog-message">${message}</div>
+          </div>
+          <div class="ios-dialog-buttons">
+            <button class="ios-dialog-btn bold" id="ios-ok-btn">OK</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      setTimeout(() => backdrop.classList.add('active'), 10);
+
+      backdrop.querySelector('#ios-ok-btn').addEventListener('click', () => {
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          backdrop.remove();
+          resolve();
+        }, 220);
+      });
+    });
+  }
+
+  function showIOSConfirm(message, title = 'Konfirmasi') {
+    return new Promise((resolve) => {
+      const backdrop = document.createElement('div');
+      backdrop.className = 'ios-dialog-backdrop';
+      backdrop.innerHTML = `
+        <div class="ios-dialog-container">
+          <div class="ios-dialog-body">
+            <div class="ios-dialog-title">${title}</div>
+            <div class="ios-dialog-message">${message}</div>
+          </div>
+          <div class="ios-dialog-buttons">
+            <button class="ios-dialog-btn danger" id="ios-cancel-btn">Batal</button>
+            <button class="ios-dialog-btn bold" id="ios-confirm-btn">Ya</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      setTimeout(() => backdrop.classList.add('active'), 10);
+
+      backdrop.querySelector('#ios-cancel-btn').addEventListener('click', () => {
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          backdrop.remove();
+          resolve(false);
+        }, 220);
+      });
+
+      backdrop.querySelector('#ios-confirm-btn').addEventListener('click', () => {
+        backdrop.classList.remove('active');
+        setTimeout(() => {
+          backdrop.remove();
+          resolve(true);
+        }, 220);
+      });
+    });
+  }
+
+  // FUNGSI UNTUK MENYALIN TEKS (Menggunakan execCommand untuk melewati proteksi iframe)
+  function copyToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Gagal menyalin teks:', err);
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // FUNGSI UNTUK MENAMBAHKAN TOMBOL SALIN PADA BLOK KODE (<pre>)
+  function addCopyButtonsToPre(bubble) {
+    const preElements = bubble.querySelectorAll('pre');
+    preElements.forEach(pre => {
+      if (pre.querySelector('.copy-code-btn')) return;
+
+      const btn = document.createElement('button');
+      btn.className = 'copy-code-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Salin Kode');
+      btn.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
+
+      btn.addEventListener('click', () => {
+        const codeElement = pre.querySelector('code');
+        const textToCopy = codeElement ? codeElement.innerText : pre.innerText;
+
+        copyToClipboard(textToCopy);
+
+        // Umpan balik visual sukses
+        btn.innerHTML = '<ion-icon name="checkmark-outline" style="color: #3fb950;"></ion-icon>';
+        btn.style.borderColor = '#2ea043';
+
+        setTimeout(() => {
+          btn.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
+          btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }, 2000);
+      });
+
+      pre.appendChild(btn);
+    });
+  }
+
+  function handleOAuthCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('access_token');
+    const username = urlParams.get('username');
+    const avatar = urlParams.get('avatar');
+
+    if (accessToken) {
+      localStorage.setItem('access_token', accessToken);
+      if (username) localStorage.setItem('github_username', username);
+      if (avatar) localStorage.setItem('github_avatar', avatar);
+
+      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      console.log("Login sukses! Token berhasil disimpan.");
+    }
+  }
+  handleOAuthCallback();
+
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const chatMessagesDiv = document.getElementById('chatMessages');
+  const modelSelect = document.querySelector('.model-selector-select');
+  const modelSelector = document.getElementById('modelSelector');
+  const repoListDiv = document.getElementById('repoList');
+  const refreshLibBtn = document.getElementById('refreshLibBtn');
+  const sideActionBtn = document.getElementById('sideActionBtn');
+  const sideActionIcon = document.getElementById('sideActionIcon');
+  const chatBoxContainer = document.getElementById('chatBoxContainer');
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const menuBtn = document.querySelector('.menu-btn');
+  const topbarProfileBtn = document.getElementById('topbarProfileBtn');
+  const topbarAvatar = document.getElementById('topbarAvatar');
+  const topbarMiniUsername = document.getElementById('topbarMiniUsername');
+
+  // Element-element panel profil (Kiri)
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const sidebarPanel = document.getElementById('sidebarPanel');
+  const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+  const sidebarAvatar = document.getElementById('sidebarAvatar');
+  const sidebarUsername = document.getElementById('sidebarUsername');
+  const sidebarFollowers = document.getElementById('sidebarFollowers');
+  const sidebarStatus = document.getElementById('sidebarStatus');
+  const sidebarLoginBtn = document.getElementById('sidebarLoginBtn');
+  const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+
+  // Element-element panel R2 (Kanan)
+  const openR2Btn = document.getElementById('openR2Btn');
+  const r2Backdrop = document.getElementById('r2Backdrop');
+  const r2Panel = document.getElementById('r2Panel');
+  const r2CloseBtn = document.getElementById('r2CloseBtn');
+  const r2UploadZone = document.getElementById('r2UploadZone');
+  const r2FileInput = document.getElementById('r2FileInput');
+  const r2FileList = document.getElementById('r2FileList');
+
+  // Element Attach script khusus chat
+  const attachScriptBtn = document.getElementById('attachScriptBtn');
+  const chatScriptFileInput = document.getElementById('chatScriptFileInput');
+  const fileAttachedIndicator = document.getElementById('fileAttachedIndicator');
+  const attachedFileName = document.getElementById('attachedFileName');
+  const removeAttachedFileBtn = document.getElementById('removeAttachedFileBtn');
+
+  // Variabel Memori Lampiran File Chat
+  let currentAttachedFile = null;
+
+/* =========================================================
+   DYNAMIC SIDE ACTION BUTTON
+   Chat      → New Chat
+   Discover  → Reload Blog
+   Library   → Refresh Library
+   ========================================================= */
+
+const SIDE_ACTIONS = {
+  home: {
+    icon: 'add-outline',
+    label: 'New Chat',
+    title: 'New Chat'
+  },
+
+  discover: {
+    icon: 'sync-outline',
+    label: 'Reload Blog',
+    title: 'Reload Blog'
+  },
+
+  library: {
+    icon: 'sync-outline',
+    label: 'Refresh Library',
+    title: 'Refresh Library'
+  }
+};
+
+function startNewChat() {
+  if (!chatMessagesDiv) return;
+
+  // Bersihkan percakapan
+  chatMessagesDiv.innerHTML = '';
+
+  // Kembalikan welcome screen
+  if (welcomeScreen) {
+    welcomeScreen.style.display = 'flex';
+    welcomeScreen.style.opacity = '0';
+
+    requestAnimationFrame(() => {
+      welcomeScreen.style.opacity = '1';
+    });
+  }
+
+  // Reset input
+  if (chatInput) {
+    chatInput.value = '';
+    chatInput.rows = 1;
+  }
+
+  // Reset attachment
+  currentAttachedFile = null;
+
+  if (chatScriptFileInput) {
+    chatScriptFileInput.value = '';
+  }
+
+  if (fileAttachedIndicator) {
+    fileAttachedIndicator.classList.add('hidden');
+  }
+
+  // Lipat chat box
+  if (chatBoxContainer) {
+    chatBoxContainer.classList.add('folded');
+  }
+
+  // Fokus ke input
+  setTimeout(() => {
+    chatInput?.focus();
+  }, 100);
+
+  console.log('New chat dimulai');
+}
+
+function updateSideAction(tabId) {
+  if (!sideActionBtn || !sideActionIcon) return;
+
+  const config = SIDE_ACTIONS[tabId];
+
+  if (!config) return;
+
+  sideActionIcon.setAttribute('name', config.icon);
+
+  sideActionBtn.setAttribute(
+    'aria-label',
+    config.label
+  );
+
+  sideActionBtn.setAttribute(
+    'title',
+    config.title
+  );
+
+  // Animasi pergantian icon
+  sideActionBtn.classList.remove('side-action-changing');
+
+  requestAnimationFrame(() => {
+    sideActionBtn.classList.add('side-action-changing');
+  });
+}
+
+  // Elemen-elemen Widget Sisa Kuota AI
+  const sidebarNeuronText = document.getElementById('sidebarNeuronText');
+  const sidebarNeuronPercent = document.getElementById('sidebarNeuronPercent');
+  const sidebarNeuronBar = document.getElementById('sidebarNeuronBar');
+
+  function openSidebar() {
+    if (sidebarBackdrop && sidebarPanel) {
+      sidebarBackdrop.classList.add('active');
+      sidebarPanel.classList.add('active');
+      sidebarPanel.removeAttribute('inert');
+    }
+  }
+
+  function closeSidebar() {
+    if (sidebarBackdrop && sidebarPanel) {
+      sidebarBackdrop.classList.remove('active');
+      sidebarPanel.classList.remove('active');
+      sidebarPanel.setAttribute('inert', '');
+    }
+  }
+
+  function updateR2UploadZoneVisibility() {
+    if (!r2UploadZone) return;
+
+    const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+    r2UploadZone.style.display = isLoggedIn ? 'block' : 'none';
+  }
+
+  // Pengendali File Explorer R2 (Kanan) - SEKARANG MANDIRI & BEBAS RE-DIREKTOR
+  function openR2Panel() {
+    if (r2Backdrop && r2Panel) {
+      updateR2UploadZoneVisibility();
+      r2Backdrop.classList.add('active');
+      r2Panel.classList.add('active');
+      r2Panel.removeAttribute('inert');
+      loadR2Files();
+    }
+  }
+
+  function closeR2Panel() {
+    if (r2Backdrop && r2Panel) {
+      r2Backdrop.classList.remove('active');
+      r2Panel.classList.remove('active');
+      r2Panel.setAttribute('inert', '');
+    }
+  }
+
+  if (openR2Btn) openR2Btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openR2Panel();
+  });
+  if (r2Backdrop) r2Backdrop.addEventListener('click', closeR2Panel);
+  if (r2CloseBtn) r2CloseBtn.addEventListener('click', closeR2Panel);
+
+  // Unggah File R2 lewat UI Zona Unggah
+  if (r2UploadZone && r2FileInput) {
+    r2UploadZone.addEventListener('click', () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        showIOSAlert('Sesi tidak aktif. Silakan login terlebih dahulu untuk mengunggah file.', 'Perhatian');
+        return;
+      }
+      r2FileInput.click();
+    });
+    r2FileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      await uploadFileToR2(file);
+    });
+  }
+
+  // API Call: Mengambil daftar file dari Cloudflare R2 dengan Integrasi Login Terbuka
+  async function loadR2Files() {
+    if (!r2FileList) return;
+
+    const token = localStorage.getItem('access_token');
+
+    // TAMPILAN JIKA BELUM LOGIN: Memberikan Tombol Hubungkan Akun di dalam Sidebar R2
+    if (!token) {
+      r2FileList.innerHTML = `
+        <div style="text-align: center; color: #8b949e; font-size: 11px; padding: 30px 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);">
+          <ion-icon name="lock-closed-outline" style="font-size: 28px; color: #ff9e22; margin-bottom: 8px;"></ion-icon>
+          <p style="margin: 0 0 8px 0; color: #ffffff; font-weight: 600; font-size: 13px;">Akses Terbatas</p>
+          <p style="margin: 0 0 16px 0; line-height: 1.4; color: #8b949e;">Silakan hubungkan akun GitHub Anda terlebih dahulu untuk mengelola penyimpanan cloud.</p>
+          <a href="${WORKER_URL}/api/auth/github" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #238636; color: #ffffff; text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; font-size: 11px; width: 100%; box-sizing: border-box; box-shadow: 0 4px 12px rgba(35, 134, 54, 0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#2ea043'" onmouseout="this.style.backgroundColor='#238636'">
+            <ion-icon name="logo-github" style="font-size: 16px;"></ion-icon> Hubungkan GitHub
+          </a>
+        </div>
+      `;
+      return;
+    }
+
+    r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;"><ion-icon name="sync-outline" style="animation: spin 1.5s linear infinite; font-size: 18px; margin-bottom: 4px;"></ion-icon><br>Memproses database cloud...</div>`;
+
+    try {
+      const response = await fetch(`${WORKER_URL}/api/r2`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('R2 Error');
+      const data = await response.json();
+
+      if (!data.files || data.files.length === 0) {
+        r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;">Penyimpanan kosong.<br>Unggah file pertama Anda di atas.</div>`;
+        return;
+      }
+
+      let html = '';
+      data.files.forEach(file => {
+        const sizeKB = (file.size / 1024).toFixed(1);
+        html += `
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+              <ion-icon name="document-outline" style="color: #58a6ff; font-size: 18px; flex-shrink:0;"></ion-icon>
+              <div style="min-width: 0;">
+                <p style="font-size: 12px; font-weight: 500; margin:0; color: #e6edf3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${file.key}</p>
+                <p style="font-size: 10px; color: #8b949e; margin: 2px 0 0;">${sizeKB} KB</p>
+              </div>
+            </div>
+            <button onclick="deleteR2File('${file.key}')" style="background: none; border: none; color: #f85149; font-size: 16px; cursor: pointer; display: flex; align-items: center; padding: 4px; border-radius: 4px; transition: background 0.2s;">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        `;
+      });
+      r2FileList.innerHTML = html;
+    } catch(err) {
+      r2FileList.innerHTML = `<div style="text-align: center; color: #f85149; font-size: 11px; padding: 20px 0;">Gagal memuat file R2.</div>`;
+    }
+  }
+
+  // API Call: Unggah berkas ke Cloudflare R2
+  async function uploadFileToR2(file) {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      showIOSAlert('Gagal mengunggah: Silakan login terlebih dahulu.', 'Akses Ditolak');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('filename', file.name);
+
+    r2FileList.innerHTML = `<div style="text-align: center; color: #8b949e; font-size: 11px; padding: 20px 0;"><ion-icon name="cloud-upload-outline" style="animation: bounce 1s infinite; font-size: 18px; margin-bottom: 4px;"></ion-icon><br>Mengunggah file ke Cloud...</div>`;
+
+    try {
+      const response = await fetch(`${WORKER_URL}/api/r2`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      if (!response.ok) throw new Error('Upload gagal');
+      await loadR2Files();
+    } catch(err) {
+      showIOSAlert('Gagal mengunggah file ke R2: ' + err.message, 'Kesalahan');
+      await loadR2Files();
+    }
+  }
+
+  // API Call: Hapus berkas dari Cloudflare R2 dengan Konfirmasi iOS Kustom
+  window.deleteR2File = async function(filename) {
+    const confirmed = await showIOSConfirm(`Apakah Anda yakin ingin menghapus "${filename}" dari penyimpanan cloud?`, 'Hapus File');
+    if (!confirmed) return;
+
+    const token = localStorage.getItem('access_token');
+    try {
+      const response = await fetch(`${WORKER_URL}/api/r2`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ filename })
+      });
+      if(!response.ok) throw new Error('Gagal menghapus');
+      await loadR2Files();
+    } catch(err) {
+      showIOSAlert('Gagal menghapus file: ' + err.message, 'Kesalahan');
+    }
+  }
+
+  // Penanganan Attach Script Khusus Chat
+  if (attachScriptBtn && chatScriptFileInput) {
+    attachScriptBtn.addEventListener('click', () => chatScriptFileInput.click());
+    chatScriptFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        currentAttachedFile = {
+          name: file.name,
+          content: evt.target.result
+        };
+        // Perbarui UI Indikator Lampiran
+        if (attachedFileName) attachedFileName.textContent = file.name;
+        if (fileAttachedIndicator) fileAttachedIndicator.classList.remove('hidden');
+
+        // Membuka lipatan saat ada file yang diunggah
+        chatBoxContainer.classList.remove('folded');
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  if (removeAttachedFileBtn) {
+    removeAttachedFileBtn.addEventListener('click', () => {
+      currentAttachedFile = null;
+      if (chatScriptFileInput) chatScriptFileInput.value = '';
+      if (fileAttachedIndicator) fileAttachedIndicator.classList.add('hidden');
+
+      // Kembalikan lipatan jika input kosong
+      if (!chatInput.value.trim()) {
+        chatBoxContainer.classList.add('folded');
+      }
+    });
+  }
+
+  // Interaktivitas Lipat Premium Gaya Gemini untuk Input Chat (Anti-bouncing Fix)
+  if (chatInput && chatBoxContainer) {
+    // Nonaktifkan pointer-events pada chatInput secara default
+    chatInput.style.pointerEvents = 'none';
+
+    // Klik di mana saja dalam chatBoxContainer akan memicu fokus ke textarea utama
+    chatBoxContainer.addEventListener('click', (e) => {
+      // Abaikan jika klik terjadi pada tombol aksi, input berkas, atau badge
+      if (e.target.closest('button') || e.target.closest('input[type="file"]') || e.target.closest('.attached-file-badge')) {
+        return;
+      }
+      // Aktifkan pointer-events pada chatInput agar bisa menerima fokus
+      chatInput.style.pointerEvents = 'auto';
+      // Fokuskan chatInput dan pastikan cursor muncul
+      chatInput.focus();
+      // Pastikan textarea mendapatkan fokus penuh (untuk mobile)
+      setTimeout(() => {
+        if (document.activeElement !== chatInput) {
+          chatInput.focus();
+        }
+      }, 50);
+    });
+
+    // Saat chatInput kehilangan fokus, nonaktifkan pointer-events lagi
+    chatInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement !== chatInput) {
+          chatInput.style.pointerEvents = 'none';
+        }
+      }, 100);
+    });
+
+    // Deteksi interaksi global untuk buka/tutup lipatan yang halus
+    document.addEventListener('click', (e) => {
+      const insideChatBox = chatBoxContainer.contains(e.target);
+
+      if (insideChatBox) {
+        // Rentangkan box dan perbesar baris textarea jika kosong
+        chatBoxContainer.classList.remove('folded');
+        if (chatInput.value.trim() === '') {
+          chatInput.rows = 2;
+        }
+      } else {
+        // Lipat kembali hanya jika klik berada di luar chatbox DAN tidak ada teks atau file
+        if (!chatInput.value.trim() && !currentAttachedFile) {
+          chatBoxContainer.classList.add('folded');
+          chatInput.rows = 1;
+        }
+      }
+    });
+  }
+
+  function updateUserProfileUI(data = null) {
+    const username = data?.username || localStorage.getItem('github_username');
+    const avatar = data?.avatar || localStorage.getItem('github_avatar');
+    const token = localStorage.getItem('access_token');
+    const followers = data?.followers !== undefined ? data.followers : (localStorage.getItem('github_followers') || 0);
+
+    updateR2UploadZoneVisibility();
+
+    if (data) {
+      if (data.username) localStorage.setItem('github_username', data.username);
+      if (data.avatar) localStorage.setItem('github_avatar', data.avatar);
+      if (data.followers !== undefined) localStorage.setItem('github_followers', data.followers);
+      if (data.neurons_used !== undefined) {
+        localStorage.setItem('neurons_used', data.neurons_used);
+      }
+    }
+
+    if (username && token) {
+      if (sidebarUsername) sidebarUsername.textContent = username;
+      if (sidebarFollowers) sidebarFollowers.textContent = `${followers.toLocaleString()} Followers`; 
+      if (sidebarStatus) sidebarStatus.textContent = '';
+      if (sidebarLoginBtn) sidebarLoginBtn.classList.add('hidden');
+      if (sidebarLogoutBtn) sidebarLogoutBtn.classList.remove('hidden');
+
+      if (avatar && sidebarAvatar) {
+        sidebarAvatar.style.backgroundImage = `url(${avatar})`;
+        sidebarAvatar.style.backgroundSize = 'cover';
+        sidebarAvatar.style.backgroundPosition = 'center';
+      }
+
+      if (topbarMiniUsername) topbarMiniUsername.textContent = username;
+      if (avatar && topbarAvatar) {
+        topbarAvatar.style.backgroundImage = `url(${avatar})`;
+        topbarAvatar.style.backgroundSize = 'cover';
+        topbarAvatar.style.backgroundPosition = 'center';
+      }
+    } else {
+      if (sidebarUsername) sidebarUsername.textContent = 'Tamu';
+      if (sidebarFollowers) sidebarFollowers.textContent = '0 Followers';
+      if (sidebarStatus) sidebarStatus.textContent = 'Belum login.';
+      if (sidebarLoginBtn) sidebarLoginBtn.classList.remove('hidden');
+      if (sidebarLogoutBtn) sidebarLogoutBtn.classList.add('hidden');
+      if (sidebarAvatar) sidebarAvatar.style.backgroundImage = '';
+
+      if (topbarMiniUsername) topbarMiniUsername.textContent = 'Anonim';
+      if (topbarAvatar) topbarAvatar.style.backgroundImage = '';
+    }
+
+    if (sidebarNeuronText && sidebarNeuronBar) {
+      const storedUsed = localStorage.getItem('neurons_used');
+      const used = data?.neurons_used !== undefined ? data.neurons_used : (storedUsed ? parseInt(storedUsed) : 0);
+      const total = 10000; // DIKEMBALIKAN: Batas riil Cloudflare Workers AI adalah 10K NRN/hari
+      const remaining = Math.max(0, total - used);
+      const percent = Math.round((remaining / total) * 100);
+
+      sidebarNeuronText.textContent = remaining.toLocaleString() + ' NRN';
+      if (sidebarNeuronPercent) sidebarNeuronPercent.textContent = percent + '%';
+      sidebarNeuronBar.style.width = percent + '%';
+
+      const dashboardQuotaText = document.getElementById('freeQuotaText');
+      if (dashboardQuotaText) {
+        dashboardQuotaText.textContent = remaining.toLocaleString() + ' NRN';
+      }
+    }
+  }
+
+  if (menuBtn) menuBtn.addEventListener('click', openSidebar);
+  if (topbarProfileBtn) topbarProfileBtn.addEventListener('click', openSidebar);
+  if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+  if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+
+  if (sidebarLogoutBtn) {
+    sidebarLogoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('github_username');
+      localStorage.removeItem('github_avatar');
+      localStorage.removeItem('github_followers');
+      localStorage.removeItem('neurons_used');
+
+      updateR2UploadZoneVisibility();
+
+      if (chatMessagesDiv) chatMessagesDiv.innerHTML = '';
+      if (welcomeScreen) {
+        welcomeScreen.style.opacity = '1';
+        welcomeScreen.style.display = 'flex';
+      }
+
+      updateUserProfileUI(null);
+      closeSidebar();
+      closeR2Panel();
+    });
+  }
+
+  if (sidebarLoginBtn) {
+    sidebarLoginBtn.href = `${WORKER_URL}/api/auth/github`;
+  }
+
+  function getHeaders() {
+    const token = localStorage.getItem('access_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  }
+
+  function getBlogListContext(query) {
+    const blogList = document.getElementById('blogList');
+    if (!blogList || !/\b(blog|artikel|post|posting|tulisan|bacaan|konten)\b/i.test(query)) {
+      return '';
+    }
+
+    return Array.from(blogList.querySelectorAll('.blog-post-link'))
+      .slice(0, 30)
+      .map((post, index) => {
+        const title = post.querySelector('.jekyll-title')?.textContent?.trim() || '';
+        const excerpt = post.querySelector('.jekyll-excerpt')?.textContent?.trim() || '';
+        const tags = Array.from(post.querySelectorAll('.tag'))
+          .map(tag => tag.textContent.trim())
+          .filter(Boolean)
+          .join(', ');
+        const url = post.getAttribute('href') || post.dataset.postUrl || '';
+        return `${index + 1}. ${title}\n   Ringkasan: ${excerpt}\n   Tag: ${tags || '-'}\n   URL: ${new URL(url, window.location.href).href}`;
+      })
+      .join('\n\n')
+      .slice(0, 12000);
+  }
+
+  async function loadUserSessionAndHistory() {
+    requireLicenseReady();
+    updateUserProfileUI();
+    const token = localStorage.getItem('access_token');
+
+    try {
+      const response = await fetch(`${WORKER_URL}/api/ai`, {
+        method: 'GET',
+        headers: getHeaders()
+      });
+
+      if (response.status === 401) {
+        throw new Error('Sesi kedaluwarsa');
+      }
+
+      if (!response.ok) throw new Error('Worker bermasalah');
+
+      const data = await response.json();
+      updateUserProfileUI(data);
+
+      if (data.authenticated) {
+        if (data.history && data.history.length > 0) {
+          if (welcomeScreen) welcomeScreen.style.display = 'none';
+          if (chatMessagesDiv) {
+            chatMessagesDiv.innerHTML = '';
+            data.history.forEach(msg => {
+              try {
+                if (msg.role === 'user') {
+                  appendUserMessage(msg.content);
+                } else if (msg.role === 'assistant') {
+                  appendAIMessage(msg.content);
+                }
+              } catch (renderErr) {
+                console.warn("Gagal merender gelembung pesan riwayat:", renderErr);
+              }
+            });
+            scrollToBottom();
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Gagal memuat sesi sebelumnya:", err);
+      if (err.message.includes('Sesi kedaluwarsa') || err.message.includes('401')) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('github_username');
+        localStorage.removeItem('github_avatar');
+        localStorage.removeItem('github_followers');
+        localStorage.removeItem('neurons_used');
+        updateUserProfileUI(null);
+      }
+    }
+  }
+
+  // Boot setelah license valid
+  waitForLicense()
+    .then(() => loadUserSessionAndHistory())
+    .catch((err) => {
+      console.error(err);
+      document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;color:#fff;font-family:sans-serif;text-align:center;padding:40px"><div><h2 style="margin:0 0 12px">🔒 Locked</h2><p style="color:#888;margin:0">License module missing or invalid.<br>Restore core.min.js &amp; credit.</p></div></div>';
+    });
+
+
+  // PENYELARASAN MODEL SELECT BERGAYA IONIC IOS
+  if (modelSelect) {
+    const storedModel = localStorage.getItem('selectedModel');
+    if (storedModel) {
+      modelSelect.value = storedModel;
+    }
+    window.selectedModel = modelSelect.value;
+
+    const handleModelChange = (e) => {
+      const val = e.detail ? e.detail.value : modelSelect.value;
+      window.selectedModel = val;
+      localStorage.setItem('selectedModel', val);
+    };
+
+    modelSelect.addEventListener('ionChange', handleModelChange);
+    modelSelect.addEventListener('change', handleModelChange);
+  }
+
+  marked.setOptions({ breaks: true, gfm: true });
+
+  window.fillAndSendPrompt = function (promptText) {
+    chatInput.value = promptText;
+    sendMessage();
+  }
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  document.getElementById(`${tabId}Tab`).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+
+    const icon = item.querySelector('ion-icon');
+
+    if (item.getAttribute('data-tab') === 'home') {
+      icon.setAttribute('name', 'chatbubbles-outline');
+    }
+
+    if (item.getAttribute('data-tab') === 'discover') {
+      icon.setAttribute('name', 'compass-outline');
+    }
+
+    if (item.getAttribute('data-tab') === 'library') {
+      icon.setAttribute('name', 'folder-outline');
+    }
+  });
+
+  const activeItem = document.querySelector(
+    `.nav-item[data-tab="${tabId}"]`
+  );
+
+  activeItem.classList.add('active');
+
+  // 🔥 UPDATE SAB DI SINI
+  updateSideAction(tabId);
+
+  const activeIcon = activeItem.querySelector('ion-icon');
+
+  if (tabId === 'home') {
+    activeIcon.setAttribute('name', 'chatbubbles');
+  }
+
+  if (tabId === 'discover') {
+    activeIcon.setAttribute('name', 'compass');
+  }
+
+  if (tabId === 'library') {
+    activeIcon.setAttribute('name', 'folder');
+  }
+
+  if (tabId === 'home') {
+    chatBoxContainer.style.display = 'flex';
+
+    setTimeout(() => {
+      chatBoxContainer.style.opacity = '1';
+    }, 10);
+
+    modelSelector.style.display = 'block';
+
+    setTimeout(() => {
+      modelSelector.style.opacity = '1';
+    }, 10);
+
+  } else {
+
+    chatBoxContainer.style.opacity = '0';
+
+    setTimeout(() => {
+      chatBoxContainer.style.display = 'none';
+    }, 300);
+
+    modelSelector.style.opacity = '0';
+
+    // ⚠️ perbaikan typo modelSelectorr
+    setTimeout(() => {
+      modelSelector.style.display = 'none';
+    }, 300);
+  }
+
+  if (tabId === 'library') {
+    loadRepositories();
+  }
+}
+
+
+// NAVIGATION TAB
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const tab = item.getAttribute('data-tab');
+
+    if (tab) {
+      switchTab(tab);
+    }
+  });
+});
+
+
+// Set SAB sesuai tab awal
+const initialActiveTab =
+  document.querySelector('.nav-item.active[data-tab]')
+    ?.getAttribute('data-tab') || 'home';
+
+updateSideAction(initialActiveTab);
+
+
+// SIDE ACTION BUTTON
+if (sideActionBtn) {
+  sideActionBtn.addEventListener('click', async () => {
+
+    const activeItem = document.querySelector(
+      '.nav-item.active[data-tab]'
+    );
+
+    const activeTab =
+      activeItem?.getAttribute('data-tab') || 'home';
+
+    switch (activeTab) {
+
+      case 'home':
+        startNewChat();
+        break;
+
+      case 'discover':
+        await reloadDiscover();
+        break;
+
+      case 'library':
+        await refreshLibrary();
+        break;
+
+      default:
+        console.warn('Unknown tab:', activeTab);
+    }
+  });
+}
+
+  function getLangClass(lang) {
+    if (!lang) return 'dot-default';
+    const l = lang.toLowerCase();
+    if (l === 'javascript') return 'dot-js';
+    if (l === 'html') return 'dot-html';
+    if (l === 'css') return 'dot-css';
+    if (l === 'typescript') return 'dot-ts';
+    return 'dot-default';
+  }
+
+  async function loadRepositories() {
+    requireLicenseReady();
+    repoListDiv.innerHTML = `<div class="loading"><ion-icon name="sync-outline" style="animation: spin 2s linear infinite; font-size: 24px; margin-bottom: 8px;"></ion-icon><br>Memuat repositori publik ${GITHUB_OWNER}...</div>`;
+    try {
+      const response = await fetch(`${WORKER_URL}/api/github/users/${GITHUB_OWNER}/repos?sort=updated&per_page=20`, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!response.ok) throw new Error(`Worker error ${response.status}`);
+      const repos = await response.json();
+      if (!Array.isArray(repos)) throw new Error('Invalid response');
+      renderRepoCards(repos);
+    } catch (err) {
+      console.warn('Primary repo fetch failed, mencoba fallback publik GitHub:', err);
+      await loadPublicRepositoriesFallback(err);
+    }
+  }
+
+  async function loadPublicRepositoriesFallback(primaryError) {
+    try {
+      const response = await fetch(`https://api.github.com/users/${GITHUB_OWNER}/repos?sort=updated&per_page=20`, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!response.ok) throw new Error(`GitHub public API error ${response.status}`);
+      const repos = await response.json();
+      if (!Array.isArray(repos)) throw new Error('Invalid public GitHub response');
+      renderRepoCards(repos);
+    } catch (fallbackError) {
+      repoListDiv.innerHTML = `<div class="error-msg">Gagal memuat repositori publik ${GITHUB_OWNER}.</div>`;
+    }
+  }
+
+  async function reloadDiscover() {
+    if (!sideActionBtn || !sideActionIcon) return;
+
+    sideActionBtn.disabled = true;
+
+    const originalIcon = sideActionIcon.getAttribute('name');
+
+    sideActionIcon.setAttribute('name', 'sync-outline');
+    sideActionIcon.style.animation = 'spin 1s linear infinite';
+
+    try {
+
+      /*
+       * Jika nanti kamu punya fungsi khusus blog:
+       *
+       * await loadBlogPosts();
+       *
+       * Untuk sekarang kita reload data Discover
+       * dengan event custom.
+       */
+
+      if (typeof window.loadBlogPosts === 'function') {
+        await window.loadBlogPosts();
+      } else {
+        document.dispatchEvent(
+          new CustomEvent('discover:reload')
+        );
+      }
+
+      console.log('Discover berhasil direload');
+
+    } catch (error) {
+      console.error(
+        'Gagal reload Discover:',
+        error
+      );
+
+      showIOSAlert(
+        'Gagal memuat ulang konten Discover.',
+        'Kesalahan'
+      );
+
+    } finally {
+
+      sideActionBtn.disabled = false;
+
+      sideActionIcon.style.animation = '';
+
+      sideActionIcon.setAttribute(
+        'name',
+        originalIcon || 'sync-outline'
+      );
+    }
+  }
+
+  // MERENDER KARTU REPOSiTORI DENGAN LINK AKTIF KE GITHUB REPO
+  function renderRepoCards(repos) {
+    const sorted = repos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+    const topRepos = sorted.slice(0, 10);
+
+    if (topRepos.length === 0) {
+      repoListDiv.innerHTML = '<div class="loading">Tidak ada repositori ditemukan.</div>';
+      return;
+    }
+
+    let html = '';
+    topRepos.forEach(repo => {
+      const lang = repo.language || 'Unknown';
+      const langDot = getLangClass(repo.language);
+      const repoUrl = repo.html_url || `https://github.com/${GITHUB_OWNER}/${repo.name}`;
+
+      html += `
+        <a href="${repoUrl}" target="_blank" rel="noopener noreferrer" class="modern-repo-card-link" aria-label="Buka repositori ${repo.name} di GitHub">
+          <div class="modern-repo-card">
+            <div class="repo-header">
+              <ion-icon name="book-outline" class="repo-icon"></ion-icon>
+              <span class="repo-name">${repo.name}</span>
+              <span class="repo-badge">${repo.private ? 'Private' : 'Public'}</span>
+              <ion-icon name="open-outline" class="repo-external-icon"></ion-icon>
+            </div>
+            <div class="repo-desc">${repo.description || 'Tidak ada deskripsi yang disediakan.'}</div>
+            <div class="repo-meta-footer">
+              <div class="meta-item"><span class="lang-dot ${langDot}"></span><span>${lang}</span></div>
+              <div class="meta-item"><ion-icon name="star-outline"></ion-icon><span>${repo.stargazers_count || 0}</span></div>
+              <div class="meta-item"><ion-icon name="git-network-outline"></ion-icon><span>${repo.forks_count || 0}</span></div>
+            </div>
+          </div>
+        </a>`;
+    });
+    repoListDiv.innerHTML = html;
+  }
+
+  function getCurrentTime() {
+    return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function sendMessage() {
+    requireLicenseReady();
+    const query = chatInput.value.trim();
+    if (!query && !currentAttachedFile) return;
+
+    if (welcomeScreen.style.display !== 'none') {
+      welcomeScreen.style.opacity = '0';
+      welcomeScreen.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => welcomeScreen.style.display = 'none', 300);
+    }
+
+    // Tampilkan pesan teks beserta lampiran di gelembung chat pengguna
+    let displayText = query;
+    if (currentAttachedFile) {
+      displayText = `📎 *Melampirkan Script: ${currentAttachedFile.name}*\n\n${query}`;
+    }
+
+    appendUserMessage(displayText);
+    chatInput.value = '';
+    chatInput.rows = 1;
+    chatBoxContainer.classList.add('folded'); // Kembalikan ke lipatan setelah dikirim
+
+    const requestPayload = { 
+      query: query,
+      model: modelSelect ? modelSelect.value : '@cf/qwen/qwen2.5-coder-32b-instruct',
+      frontendContext: getBlogListContext(query)
+    };
+
+    if (currentAttachedFile) {
+      requestPayload.attachedFile = currentAttachedFile;
+      // Reset attachment setelah dikirim
+      currentAttachedFile = null;
+      if (chatScriptFileInput) chatScriptFileInput.value = '';
+      if (fileAttachedIndicator) fileAttachedIndicator.classList.add('hidden');
+    }
+
+    const typingId = showTypingIndicator();
+    try {
+      const response = await fetch(`${WORKER_URL}/api/ai`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(requestPayload)
+      });
+
+      removeTypingIndicator(typingId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.authenticated === false) {
+        const answer = data.answer || 'Kamu belum login, silahkan login terlebih dahulu yah.';
+        let loginUrl = data.action?.url || `${WORKER_URL}/api/auth/github`;
+
+        if (loginUrl.startsWith('/')) {
+          loginUrl = `${WORKER_URL}${loginUrl}`;
+        }
+
+        appendAIMessageWithLogin(answer, loginUrl);
+      } else {
+        const answer = data.answer || data.message || 'Maaf, saya tidak bisa merespon saat ini.';
+        appendAIMessage(answer);
+
+        if (data.neurons_used !== undefined) {
+          updateUserProfileUI(data);
+        }
+      }
+    } catch (err) {
+      removeTypingIndicator(typingId);
+      appendAIMessage(`❌ **Error:** ${err.message}. Periksa koneksi dan worker Anda.`);
+    }
+  }
+
+  function appendAIMessageWithLogin(text, loginUrl) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper ai';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    const textSpan = document.createElement('div');
+    textSpan.style.display = 'inline';
+    bubble.appendChild(textSpan);
+
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+
+    let i = 0;
+    function typeEffect() {
+      if (i < text.length) {
+        textSpan.textContent += text.charAt(i);
+        i++;
+        scrollToBottom();
+        setTimeout(typeEffect, 15);
+      } else {
+        const btnContainer = document.createElement('div');
+        btnContainer.style.marginTop = '12px';
+        btnContainer.style.opacity = '0';
+        btnContainer.style.transition = 'opacity 0.4s ease';
+
+        const loginBtn = document.createElement('a');
+        loginBtn.href = loginUrl;
+        loginBtn.style.display = 'inline-flex';
+        loginBtn.style.alignItems = 'center';
+        loginBtn.style.gap = '8px';
+        loginBtn.style.backgroundColor = '#238636';
+        loginBtn.style.color = '#ffffff';
+        loginBtn.style.padding = '10px 16px';
+        loginBtn.style.borderRadius = '8px';
+        loginBtn.style.fontSize = '13px';
+        loginBtn.style.fontWeight = '600';
+        loginBtn.style.textDecoration = 'none';
+        loginBtn.style.boxShadow = '0 4px 12px rgba(35, 134, 54, 0.2)';
+        loginBtn.style.transition = 'all 0.2s';
+
+        loginBtn.onmouseover = () => { loginBtn.style.backgroundColor = '#2ea043'; };
+        loginBtn.onmouseout = () => { loginBtn.style.backgroundColor = '#238636'; };
+
+        loginBtn.innerHTML = `<ion-icon name="logo-github" style="font-size: 18px;"></ion-icon><span>Hubungkan Akun GitHub</span>`;
+        btnContainer.appendChild(loginBtn);
+        bubble.appendChild(btnContainer);
+
+        setTimeout(() => {
+          btnContainer.style.opacity = '1';
+          scrollToBottom();
+        }, 100);
+      }
+    }
+    typeEffect();
+  }
+
+  function appendUserMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper user';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    // Support basic formatting for script attachment tag inside User Bubble
+    const rawHtml = marked.parse(text);
+    const cleanHtml = DOMPurify.sanitize(rawHtml);
+    bubble.innerHTML = cleanHtml;
+
+    // MENAMPILKAN TOMBOL SALIN KODE PADA BLOK KODE
+    addCopyButtonsToPre(bubble);
+
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(messageDiv);
+
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function appendAIMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message-wrapper ai';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    const rawHtml = marked.parse(text);
+    const cleanHtml = DOMPurify.sanitize(rawHtml);
+    bubble.innerHTML = cleanHtml;
+
+    // MENAMPILKAN TOMBOL SALIN KODE PADA BLOK KODE
+    addCopyButtonsToPre(bubble);
+
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'timestamp';
+    timeSpan.textContent = getCurrentTime();
+
+    messageDiv.appendChild(bubble);
+    messageDiv.appendChild(timeSpan);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function showTypingIndicator() {
+    const id = 'typing-' + Date.now();
+    const wrapper = document.createElement('div');
+    wrapper.id = id;
+    wrapper.className = 'message-wrapper ai';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-avatar';
+    avatar.innerHTML = '<ion-icon name="logo-github"></ion-icon>';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    messageDiv.innerHTML = `<div class="bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageDiv);
+    chatMessagesDiv.appendChild(wrapper);
+    scrollToBottom();
+
+    return id;
+  }
+
+  function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function scrollToBottom() {
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab) {
+      activeTab.scrollTop = activeTab.scrollHeight;
+    } else {
+      chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  chatInput.addEventListener('input', function () {
+    this.rows = 1;
+    const lineCount = Math.ceil(this.scrollHeight / 24);
+    this.rows = Math.min(Math.max(lineCount, 2), 4);
+  });
+
+  async function refreshLibrary() {
+  if (!sideActionBtn || !sideActionIcon) return;
+
+  sideActionBtn.disabled = true;
+
+  sideActionIcon.style.animation =
+    'spin 1s linear infinite';
+
+  try {
+    await loadRepositories();
+  } catch (error) {
+    console.error(
+      'Gagal refresh library:',
+      error
+    );
+  } finally {
+    sideActionIcon.style.animation = '';
+    sideActionBtn.disabled = false;
+  }
+}
+
+  async function checkWorkerHealth() {
+    try {
+      const res = await fetch(`${WORKER_URL}/health`);
+      if (!res.ok) appendAIMessage('⚠️ AI dapat melakukan kesalahan, periksa kembali respon.');
+    } catch (e) {
+      console.warn('Cek koneksi worker gagal di background.');
+    }
+  }
+  checkWorkerHealth();

@@ -1,243 +1,102 @@
-<style>
-  /* Container Banner Premium */
-  #pwa-install-container {
-    display: none; /* Dikontrol penuh lewat JS */
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
-    color: #ffffff;
-    padding: 16px 20px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4), 0 8px 10px -6px rgba(79, 70, 229, 0.4);
-    z-index: 9999;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    
-    /* Animasi masuk halus */
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
 
-  #pwa-install-container.show {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    opacity: 1;
-    transform: translateY(0);
-  }
+<div id="pwa-install-container" class="pwa-hidden pwa-animate-slide-up">
+  <div class="pwa-card">
 
-  #pwa-install-container.hide {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    transform: translateY(20px) !important;
-    bottom: -1000px !important;
-  }
-
-  @media (min-width: 640px) {
-    #pwa-install-container.show {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    #pwa-install-container {
-      left: auto;
-      right: 24px;
-      width: 450px;
-    }
-  }
-
-  /* Info App (Ikon + Teks) */
-  .pwa-content-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-grow: 1;
-    margin-bottom: 20px;
-  }
-
-  .pwa-app-icon {
-    width: 42px;
-    height: 42px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .pwa-text-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .pwa-main-title {
-    font-size: 14px;
-    font-weight: 700;
-    margin: 0;
-    letter-spacing: 0.3px;
-  }
-
-  .pwa-sub-title {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 2px 0 0 0;
-    line-height: 1.3;
-  }
-
-  /* Kumpulan Aksi (Tombol Instal + Tombol Tutup) */
-  .pwa-actions-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-  }
-
-  @media (min-width: 640px) {
-    .pwa-actions-wrapper {
-      width: auto;
-      flex-shrink: 0;
-    }
-  }
-
-  /* Tombol Instalasi Utama */
-  #btn-pwa-install {
-    flex-grow: 1;
-    background-color: #ffffff;
-    color: #4f46e5;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-    white-space: nowrap;
-  }
-
-  #btn-pwa-install:hover {
-    background-color: #f8fafc;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-
-  #btn-pwa-install:active {
-    transform: scale(0.97);
-  }
-
-  /* Tombol Tutup Silang (X) */
-  #btn-pwa-close-banner {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.6);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s, color 0.2s;
-  }
-
-  #btn-pwa-close-banner:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-  }
-</style>
-
-<!-- Banner Markup -->
-<div id="pwa-install-container">
-  <!-- Sisi Kiri: Ikon Aplikasi & Informasi Singkat -->
-  <div class="pwa-content-wrapper">
-    <div class="pwa-app-icon">
-      <i class="fa-solid fa-mobile-screen"></i>
+    <!-- Header Banner -->
+    <div class="pwa-header">
+      <div class="pwa-icon-box">
+        <!-- Menggunakan variabel site.title Jekyll sebagai fallback jika site.pwa_icon tidak diset -->
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div class="pwa-info">
+        <h3 class="pwa-title">{{ site.title | default: "Aplikasi Web Kami" }}</h3>
+        <p class="pwa-desc">Instal aplikasi untuk performa membaca yang lebih lancar, cepat, dan hemat kuota.</p>
+      </div>
+      <button id="pwa-btn-close" class="pwa-close-btn" aria-label="Tutup">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
-    <div class="pwa-text-group">
-      <h4 class="pwa-main-title">Baca Blog Lebih Nyaman!</h4>
-      <p class="pwa-sub-title">Instal aplikasi sekarang untuk akses lebih cepat.</p>
-    </div>
-  </div>
 
-  <!-- Sisi Kanan: Tombol Aksi -->
-  <div class="pwa-actions-wrapper">
-    <button id="btn-pwa-install">
-      <i class="fa-solid fa-cloud-arrow-down"></i> Instal Sekarang
-    </button>
-    <button id="btn-pwa-close-banner" aria-label="Tutup Banner">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
+    <!-- Body Banner -->
+    <div class="pwa-body">
+      <!-- Tombol Instal Otomatis (Jika didukung Browser) -->
+      <div id="pwa-native-area" class="pwa-hidden">
+        <button id="pwa-btn-install" class="pwa-btn-install">
+          <i class="fa-solid fa-download"></i> Pasang Aplikasi
+        </button>
+      </div>
+
+      <!-- Panduan Manual (Jika Browser tidak mendukung Instalasi Langsung) -->
+      <div id="pwa-manual-area" class="pwa-hidden">
+        <div class="pwa-instructions">
+          <p id="pwa-text-guide"></p>
+          <div id="pwa-steps-visual" class="pwa-steps"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
   (function () {
     let deferredPrompt = null;
-    const STORAGE_KEY = "pwa_inline_dismissed_time";
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 Jam dalam milidetik
+    const STORAGE_KEY = "pwa_dismissed_time";
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Selisih waktu 24 jam dalam milidetik
 
-    const bannerContainer = document.getElementById("pwa-install-container");
-    const installBtn = document.getElementById("btn-pwa-install");
-    const closeBtn = document.getElementById("btn-pwa-close-banner");
+    const banner = document.getElementById("pwa-install-container");
+    const closeBtn = document.getElementById("pwa-btn-close");
+    const nativeArea = document.getElementById("pwa-native-area");
+    const manualArea = document.getElementById("pwa-manual-area");
+    const installBtn = document.getElementById("pwa-btn-install");
+    const textGuide = document.getElementById("pwa-text-guide");
+    const stepsVisual = document.getElementById("pwa-steps-visual");
 
-    // ========================================================
-    // 1. DETEKSI APAKAH APLIKASI SUDAH TERINSTAL (SANGAT AKURAT)
-    // ========================================================
     async function isAppAlreadyInstalled() {
-      // Deteksi jika berjalan dalam mode standalone (Aplikasi dibuka langsung)
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
-                            || window.navigator.standalone 
-                            || document.referrer.includes('android-app://');
-      
-      if (isStandalone) return true;
+      if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone ||
+        document.referrer.includes("android-app://")
+      ) {
+        return true;
+      }
 
-      // Gunakan API modern untuk memeriksa status instalasi (didukung Chrome/Android/Edge)
-      if ('getInstalledRelatedApps' in navigator) {
+      if (typeof navigator.getInstalledRelatedApps === "function") {
         try {
           const relatedApps = await navigator.getInstalledRelatedApps();
-          if (relatedApps.length > 0) {
-            return true; // Aplikasi terdeteksi sudah terinstal di sistem operasi
-          }
-        } catch (err) {
-          console.warn("Gagal mendeteksi status instalasi via API:", err);
+          return relatedApps.length > 0;
+        } catch (error) {
+          console.warn("Gagal mendeteksi status instalasi PWA:", error);
         }
       }
 
       return false;
     }
 
-    // Fungsi Validasi Waktu Tampil & Keadaan Sesi
-    function isAllowedByLocalStorage() {
+    // ==========================================
+    // Cek Selisih Waktu 24 Jam
+    // ==========================================
+    function shouldShowBanner() {
+      // 1. Cek jika sudah berjalan dalam mode PWA (standalone)
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+        return false;
+      }
+
+      // 2. Cek histori penyimpanan local pengguna
       const lastDismissed = localStorage.getItem(STORAGE_KEY);
       if (lastDismissed) {
         const timePassed = Date.now() - parseInt(lastDismissed, 10);
         if (timePassed < ONE_DAY_MS) {
-          return false; // Belum lewat 24 jam semenjak di-close
+          console.log("PWA Banner disembunyikan: Belum lewat 24 jam sejak penutupan terakhir.");
+          return false;
         }
       }
       return true;
     }
 
-    // Tampilkan Banner dengan Transisi Halus
-    function displayBanner() {
-      bannerContainer.classList.add("show");
-    }
-
-    // Deteksi Platform Browser
+    // ==========================================
+    // Deteksi Browser & Platform OS
+    // ==========================================
     function getBrowserInfo() {
       const ua = navigator.userAgent;
       const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -251,85 +110,134 @@
       return { isIOS, isAndroid, isSafari, isSamsung, isFirefox, isEdge, isChrome };
     }
 
-    // ========================================================
-    // 2. ALUR DETEKSI SEBELUM MENAMPILKAN BANNER
-    // ========================================================
-    async function evaluateAndShowBanner() {
-      // Langkah A: Cek apakah aplikasi sudah terinstal di perangkat
-      const installed = await isAppAlreadyInstalled();
-      if (installed) {
-        console.log("ℹ️ PWA terdeteksi sudah terinstal. Banner tetap disembunyikan.");
-        bannerContainer.classList.remove("show");
-        bannerContainer.classList.add("hide");
-        return;
-      }
-
-      // Langkah B: Cek aturan jeda 24 jam
-      if (!isAllowedByLocalStorage()) {
-        return;
-      }
-
+    // ==========================================
+    // Racik Teks Instruksi Berdasarkan Browser
+    // ==========================================
+    function applyBrowserInstructions() {
       const info = getBrowserInfo();
-      // Periksa apakah browser saat ini mendukung 'beforeinstallprompt' secara teoritis
-      const supportsNativePrompt = ('onbeforeinstallprompt' in window) || info.isChrome || info.isAndroid || info.isSamsung || info.isEdge;
 
-      if (supportsNativePrompt) {
-        // Pada browser yang mendukung native prompt, kita HANYA menampilkan banner 
-        // apabila event 'beforeinstallprompt' berhasil ditangkap (deferredPrompt tidak null).
-        // Jika aplikasi sudah diinstal, browser otomatis TIDAK AKAN menembakkan event tersebut.
-        if (deferredPrompt) {
-          displayBanner();
-        }
+      if (info.isIOS && info.isSafari) {
+        textGuide.innerHTML = `Ketuk tombol <strong>Bagikan (Share)</strong> di bagian bawah layar Safari Anda, lalu pilih <strong>Tambahkan ke Layar Utama (Add to Home Screen)</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Safari</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-arrow-up-from-bracket"></i> Share</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-regular fa-square-plus"></i> Add to Home Screen</span>
+        `;
+      } else if (info.isAndroid && info.isSamsung) {
+        textGuide.innerHTML = `Ketuk tombol <strong>Menu (☰)</strong> di kanan bawah, pilih <strong>+ Tambah halaman ke</strong>, lalu pilih <strong>Layar Depan</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Samsung</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-bars"></i> Menu</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge">+ Layar Depan</span>
+        `;
+      } else if (info.isChrome && info.isAndroid) {
+        textGuide.innerHTML = `Ketuk menu <strong>Titik Tiga (⋮)</strong> di kanan atas browser, lalu pilih opsi <strong>Instal Aplikasi</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Chrome</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge">Instal Aplikasi</span>
+        `;
+      } else if (info.isFirefox) {
+        textGuide.innerHTML = `Ketuk menu <strong>Titik Tiga (⋮)</strong> di samping URL bar, lalu pilih opsi <strong>Pasang (Install)</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Firefox</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-house-chimney-medical"></i> Pasang</span>
+        `;
+      } else if (info.isEdge) {
+        textGuide.innerHTML = `Ketuk menu <strong>Tiga Titik (...)</strong> di bawah layar, lalu klik <strong>Tambahkan ke Layar Utama</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Edge</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-ellipsis"></i></span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge"><i class="fa-solid fa-plus"></i> Tambah</span>
+        `;
       } else {
-        // Untuk browser yang tidak mendukung event native (seperti iOS Safari),
-        // kita tampilkan panduan secara langsung (asalkan lolos pengecekan di Langkah A & B)
-        displayBanner();
+        // Fallback Umum
+        textGuide.innerHTML = `Buka menu pengaturan browser Anda dan klik <strong>Instal Aplikasi</strong> atau <strong>Tambahkan ke Layar Utama</strong>.`;
+        stepsVisual.innerHTML = `
+          <span>Menu</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="pwa-step-badge">Instal / Tambahkan</span>
+        `;
       }
     }
 
-    // Tangkap Event Instalasi dari Browser
+    // ==========================================
+    // Logika Alur Tampilan
+    // ==========================================
+    async function renderBanner() {
+      if (!shouldShowBanner()) return;
+      if (await isAppAlreadyInstalled()) return;
+
+      if (deferredPrompt) {
+        // Browser mendukung automatic prompt
+        nativeArea.classList.remove("pwa-hidden");
+        manualArea.classList.add("pwa-hidden");
+      } else {
+        // Harus menggunakan instruksi manual
+        nativeArea.classList.add("pwa-hidden");
+        manualArea.classList.remove("pwa-hidden");
+        applyBrowserInstructions();
+      }
+
+      // Tampilkan kontainer utama
+      banner.classList.remove("pwa-hidden");
+    }
+
+    // ==========================================
+    // Event Listeners
+    // ==========================================
+
+    // Tangkap event automatic installation prompt
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      // Langsung evaluasi ulang begitu prompt siap
-      evaluateAndShowBanner();
+      renderBanner();
     });
 
-    // Pemicu evaluasi cadangan saat halaman selesai dimuat
+    // Jalankan pengecekan setelah halaman termuat
     window.addEventListener("load", () => {
+      // Tunggu 2 detik agar halaman termuat lancar tanpa mengganggu interaksi awal
       setTimeout(() => {
-        evaluateAndShowBanner();
-      }, 10000); // Delay
+        // Jika beforeinstallprompt tidak terpicu (misal di Safari/Firefox), tetap tampilkan cara manual
+        if (!deferredPrompt) {
+          renderBanner();
+        }
+      }, 2000);
     });
 
-    // Event Klik Tombol Instal
+    // Aksi tombol instalasi otomatis (Native)
     installBtn.addEventListener("click", async () => {
-      if (!deferredPrompt) {
-        // Fallback jika diklik di browser non-compatible / iOS Safari
-        console.log("Instalasi otomatis tidak didukung, silakan tambahkan secara manual melalui menu browser.");
-        return;
-      }
+      if (!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log(`Pilihan user: ${outcome}`);
+      console.log(`User memilih: ${outcome}`);
       deferredPrompt = null;
-      bannerContainer.classList.remove("show");
-        bannerContainer.classList.add("hide");
+      banner.classList.add("pwa-hidden");
     });
 
-    // Event Klik Tombol Close (Simpan Waktu Tutup ke LocalStorage)
+    // Tombol Tutup (Sembunyikan dan simpan timestamp 24 jam)
     closeBtn.addEventListener("click", () => {
-      bannerContainer.classList.remove("show");
-        bannerContainer.classList.add("hide");
+      banner.classList.add("pwa-hidden");
       localStorage.setItem(STORAGE_KEY, Date.now().toString());
     });
 
-    // Deteksi Jika Berhasil Diinstal saat banner sedang terbuka
+    // Deteksi jika instalasi berhasil dijalankan oleh user
     window.addEventListener("appinstalled", () => {
-      console.log("🎉 PWA berhasil terpasang.");
+      console.log("PWA Berhasil diinstal.");
       deferredPrompt = null;
-      bannerContainer.classList.remove("show");
-        bannerContainer.classList.add("hide");
+      banner.classList.add("pwa-hidden");
     });
+
   })();
 </script>
