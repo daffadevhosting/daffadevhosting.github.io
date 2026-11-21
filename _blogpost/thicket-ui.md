@@ -26,11 +26,13 @@ Instead of repeatedly writing HTML and CSS for similar interface elements, devel
 
 For example, a button can be implemented using:
 ```text
+{% raw %}
 {% include components/button.html
    label="Get Started"
    variant="primary"
    size="lg"
 %}
+{% endraw %}
 ```
 This approach makes components easier to reuse across different pages and layouts.
 
