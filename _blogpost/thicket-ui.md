@@ -79,13 +79,13 @@ Thicket UI uses modular SCSS to separate component styles and make stylesheet ma
 Rather than maintaining one enormous CSS file, developers can organize styles into smaller, more manageable modules.
 
 A typical structure might look like:
-
+```text
 scss/
 ├── tokens/
 ├── components/
 ├── utilities/
 └── main.scss
-
+```
 This approach improves code organization and makes customization more predictable.
 
 Developers can modify individual components without unnecessarily affecting unrelated parts of the interface.
@@ -106,13 +106,13 @@ Thicket UI uses design tokens to centralize values such as:
 Using CSS custom properties makes it easier to customize the visual identity of an entire website.
 
 For example:
-
+```scss
 :root {
   --thicket-primary: #2563eb;
   --thicket-radius: 0.75rem;
   --thicket-spacing: 1rem;
 }
-
+```
 Instead of manually changing values across multiple stylesheets, developers can update the underlying design tokens.
 
 4. Utility CSS
@@ -144,10 +144,10 @@ Unused CSS can increase stylesheet size and negatively affect loading efficiency
 Thicket UI includes a CSS purge workflow designed to scan project content and generate a reduced stylesheet.
 
 For example:
-
+```bash
 npx thicket purge \
   --output assets/css/thicket.purged.css
-
+```
 This can help reduce unnecessary CSS in production builds.
 
 Dynamic class names should still be handled carefully through appropriate safelist configuration to prevent required styles from being removed.
