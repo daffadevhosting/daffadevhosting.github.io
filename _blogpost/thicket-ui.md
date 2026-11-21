@@ -26,7 +26,8 @@ Instead of repeatedly writing HTML and CSS for similar interface elements, devel
 
 For example, a button can be implemented using:
 
-{% raw %}```text
+{% raw %}
+```text
 {% include components/button.html
    label="Get Started"
    variant="primary"
