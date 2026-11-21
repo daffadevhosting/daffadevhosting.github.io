@@ -1,5 +1,4 @@
 ---
-
 title: "Thicket UI: A Modular Component Framework Built for Jekyll Developers"
 img: "https://placehold.co/600x400?text=Thicket+UI"
 date: 2026-11-22 00:00:00 +0700
@@ -7,6 +6,7 @@ categories: [Web Development]
 tags: [Jekyll, Thicket UI, Liquid, SCSS, Frontend, Open Source]
 read_time: "6 min read"
 excerpt: "Discover Thicket UI, a modular component framework designed to make Jekyll development more efficient with reusable Liquid components, SCSS architecture, design tokens, and modern frontend utilities."
+---
 
 Thicket UI: A Modular Component Framework Built for Jekyll Developers
 
