@@ -1,0 +1,763 @@
+/* topbar */
+/* ---------- VARIABEL (sesuaikan dengan tema Anda) ---------- */
+:root {
+  --sidebar-bg: #0d1117;
+  --sidebar-card-bg: #161b22;
+  --sidebar-border: #30363d;
+  --sidebar-text: #c9d1d9;
+  --sidebar-text-secondary: #8b949e;
+  --sidebar-accent: #58a6ff;
+  --sidebar-progress-bg: #21262d;
+  --sidebar-progress-fill: #58a6ff;
+  --sidebar-radius: 16px;
+  --sidebar-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- BACKDROP ---------- */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- PANEL SIDEBAR ---------- */
+.sidebar-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 85vw);
+  height: 100%;
+  background: var(--sidebar-bg);
+  border-left: 1px solid var(--sidebar-border);
+  box-shadow: var(--sidebar-shadow);
+  z-index: 1000;
+  padding: 20px 18px 24px;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  color: var(--sidebar-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.sidebar-panel.open {
+  transform: translateX(0);
+}
+
+/* ---------- TOMBOL TUTUP ---------- */
+.sidebar-close-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.sidebar-close-btn {
+  --color: var(--sidebar-text-secondary);
+  --padding-start: 0;
+  --padding-end: 0;
+  height: 36px;
+  width: 36px;
+  font-size: 24px;
+}
+
+.sidebar-close-btn:hover {
+  --color: var(--sidebar-text);
+}
+
+/* ---------- HEADER PROFIL ---------- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--sidebar-border);
+  margin-bottom: 16px;
+}
+
+.sidebar-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--sidebar-border);
+  flex-shrink: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2358a6ff"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z"/></svg>');
+  background-size: 55%;
+  background-position: center 55%;
+  background-repeat: no-repeat;
+  background-color: #1f2937;
+  border: 2px solid var(--sidebar-border);
+}
+
+.sidebar-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f0f6fc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-followers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sidebar-accent);
+  margin: 2px 0 0;
+}
+
+.followers-icon {
+  font-size: 14px;
+}
+
+/* ---------- KARTU NEURON ---------- */
+.sidebar-neuron-card {
+  background: var(--sidebar-card-bg);
+  border-radius: var(--sidebar-radius);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 1px solid var(--sidebar-border);
+}
+
+.neuron-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.neuron-icon {
+  font-size: 18px;
+  color: var(--sidebar-accent);
+}
+
+.neuron-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sidebar-text-secondary);
+}
+
+.neuron-card-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.neuron-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f0f6fc;
+}
+
+.neuron-percent {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sidebar-accent);
+}
+
+.neuron-progress-bg {
+  width: 100%;
+  height: 6px;
+  background: var(--sidebar-progress-bg);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.neuron-progress-bar {
+  height: 100%;
+  background: var(--sidebar-progress-fill);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+/* ---------- BODY / AKSI ---------- */
+.sidebar-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--sidebar-text-secondary);
+  margin: 0 0 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: 16px;
+}
+
+.status-icon {
+  font-size: 18px;
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.sidebar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  width: 100%;
+  text-align: center;
+}
+
+.sidebar-action-btn.primary {
+  background: var(--sidebar-accent);
+  color: #0d1117;
+}
+
+.sidebar-action-btn.primary:hover {
+  background: #79c0ff;
+  transform: scale(1.01);
+}
+
+.sidebar-action-btn.secondary {
+  background: transparent;
+  color: #f85149;
+  border: 1px solid #f85149;
+}
+
+.sidebar-action-btn.secondary:hover {
+  background: #f851491a;
+}
+
+.sidebar-action-btn.hidden {
+  display: none;
+}
+
+/* ---------- SCROLLBAR (opsional) ---------- */
+.sidebar-panel::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-panel::-webkit-scrollbar-thumb {
+  background: var(--sidebar-border);
+  border-radius: 4px;
+}
+.model-selector-wrap {
+  min-width: 140px;
+}
+
+.model-selector-select {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+  /* GAYA SPESIFIK DAN INDEPENDEN UNTUK SIDEBAR R2 SISI KANAN */
+  .r2-sidebar-panel {
+    position: fixed;
+    padding: 20px 8px;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100%;
+    background: #161b22;
+    z-index: 1000000; /* Ditinggikan agar selalu di atas elemen lain */
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .r2-sidebar-panel.active {
+    transform: translateX(0) !important;
+  }
+  
+  /* Backdrop transparan khusus untuk R2 agar terisolasi sempurna */
+  .r2-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .r2-sidebar-backdrop.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Transisi Efek Hover Zona R2 */
+  .r2-upload-zone:hover {
+    border-color: #58a6ff !important;
+    background: rgba(88, 166, 255, 0.03) !important;
+  }
+
+/* footer */
+.side-action-btn {
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+}
+
+.side-action-btn.side-action-changing {
+  animation: sideActionChange 0.28s
+    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.side-action-btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.side-action-btn ion-icon {
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}
+
+@keyframes sideActionChange {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-20deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+  .chat-box {
+    display: flex;
+    flex-direction: column;
+    /* Menggunakan latar putih transparan dengan efek glassmorphism */
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 24px !important;
+    padding: 14px 18px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
+    cursor: text;
+  }
+
+  .chat-box:focus-within {
+    background: #ffffff !important;
+    border-color: rgba(9, 105, 218, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(9, 105, 218, 0.12) !important;
+    border-radius: 20px !important;
+  }
+
+  /* Mode Lipat (Saat Tidak Fokus & Kosong) */
+  .chat-box.folded {
+    border-radius: 28px !important;
+    padding: 10px 16px !important;
+  }
+
+  .chat-box.folded .chat-action-row {
+    max-height: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    border-top-color: transparent !important;
+  }
+
+  .chat-box.folded .chat-textarea {
+    padding-bottom: 0 !important;
+  }
+
+  .chat-textarea {
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #1f2328 !important; /* Warna teks gelap agar jelas di latar putih */
+    font-family: inherit !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    resize: none !important;
+    padding: 4px 0 8px 0 !important;
+    transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease !important;
+    box-sizing: border-box !important;
+    user-select: text !important; /* Pastikan teks bisa dipilih */
+    -webkit-user-select: text !important;
+  }
+
+  .chat-textarea::placeholder {
+    color: rgba(31, 35, 40, 0.45) !important;
+  }
+
+  .chat-action-row {
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+    padding-top: 10px !important;
+    margin-top: 4px !important;
+    max-height: 60px;
+    opacity: 1;
+    transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+                margin-top 0.3s ease, 
+                padding-top 0.3s ease,
+                border-top-color 0.3s ease !important;
+  }
+
+  .chat-left-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .chat-action-icon-btn {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-radius: 50% !important;
+    color: #444c56 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    padding: 0 !important;
+  }
+
+  .chat-action-icon-btn:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #0969da !important;
+    transform: scale(1.05) !important;
+  }
+
+  .chat-tip-text {
+    font-size: 11px !important;
+    color: rgba(31, 35, 40, 0.5) !important;
+    font-weight: 400 !important;
+    pointer-events: none !important;
+  }
+
+  .chat-send-circle-btn {
+    background: #0969da !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    padding: 0 !important;
+  }
+
+  .chat-send-circle-btn:hover {
+    background: #1f77e4 !important;
+    transform: scale(1.05) !important;
+  }
+
+  /* File Attachment Badge */
+  .attached-file-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: rgba(9, 105, 218, 0.08) !important;
+    border: 1px solid rgba(9, 105, 218, 0.2) !important;
+    color: #0969da !important;
+    border-radius: 12px !important;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    margin-bottom: 12px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .attached-file-badge span {
+    max-width: 160px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-weight: 600 !important;
+  }
+
+  .attached-file-badge button {
+    background: none !important;
+    border: none !important;
+    color: #d12420 !important;
+    font-size: 16px !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center;
+  }
+
+  /* Bottom Navigation Hide on Focus */
+  .bottom-nav-row {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .bottom-nav-row.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Notifikasi Toast kustom */
+  .toast-container {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .custom-toast {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #1f2328;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-family: inherit;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    animation: slideUpToast 0.3s ease forwards;
+  }
+
+  .custom-toast.error {
+    border-color: rgba(209, 36, 32, 0.4);
+    color: #d12420;
+  }
+
+  .custom-toast.success {
+    border-color: rgba(9, 105, 218, 0.4);
+    color: #0969da;
+  }
+
+  @keyframes slideUpToast {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+/* pwa-button */
+/* Animasi masuk dari bawah */
+  @keyframes pwaSlideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .pwa-animate-slide-up {
+    animation: pwaSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  /* Menggunakan CSS murni untuk layout agar tidak bentrok dengan CSS tema Jekyll Anda */
+  #pwa-install-container {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (min-width: 768px) {
+    #pwa-install-container {
+      left: auto;
+      right: 16px;
+      width: 380px;
+    }
+  }
+  .pwa-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    color: #f8fafc;
+    overflow: hidden;
+  }
+  .pwa-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .pwa-icon-box {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+  }
+  .pwa-icon-box i {
+    color: #ffffff;
+    font-size: 20px;
+  }
+  .pwa-info {
+    flex-grow: 1;
+    min-width: 0;
+  }
+  .pwa-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pwa-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+  }
+  .pwa-close-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .pwa-close-btn:hover {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+  .pwa-body {
+    padding: 16px;
+    background-color: rgba(15, 23, 42, 0.6);
+  }
+  .pwa-btn-install {
+    width: 100%;
+    background-color: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+  .pwa-btn-install:hover {
+    background-color: #4338ca;
+  }
+  .pwa-btn-install:active {
+    transform: scale(0.98);
+  }
+  .pwa-instructions {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .pwa-instructions p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .pwa-instructions strong {
+    color: #818cf8;
+  }
+  .pwa-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #64748b;
+  }
+  .pwa-step-badge {
+    background-color: #0f172a;
+    color: #94a3b8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #334155;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .pwa-hidden {
+    display: none !important;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    bottom: -1000px !important;
+    left: auto !important;
+  }
