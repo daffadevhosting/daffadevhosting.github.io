@@ -25,16 +25,15 @@ Thicket UI is a Jekyll-oriented UI framework that combines reusable Liquid compo
 Instead of repeatedly writing HTML and CSS for similar interface elements, developers can create reusable components and customize them through Liquid parameters.
 
 For example, a button can be implemented using:
-
+```liquid
 {% raw %}
-```text
 {% include components/button.html
    label="Get Started"
    variant="primary"
    size="lg"
 %}
-```
 {% endraw %}
+```
 This approach makes components easier to reuse across different pages and layouts.
 
 The goal is simple: reduce repetitive code while keeping the development experience familiar to Jekyll developers.
